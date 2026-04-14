@@ -17,14 +17,14 @@ class AskAiScreen extends StatelessWidget {
             left: 0,
             right: 0,
             child: Container(
-              height: 300,
+              height: 400,
               decoration: BoxDecoration(
                 gradient: RadialGradient(
                   center: Alignment.topCenter,
-                  radius: 1.5,
+                  radius: 1.2,
                   colors: [
-                    const Color(0xFFFFFFFF),
-                    const Color(0xFFFFFFFF).withOpacity(0),
+                    const Color(0xFFD0E8FF).withOpacity(0.6), // Soft blue glow
+                    const Color(0xFFF5F5F5).withOpacity(0),
                   ],
                 ),
               ),
@@ -34,12 +34,11 @@ class AskAiScreen extends StatelessWidget {
           // Central Watermark
           Center(
             child: Opacity(
-              opacity: 0.1, // Subtle watermark
+              opacity: 0.15, // Adjusted for clear but subtle visibility
               child: Image.asset(
                 'assets/Figma MCP Assets/CommonAssets/Images/Repeat group 4.png',
-                width: 250,
-                color: Colors.black.withOpacity(0.2),
-                colorBlendMode: BlendMode.dstIn,
+                width: 280,
+                fit: BoxFit.contain,
               ),
             ),
           ),
@@ -105,11 +104,11 @@ class AskAiScreen extends StatelessWidget {
                   width: double.infinity,
                   decoration: BoxDecoration(
                     gradient: RadialGradient(
-                      center: const Alignment(0, 2),
-                      radius: 1.5,
+                      center: const Alignment(0, 1.8),
+                      radius: 1.2,
                       colors: [
-                        const Color(0xFFFF96BE).withOpacity(0.3),
-                        const Color(0xFFFF96BE).withOpacity(0),
+                        const Color(0xFFFF96BE).withOpacity(0.5), // Stronger pink
+                        const Color(0xFFF5F5F5).withOpacity(0),
                       ],
                     ),
                   ),
@@ -192,7 +191,7 @@ class AskAiScreen extends StatelessWidget {
             svgPath,
             width: 24,
             height: 24,
-            colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcIn),
+            colorFilter: const ColorFilter.mode(Color(0xFF737373), BlendMode.srcIn),
           ),
           const SizedBox(height: 8),
           Text(
