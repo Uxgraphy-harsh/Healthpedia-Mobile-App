@@ -59,7 +59,7 @@ class _RemindersHistoryScreenState extends State<RemindersHistoryScreen> with Si
                         border: Border.all(color: const Color(0xFFD4D4D4)),
                       ),
                       child: SvgPicture.asset(
-                        'assets/Figma MCP Assets/Summary Screen/Icons/arrow_back.svg',
+                        'assets/Figma MCP Assets/Onboarding Screens/Onboarding Screens Icons/arrow_back.svg',
                         width: 24,
                         height: 24,
                         colorFilter: const ColorFilter.mode(Color(0xFF0A0A0A), BlendMode.srcIn),
