@@ -50,13 +50,20 @@ class AskAiScreen extends StatelessWidget {
             ),
           ),
 
-          // 3. Central Watermark (High Fidelity)
+          // 3. Central Watermark (Desaturated & High Fidelity)
           Center(
-            child: Image.asset(
-              'assets/Figma MCP Assets/CommonAssets/Images/Repeat group 4.png',
-              width: 320,
-              opacity: const AlwaysStoppedAnimation(0.25), // Much more visible now
-              fit: BoxFit.contain,
+            child: ColorFiltered(
+              colorFilter: const ColorFilter.matrix(<double>[
+                0.2126, 0.7152, 0.0722, 0, 0,
+                0.2126, 0.7152, 0.0722, 0, 0,
+                0.2126, 0.7152, 0.0722, 0, 0,
+                0,      0,      0,      1, 0,
+              ]),
+              child: Image.asset(
+                'assets/Figma MCP Assets/CommonAssets/Images/Repeat group 4.png',
+                width: 350,
+                fit: BoxFit.contain,
+              ),
             ),
           ),
 
