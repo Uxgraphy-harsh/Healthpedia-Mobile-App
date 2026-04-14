@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 // ──────────────────────── Data models ────────────────────────────────────────
 
@@ -31,6 +32,13 @@ class _Attachment {
     required this.size,
     required this.isPdf,
   });
+}
+
+class _TimingPill {
+  final IconData? icon;
+  final String? label;
+  final bool isActive;
+  const _TimingPill({this.icon, this.label, required this.isActive});
 }
 
 // ──────────────────────── Screen ─────────────────────────────────────────────
@@ -86,9 +94,6 @@ class ReportDetailScreen extends StatelessWidget {
     _Attachment(name: 'Report_p2.jpg', size: '1.7 MB', isPdf: false),
   ];
 
-  // ── Dosage dots pattern (empty, filled, empty, filled) ─────────────────────
-  static const _dosageFilled = [false, true, false, true];
-
   // ──────────────────────────────────────────────────────────────────────────
 
   @override
@@ -115,7 +120,7 @@ class ReportDetailScreen extends StatelessWidget {
                     const SizedBox(height: 24),
                     _buildSection('RESULTS', _buildResultsTable()),
                     const SizedBox(height: 24),
-                    _buildSection('PRESCRIPTIONS', _buildPrescriptions()),
+                    _buildSection('PRESCRIBED MEDICINES', _buildPrescriptions()),
                     const SizedBox(height: 24),
                     _buildSection('ATTACHMENTS', _buildAttachments()),
                     const SizedBox(height: 16),
@@ -575,6 +580,14 @@ class ReportDetailScreen extends StatelessWidget {
   }
 
   Widget _buildPrescriptionCard() {
+    // Timing indicators: Morning(active), Lunch, Dinner, Night
+    const timings = [
+      _TimingPill(icon: Icons.wb_sunny_rounded, label: null, isActive: true),
+      _TimingPill(icon: null, label: 'L', isActive: false),
+      _TimingPill(icon: null, label: 'D', isActive: false),
+      _TimingPill(icon: Icons.nights_stay, label: null, isActive: false),
+    ];
+
     return Container(
       width: 160,
       padding: const EdgeInsets.all(10),
@@ -586,57 +599,108 @@ class ReportDetailScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Prescription image container — aspect 1:1 clipped
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: AspectRatio(
-              aspectRatio: 1,
-              child: Image.asset(
-                'assets/Figma MCP Assets/CommonAssets/Images/Prescription Image 1.png',
-                fit: BoxFit.cover,
+          // ── Image area with '1x' badge overlay ──────────────────────────
+          Stack(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: AspectRatio(
+                  aspectRatio: 1,
+                  child: Image.asset(
+                    'assets/Figma MCP Assets/CommonAssets/Images/Prescription Image 1.png',
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
-            ),
+              // '1x' quantity badge — top right
+              Positioned(
+                top: 6,
+                right: 6,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(99),
+                    boxShadow: const [_cardShadow],
+                  ),
+                  child: const Text(
+                    '1x',
+                    style: TextStyle(
+                      fontFamily: 'Geist',
+                      fontSize: 11,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xFF0A0A0A),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 8),
-          // Name — Medium 16px
+          // ── Small thumbnail row ──────────────────────────────────────────
+          Row(
+            children: [
+              _buildThumb(), const SizedBox(width: 4),
+              _buildThumb(), const SizedBox(width: 4),
+              _buildThumb(),
+            ],
+          ),
+          const SizedBox(height: 8),
+          // ── Name + timing ────────────────────────────────────────────────
           const Text(
             'Thyrox 50 Tablet',
             style: TextStyle(
-              fontFamily: 'Geist',
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              color: Color(0xFF0A0A0A),
+              fontFamily: 'Geist', fontSize: 16,
+              fontWeight: FontWeight.w500, color: Color(0xFF0A0A0A),
             ),
           ),
-          // Timing — Regular 14px, Neutral 500
           const Text(
             '~ Before food',
             style: TextStyle(
-              fontFamily: 'Geist',
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-              color: Color(0xFF737373),
+              fontFamily: 'Geist', fontSize: 14,
+              fontWeight: FontWeight.w400, color: Color(0xFF737373),
             ),
           ),
           const SizedBox(height: 8),
-          // Dosage dots — (empty, filled) × 2
+          // ── Dosage timing pills ──────────────────────────────────────────
           Row(
-            children: _dosageFilled.map((filled) => Padding(
-              padding: const EdgeInsets.only(right: 8),
+            children: timings.map((t) => Padding(
+              padding: const EdgeInsets.only(right: 6),
               child: Container(
-                width: 12,
-                height: 12,
+                width: 24, height: 24,
                 decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: filled ? const Color(0xFF3B82F6) : Colors.transparent,
-                  border: filled
-                      ? null
-                      : Border.all(color: const Color(0xFFA3A3A3)),
+                  color: t.isActive ? const Color(0xFF3B82F6) : Colors.transparent,
+                  border: t.isActive ? null : Border.all(color: const Color(0xFFA3A3A3)),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Center(
+                  child: t.icon != null
+                      ? Icon(t.icon, size: 14,
+                          color: t.isActive ? Colors.white : const Color(0xFFA3A3A3))
+                      : Text(t.label!,
+                          style: TextStyle(
+                            fontFamily: 'Geist', fontSize: 11,
+                            fontWeight: FontWeight.w500,
+                            color: t.isActive ? Colors.white : const Color(0xFFA3A3A3),
+                          )),
                 ),
               ),
             )).toList(),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildThumb() {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(4),
+      child: SizedBox(
+        width: 36, height: 36,
+        child: Image.asset(
+          'assets/Figma MCP Assets/CommonAssets/Images/Prescription Image 1.png',
+          fit: BoxFit.cover,
+        ),
       ),
     );
   }
@@ -656,11 +720,14 @@ class ReportDetailScreen extends StatelessWidget {
           ),
           child: Row(
             children: [
-              // Icon: picture_as_pdf for PDF, image for image files (Material)
-              Icon(
-                a.isPdf ? Icons.picture_as_pdf : Icons.image_outlined,
-                size: 24,
-                color: const Color(0xFF0A0A0A),
+              // SVG icons with native colors — picture_as_pdf (red), filter (blue)
+              SvgPicture.asset(
+                a.isPdf
+                    ? 'assets/Figma MCP Assets/CommonAssets/Icons/picture_as_pdf.svg'
+                    : 'assets/Figma MCP Assets/CommonAssets/Icons/filter.svg',
+                width: 24,
+                height: 24,
+                // NO colorFilter — Figma uses native SVG colors (red for PDF, blue for image)
               ),
               const SizedBox(width: 8),
               Expanded(
@@ -690,9 +757,9 @@ class ReportDetailScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              // arrow_outward = open_in_new Material icon
+              // arrow_outward — diagonal open icon (Figma: imgArrowOutward)
               const Icon(
-                Icons.open_in_new,
+                Icons.arrow_outward,
                 size: 24,
                 color: Color(0xFF0A0A0A),
               ),
