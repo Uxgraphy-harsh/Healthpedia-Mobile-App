@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:healthpedia_frontend/core/theme/app_theme.dart';
-import 'package:healthpedia_frontend/features/splash/screens/splash_screen.dart';
+import 'package:healthpedia_frontend/features/onboarding/screens/overview_screen.dart';
 
 void main() {
   runApp(const HealthpediaApp());
@@ -18,8 +18,8 @@ class HealthpediaApp extends StatelessWidget {
       title: 'Healthpedia',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
-      // Setting the initial route directly to the Splash Screen for prototyping
-      home: const SplashScreen(),
+      // TODO: Replace with go_router once navigation is set up
+      home: const OverviewScreen(),
     );
   }
 }

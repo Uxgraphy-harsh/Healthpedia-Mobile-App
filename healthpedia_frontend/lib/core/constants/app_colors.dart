@@ -250,6 +250,11 @@ class AppColors {
   static const Color pink950 = Color(0xFF2C0011);
 
   // ─────────────────────────────────────────────
+  // Maroon
+  // ─────────────────────────────────────────────
+  static const Color maroon700 = Color(0xFF510B27);
+
+  // ─────────────────────────────────────────────
   // Rose
   // ─────────────────────────────────────────────
   static const Color rose50 = Color(0xFFFFF1F2);

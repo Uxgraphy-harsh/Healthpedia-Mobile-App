@@ -1,33 +1,50 @@
-# Healthpedia Frontend
+# Healthpedia Frontend (Flutter)
 
 Welcome to the Healthpedia mobile application project.
 
 > [!NOTE]
-> **Frontend Prototyping Phase**: This project is currently focused entirely on the frontend design phase. It contains basic prototypes and UI implementations without real backend functional logic. The backend integration will be worked out in a later phase.
+> **Frontend Prototyping Phase**: Currently focusing on UI/UX implementation. Logic is mocked; tokens are real.
 
-## Development Workflow
+---
 
-When working on the frontend codebase, please adhere to the following workflow rules:
+## 🤖 AI OPERATING GUIDELINES (Read this first!)
+**To save credits and ensure accuracy across model switches, all AI agents MUST follow these rules:**
 
-Always check the [SCREENS.md](./SCREENS.md) file when working on the frontend code. This file contains the complete architectural map and explains the full app flow. Understanding how a screen connects to the rest of the application is mandatory before making modifications or adding new screens.
+1. **Query the Graph first**: Before using `grep` or `ls`, check `graphify-out/GRAPH_REPORT.md`. Avoid expensive file-system crawling.
+2. **Follow the Design System**: DO NOT hardcode colors or spacing. Use [AppColors](lib/core/constants/app_colors.dart), [AppTypography](lib/core/constants/app_typography.dart), and [AppSpacing](lib/core/constants/app_spacing.dart).
+3. **Advanced Simplicity (Core Philosophy)**: Write code that is **Super Advanced but Simple**. Achieve results through professional, idiomatic, and robust patterns that a senior developer would respect. **Avoid "jugaad" (hacky) solutions** or over-complicating small features with unnecessary "ultra-advanced" techniques.
+4. **Maintainability First**: Keep UI components focused and logic clean. Small changes (asset swaps, color fixes) should be implemented properly, not as convoluted workarounds.
+5. **Reference the Map**: Always keep [SCREENS.md](./SCREENS.md) in context. It is the architectural source of truth.
+6. **Be Concise**: Prioritize execution and code over verbose explanations.
 
-### Visual Analysis & Screenshots 📸
-When the user provides screenshots for visual reference:
-1. **Figma Reference Screenshots**: These are the ultimate source-of-truth for visual design (scale, spacing, proportion). You will recognize these as clean mobile frames without any code editor UI.
-2. **Implementation Screenshots (Android Studio/Emulator)**: These show the literal codebase output on the device preview. If a screenshot contains Android Studio windows or IDE code alongside the emulator, it is meant to show you the current buggy implementation. Ignore the code text in these images and focus strictly on comparing the emulator screen against the pure Figma reference image to correct issues.
+---
 
-### Design Tokens & Figma MCP
-Our design system is token-driven. You will find our extracted Figma tokens inside the `assets/tokens/` folder (such as `brand_tokens.json`). 
+## 🎨 Design System & Assets
+- **Tokens**: Located in `lib/core/constants/`. These are derived from `assets/tokens/`.
+- **Figma Reference**: Use Node `59:438` for the Onboarding/Overview flow.
+- **Assets**: Icons and photos are in `assets/Figma MCP Assets/`. Use `SvgPicture` for `.svg` and `Image.asset` for `.png/jpg`. 
+  - *Note*: If an SVG asset fails to render correctly (e.g. contains complex patterns), check for a corresponding PNG in the `Icons/Onboarding/` subfolder.
 
-Whenever you are building or updating screens using the **Figma MCP**:
-1. You strictly must utilize these design tokens rather than hardcoding hex colors, font sizes, or spacing.
-2. Refer to the `assets/Figma MCP Assets/` folder, which contains relevant pre-exported image/icon assets. Use these assets to accurately replicate the pixel-perfect design.
+---
 
-### AI Assistants & Graphify 🧠
-This project has [Graphify](https://github.com/safishamsi/graphify) installed and configured specifically to assist AI agents (like Antigravity). Agents can run `/graphify .` in the terminal to generate a full visual codebase mapping and analyze architecture, greatly improving context-awareness and reliability when coding features.
+## 🧠 Graphify & Knowledge Management
+This project uses **Graphify** to maintain a persistent knowledge graph of the codebase.
+
+- **To Rebuild the Graph**: Run `./graphify_rebuild.sh` (or `/graphify .` if configured).
+- **Audit Trail**: Check [graphify-out/GRAPH_REPORT.md](./graphify-out/GRAPH_REPORT.md) for architectural "God Nodes".
+- **Persistence**: Relationships in `graphify-out/graph.json` survive model switches.
+
+---
+
+## 🚦 Current Session State (Handover)
+> [!IMPORTANT]
+> **Current Task**: Onboarding Carousel Complete.
+> **Last Goal**: Implemented "Apple Glass" CTAs with solid black Primary failsafe and PNG icon integration. Updated README with coding philosophy.
+> **Environment Status**: `node` and `pip` are currently missing/not in PATH.
+
+---
 
 ## Getting Started
-
 To run this project:
 ```bash
 flutter pub get
