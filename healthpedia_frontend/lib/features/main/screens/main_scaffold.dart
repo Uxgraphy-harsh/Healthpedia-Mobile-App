@@ -6,6 +6,7 @@ import 'package:healthpedia_frontend/core/constants/app_colors.dart';
 import 'package:healthpedia_frontend/features/main/screens/summary_screen.dart';
 import 'package:healthpedia_frontend/features/main/screens/reminders_screen.dart';
 import 'package:healthpedia_frontend/features/main/screens/reminders_history_screen.dart';
+import 'package:healthpedia_frontend/features/main/screens/ask_ai_screen.dart';
 
 enum ReminderStatus { pending, completed, missed }
 
@@ -176,6 +177,19 @@ class _MainScaffoldState extends State<MainScaffold> {
             child: GestureDetector(
               onTap: () {
                 HapticFeedback.mediumImpact();
+                Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) => const AskAiScreen(),
+                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                      const begin = Offset(0.0, 1.0);
+                      const end = Offset.zero;
+                      const curve = Curves.easeOutQuart;
+                      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                      return SlideTransition(position: animation.drive(tween), child: child);
+                    },
+                  ),
+                );
               },
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -248,7 +262,7 @@ class _MainScaffoldState extends State<MainScaffold> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SvgPicture.asset(
-                'assets/Figma MCP Assets/Summary Screen/Icons/${isSelected ? selectedIcon : unselectedIcon}',
+                'assets/Figma MCP Assets/Shared Assets/Icons/${isSelected ? selectedIcon : unselectedIcon}',
                 colorFilter: ColorFilter.mode(
                   isSelected ? const Color(0xFF2C0011) : const Color(0xFFA3A3A3),
                   BlendMode.srcIn,

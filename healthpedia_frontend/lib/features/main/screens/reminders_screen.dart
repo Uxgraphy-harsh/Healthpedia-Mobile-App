@@ -174,7 +174,7 @@ class _RemindersScreenState extends State<RemindersScreen> with SingleTickerProv
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       SvgPicture.asset(
-                        'assets/Figma MCP Assets/Summary Screen/Icons/add_2.svg',
+                        'assets/Figma MCP Assets/Shared Assets/Icons/add_2.svg',
                         width: 20,
                         height: 20,
                         colorFilter: const ColorFilter.mode(Color(0xFFCD577F), BlendMode.srcIn),
@@ -235,7 +235,7 @@ class _RemindersScreenState extends State<RemindersScreen> with SingleTickerProv
           children: [
             // Checklist Icon (Dotted circle for pending)
             SvgPicture.asset(
-              'assets/Figma MCP Assets/Summary Screen/Icons/Reminder Icon Placeholder 1.svg',
+              'assets/Figma MCP Assets/Shared Assets/Icons/Reminder Icon Placeholder 1.svg',
               width: 24,
               height: 24,
             ),

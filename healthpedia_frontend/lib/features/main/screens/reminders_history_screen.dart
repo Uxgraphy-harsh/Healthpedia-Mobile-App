@@ -167,12 +167,12 @@ class _RemindersHistoryScreenState extends State<RemindersHistoryScreen> with Si
             // Status Icon
             isMissed 
               ? SvgPicture.asset(
-                  'assets/Figma MCP Assets/Summary Screen/Icons/Warning Container.svg',
+                  'assets/Figma MCP Assets/Shared Assets/Icons/Warning Container.svg',
                   width: 24,
                   height: 24,
                 )
               : SvgPicture.asset(
-                  'assets/Figma MCP Assets/Summary Screen/Icons/Reminder Icon Placeholder 3.svg',
+                  'assets/Figma MCP Assets/Shared Assets/Icons/Reminder Icon Placeholder 3.svg',
                   width: 24,
                   height: 24,
                 ),

@@ -138,12 +138,11 @@ class _SummaryScreenState extends State<SummaryScreen> {
                                 ),
                                 child: Row(
                                   children: [
-                                    SvgPicture.asset(
-                                      'assets/Figma MCP Assets/Summary Screen/Icons/arrow_upward.svg',
-                                      width: 12,
-                                      height: 12,
-                                      colorFilter: const ColorFilter.mode(Color(0xFF4ADE80), BlendMode.srcIn),
-                                    ),
+                                     const Icon(
+                                       Icons.arrow_upward,
+                                       size: 14,
+                                       color: Color(0xFF4ADE80),
+                                     ),
                                     const SizedBox(width: 4),
                                     const Text(
                                       '+3 from last week',
@@ -168,11 +167,10 @@ class _SummaryScreenState extends State<SummaryScreen> {
                             ),
                             child: Row(
                               children: [
-                                SvgPicture.asset(
-                                  'assets/Figma MCP Assets/Summary Screen/Icons/edit.svg',
-                                  width: 14,
-                                  height: 14,
-                                  colorFilter: const ColorFilter.mode(Color(0xFFA3A3A3), BlendMode.srcIn),
+                                const Icon(
+                                  Icons.edit,
+                                  size: 14,
+                                  color: Color(0xFFA3A3A3),
                                 ),
                                 const SizedBox(width: 6),
                                 const Text(
@@ -277,11 +275,11 @@ class _SummaryScreenState extends State<SummaryScreen> {
                             ),
                           ),
                           const SizedBox(width: 4),
-                          SvgPicture.asset(
-                            'assets/Figma MCP Assets/Summary Screen/Icons/arrow_forward_ios.svg',
-                            width: 14,
-                            height: 14,
-                          ),
+                            const Icon(
+                              Icons.arrow_forward_ios,
+                              size: 14,
+                              color: Color(0xFF737373),
+                            ),
                         ],
                       ),
                     ),
@@ -412,7 +410,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SvgPicture.asset('assets/Figma MCP Assets/Summary Screen/Icons/$icon', width: 24, height: 24),
+          SvgPicture.asset('assets/Figma MCP Assets/Shared Assets/Icons/$icon', width: 24, height: 24),
           const SizedBox(height: 4),
           Row(
             crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -460,7 +458,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
           child: Row(
             children: [
               SvgPicture.asset(
-                'assets/Figma MCP Assets/Summary Screen/Icons/Reminder Icon Placeholder 1.svg',
+                'assets/Figma MCP Assets/Shared Assets/Icons/Reminder Icon Placeholder 1.svg',
                 width: 24,
                 height: 24,
               ),
