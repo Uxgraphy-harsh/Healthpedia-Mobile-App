@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'main_scaffold.dart';
 import 'reminders_history_screen.dart';
+import '../widgets/add_reminder_bottom_sheet.dart';
 
 class RemindersScreen extends StatefulWidget {
   final List<ReminderItem> reminders;
@@ -155,6 +156,14 @@ class _RemindersScreenState extends State<RemindersScreen> with SingleTickerProv
               child: GestureDetector(
                 onTap: () {
                   HapticFeedback.mediumImpact();
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    isDismissible: true,
+                    enableDrag: true,
+                    backgroundColor: Colors.transparent,
+                    builder: (sheetContext) => const AddReminderBottomSheet(),
+                  );
                 },
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),

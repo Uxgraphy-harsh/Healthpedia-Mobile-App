@@ -11,13 +11,13 @@ class AskAiScreen extends StatelessWidget {
       backgroundColor: const Color(0xFFF5F5F5), // Neutral 100
       body: Stack(
         children: [
-          // 1. Blue Top Glow (Shape-based like Figma Ellipse 2)
+          // 1. Blue Top Glow (Exact Figma Ellipse 2: y=-781, size=1152)
           Positioned(
-            top: -250,
-            left: -50,
-            right: -50,
+            top: -781,
+            left: -381,
             child: Container(
-              height: 500,
+              width: 1152,
+              height: 1152,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
@@ -50,7 +50,7 @@ class AskAiScreen extends StatelessWidget {
             ),
           ),
 
-          // 3. Central Watermark (Desaturated & High Fidelity)
+          // 3. Central Watermark (Exact Figma Scale: 160px)
           Center(
             child: ColorFiltered(
               colorFilter: const ColorFilter.matrix(<double>[
@@ -61,148 +61,149 @@ class AskAiScreen extends StatelessWidget {
               ]),
               child: Image.asset(
                 'assets/Figma MCP Assets/CommonAssets/Images/Repeat group 4.png',
-                width: 180, // Reduced as per Figma comparison
+                width: 160,
                 fit: BoxFit.contain,
               ),
             ),
           ),
 
           // 4. Content Layer
-          SafeArea(
-            child: Column(
-              children: [
-                // Top Bar
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // Close Button
-                      GestureDetector(
-                        onTap: () => Navigator.pop(context),
-                        child: Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white.withOpacity(0.1),
-                          ),
-                          child: const Icon(Icons.close, size: 24, color: Color(0xFF0A0A0A)),
-                        ),
-                      ),
-                      // Chat History Pill
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          Column(
+            children: [
+              // Consistent StatusBar Offset (44px)
+              const SizedBox(height: 44),
+              // Top Bar
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Close Button
+                    GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: Container(
+                        width: 40,
+                        height: 40,
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.6),
-                          borderRadius: BorderRadius.circular(999),
-                          border: Border.all(color: const Color(0xFFE5E5E5).withOpacity(0.5)),
+                          shape: BoxShape.circle,
+                          color: Colors.white.withOpacity(0.1),
                         ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            SvgPicture.asset(
-                              'assets/Figma MCP Assets/CommonAssets/Icons/ChatsCircle.svg',
-                              width: 20,
-                              height: 20,
-                              colorFilter: const ColorFilter.mode(Color(0xFF737373), BlendMode.srcIn),
-                            ),
-                            const SizedBox(width: 8),
-                            const Text(
-                              'Chat history',
-                              style: TextStyle(
-                                fontFamily: 'Geist',
-                                fontSize: 16,
-                                fontWeight: FontWeight.w400,
-                                color: Color(0xFF737373),
-                              ),
-                            ),
-                          ],
-                        ),
+                        child: const Icon(Icons.close, size: 24, color: Color(0xFF0A0A0A)),
                       ),
-                    ],
-                  ),
-                ),
-
-                const Spacer(),
-
-                // Bottom Content (Floating above gradients)
-                Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Options Row
-                      Row(
+                    ),
+                    // Chat History Pill
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.6),
+                        borderRadius: BorderRadius.circular(999),
+                        border: Border.all(color: const Color(0xFFE5E5E5).withOpacity(0.5)),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          Expanded(
-                            child: _buildOptionCard(
-                              'Log symptoms',
-                              'assets/Figma MCP Assets/CommonAssets/Icons/Heartbeat.svg',
-                            ),
+                          SvgPicture.asset(
+                            'assets/Figma MCP Assets/CommonAssets/Icons/ChatsCircle.svg',
+                            width: 20,
+                            height: 20,
+                            colorFilter: const ColorFilter.mode(Color(0xFF737373), BlendMode.srcIn),
                           ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: _buildOptionCard(
-                              'Analyze Reports',
-                              'assets/Figma MCP Assets/CommonAssets/Icons/Files.svg',
+                          const SizedBox(width: 8),
+                          const Text(
+                            'Chat history',
+                            style: TextStyle(
+                              fontFamily: 'Geist',
+                              fontSize: 16,
+                              fontWeight: FontWeight.w400,
+                              color: Color(0xFF737373),
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 10),
-                      // Ask Section
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.9),
-                          borderRadius: BorderRadius.circular(32),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.05),
-                              blurRadius: 20,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Ask anything about your health',
-                              style: TextStyle(
-                                fontFamily: 'Geist',
-                                fontSize: 18,
-                                color: Color(0xFF737373),
-                              ),
-                            ),
-                            const SizedBox(height: 24),
-                            Row(
-                              children: [
-                                _buildRoundButton(Icons.attach_file),
-                                const Spacer(),
-                                _buildRoundButton(Icons.mic_none),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      // Home Indicator
-                      Container(
-                        width: 134,
-                        height: 5,
-                        decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(100),
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+
+              const Spacer(),
+
+              // Bottom Content
+              Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Options Row
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildOptionCard(
+                            'Log symptoms',
+                            'assets/Figma MCP Assets/CommonAssets/Icons/Heartbeat.svg',
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: _buildOptionCard(
+                            'Analyze Reports',
+                            'assets/Figma MCP Assets/CommonAssets/Icons/Files.svg',
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    // Ask Section
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.9),
+                        borderRadius: BorderRadius.circular(32),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 20,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Ask anything about your health',
+                            style: TextStyle(
+                              fontFamily: 'Geist',
+                              fontSize: 18,
+                              color: Color(0xFF737373),
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                          Row(
+                            children: [
+                              _buildRoundButton(Icons.attach_file),
+                              const Spacer(),
+                              _buildRoundButton(Icons.mic_none),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    // Home Indicator
+                    Container(
+                      width: 134,
+                      height: 5,
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 8), // Standard bottom spacing
+            ],
           ),
         ],
       ),

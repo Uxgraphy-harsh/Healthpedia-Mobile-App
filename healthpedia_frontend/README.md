@@ -17,6 +17,8 @@ Welcome to the Healthpedia mobile application project.
 5. **Reference the Map**: Always keep [SCREENS.md](./SCREENS.md) in context. It is the architectural source of truth.
 6. **Icon Policy**: Always prioritize **Material Icons** (`Icons.xxx`) if a matching or sufficiently similar icon exists in the Flutter framework. Only use SVG/PNG assets from the `Figma MCP Assets` folder for unique brand assets or complex multi-color custom icons. This optimizes performance and ensures 100% reliability on the Apple App Store.
 7. **Be Concise**: Prioritize execution and code over verbose explanations.
+8. **Figma MCP-First Workflow**: DO NOT eyeball designs from screenshots/mockups. ALWAYS use `get_design_context` or `get_metadata` to extract precise offsets, opacity values, color hexes, and node hierarchies from the Figma source of truth. Failure to use the MCP tools correctly leads to loss of design fidelity.
+9. **Asset Naming & Organization**: Maintain the `assets/Figma MCP Assets/CommonAssets/` structure for universal assets. Avoid renaming folders unless it drastically improves clarity and you have updated all code references.
 
 ---
 

@@ -7,6 +7,7 @@ import 'package:healthpedia_frontend/features/main/screens/summary_screen.dart';
 import 'package:healthpedia_frontend/features/main/screens/reminders_screen.dart';
 import 'package:healthpedia_frontend/features/main/screens/reminders_history_screen.dart';
 import 'package:healthpedia_frontend/features/main/screens/ask_ai_screen.dart';
+import 'package:healthpedia_frontend/features/main/screens/records_screen.dart';
 
 enum ReminderStatus { pending, completed, missed }
 
@@ -127,6 +128,8 @@ class _MainScaffoldState extends State<MainScaffold> {
           reminders: _reminders,
           onToggle: _toggleReminder,
         );
+      case 2:
+        return const RecordsScreen();
       default:
         return Center(
           child: Text(
