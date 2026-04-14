@@ -1,0 +1,226 @@
+{
+  "0": {
+    "$type": "number",
+    "$value": 0,
+    "$description": "Spacing value for 0 (number)",
+    "$extensions": {
+      "com.figma.variableId": "VariableID:2:5974",
+      "com.figma.hiddenFromPublishing": true,
+      "com.figma.scopes": [
+        "ALL_SCOPES"
+      ],
+      "com.figma.isOverride": true
+    }
+  },
+  "1": {
+    "$type": "number",
+    "$value": 1,
+    "$description": "Spacing value for 1 (number)",
+    "$extensions": {
+      "com.figma.variableId": "VariableID:2:5883",
+      "com.figma.hiddenFromPublishing": true,
+      "com.figma.scopes": [
+        "ALL_SCOPES"
+      ],
+      "com.figma.isOverride": true
+    }
+  },
+  "2": {
+    "$type": "number",
+    "$value": 2,
+    "$description": "Spacing value for 2 (number)",
+    "$extensions": {
+      "com.figma.variableId": "VariableID:2:6039",
+      "com.figma.hiddenFromPublishing": true,
+      "com.figma.scopes": [
+        "ALL_SCOPES"
+      ],
+      "com.figma.isOverride": true
+    }
+  },
+  "4": {
+    "$type": "number",
+    "$value": 4,
+    "$description": "Spacing value for 4 (number)",
+    "$extensions": {
+      "com.figma.variableId": "VariableID:2:6155",
+      "com.figma.hiddenFromPublishing": true,
+      "com.figma.scopes": [
+        "ALL_SCOPES"
+      ],
+      "com.figma.isOverride": true
+    }
+  },
+  "8": {
+    "$type": "number",
+    "$value": 8,
+    "$description": "Spacing value for 8 (number)",
+    "$extensions": {
+      "com.figma.variableId": "VariableID:2:6053",
+      "com.figma.hiddenFromPublishing": true,
+      "com.figma.scopes": [
+        "ALL_SCOPES"
+      ],
+      "com.figma.isOverride": true
+    }
+  },
+  "10": {
+    "$type": "number",
+    "$value": 10,
+    "$description": "Spacing value for 10 (number)",
+    "$extensions": {
+      "com.figma.variableId": "VariableID:2:6033",
+      "com.figma.hiddenFromPublishing": true,
+      "com.figma.scopes": [
+        "ALL_SCOPES"
+      ],
+      "com.figma.isOverride": true
+    }
+  },
+  "12": {
+    "$type": "number",
+    "$value": 12,
+    "$description": "Spacing value for 12 (number)",
+    "$extensions": {
+      "com.figma.variableId": "VariableID:2:5985",
+      "com.figma.hiddenFromPublishing": true,
+      "com.figma.scopes": [
+        "ALL_SCOPES"
+      ],
+      "com.figma.isOverride": true
+    }
+  },
+  "14": {
+    "$type": "number",
+    "$value": 14,
+    "$description": "Spacing value for 14 (number)",
+    "$extensions": {
+      "com.figma.variableId": "VariableID:2:5981",
+      "com.figma.hiddenFromPublishing": true,
+      "com.figma.scopes": [
+        "ALL_SCOPES"
+      ],
+      "com.figma.isOverride": true
+    }
+  },
+  "16": {
+    "$type": "number",
+    "$value": 16,
+    "$description": "Spacing value for 16 (number)",
+    "$extensions": {
+      "com.figma.variableId": "VariableID:2:6132",
+      "com.figma.hiddenFromPublishing": true,
+      "com.figma.scopes": [
+        "ALL_SCOPES"
+      ],
+      "com.figma.isOverride": true
+    }
+  },
+  "20": {
+    "$type": "number",
+    "$value": 20,
+    "$description": "Spacing value for 20 (number)",
+    "$extensions": {
+      "com.figma.variableId": "VariableID:2:5879",
+      "com.figma.hiddenFromPublishing": true,
+      "com.figma.scopes": [
+        "ALL_SCOPES"
+      ],
+      "com.figma.isOverride": true
+    }
+  },
+  "24": {
+    "$type": "number",
+    "$value": 24,
+    "$description": "Spacing value for 24 (number)",
+    "$extensions": {
+      "com.figma.variableId": "VariableID:2:5921",
+      "com.figma.hiddenFromPublishing": true,
+      "com.figma.scopes": [
+        "ALL_SCOPES"
+      ],
+      "com.figma.isOverride": true
+    }
+  },
+  "28": {
+    "$type": "number",
+    "$value": 28,
+    "$description": "Spacing value for 28 (number)",
+    "$extensions": {
+      "com.figma.variableId": "VariableID:2:5959",
+      "com.figma.hiddenFromPublishing": true,
+      "com.figma.scopes": [
+        "ALL_SCOPES"
+      ],
+      "com.figma.isOverride": true
+    }
+  },
+  "32": {
+    "$type": "number",
+    "$value": 32,
+    "$description": "Spacing value for 32 (number)",
+    "$extensions": {
+      "com.figma.variableId": "VariableID:2:5971",
+      "com.figma.hiddenFromPublishing": true,
+      "com.figma.scopes": [
+        "ALL_SCOPES"
+      ],
+      "com.figma.isOverride": true
+    }
+  },
+  "40": {
+    "$type": "number",
+    "$value": 40,
+    "$description": "Spacing value for 40 (number)",
+    "$extensions": {
+      "com.figma.variableId": "VariableID:2:6100",
+      "com.figma.hiddenFromPublishing": true,
+      "com.figma.scopes": [
+        "ALL_SCOPES"
+      ],
+      "com.figma.isOverride": true
+    }
+  },
+  "48": {
+    "$type": "number",
+    "$value": 48,
+    "$description": "Spacing value for 48 (number)",
+    "$extensions": {
+      "com.figma.variableId": "VariableID:2:5953",
+      "com.figma.hiddenFromPublishing": true,
+      "com.figma.scopes": [
+        "ALL_SCOPES"
+      ],
+      "com.figma.isOverride": true
+    }
+  },
+  "60": {
+    "$type": "number",
+    "$value": 60,
+    "$description": "Spacing value for 60 (number)",
+    "$extensions": {
+      "com.figma.variableId": "VariableID:2:6134",
+      "com.figma.hiddenFromPublishing": true,
+      "com.figma.scopes": [
+        "ALL_SCOPES"
+      ],
+      "com.figma.isOverride": true
+    }
+  },
+  "72": {
+    "$type": "number",
+    "$value": 72,
+    "$description": "Spacing value for 72 (number)",
+    "$extensions": {
+      "com.figma.variableId": "VariableID:2:6123",
+      "com.figma.hiddenFromPublishing": true,
+      "com.figma.scopes": [
+        "ALL_SCOPES"
+      ],
+      "com.figma.isOverride": true
+    }
+  },
+  "$extensions": {
+    "com.figma.modeName": "Default"
+  }
+}

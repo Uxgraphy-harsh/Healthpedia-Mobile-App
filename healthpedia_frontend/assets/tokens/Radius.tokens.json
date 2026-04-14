@@ -1,0 +1,135 @@
+{
+  "none": {
+    "$type": "number",
+    "$value": 0,
+    "$description": "Radius value for none (tshirt)",
+    "$extensions": {
+      "com.figma.variableId": "VariableID:2:6137",
+      "com.figma.hiddenFromPublishing": true,
+      "com.figma.scopes": [
+        "ALL_SCOPES"
+      ],
+      "com.figma.isOverride": true
+    }
+  },
+  "sm": {
+    "$type": "number",
+    "$value": 2,
+    "$description": "Radius value for sm (tshirt)",
+    "$extensions": {
+      "com.figma.variableId": "VariableID:2:6068",
+      "com.figma.hiddenFromPublishing": true,
+      "com.figma.scopes": [
+        "ALL_SCOPES"
+      ],
+      "com.figma.isOverride": true
+    }
+  },
+  "md": {
+    "$type": "number",
+    "$value": 4,
+    "$description": "Radius value for md (tshirt)",
+    "$extensions": {
+      "com.figma.variableId": "VariableID:2:5864",
+      "com.figma.hiddenFromPublishing": true,
+      "com.figma.scopes": [
+        "ALL_SCOPES"
+      ],
+      "com.figma.isOverride": true
+    }
+  },
+  "lg": {
+    "$type": "number",
+    "$value": 8,
+    "$description": "Radius value for lg (tshirt)",
+    "$extensions": {
+      "com.figma.variableId": "VariableID:2:6108",
+      "com.figma.hiddenFromPublishing": true,
+      "com.figma.scopes": [
+        "ALL_SCOPES"
+      ],
+      "com.figma.isOverride": true
+    }
+  },
+  "xl": {
+    "$type": "number",
+    "$value": 12,
+    "$description": "Radius value for xl (tshirt)",
+    "$extensions": {
+      "com.figma.variableId": "VariableID:2:6024",
+      "com.figma.hiddenFromPublishing": true,
+      "com.figma.scopes": [
+        "ALL_SCOPES"
+      ],
+      "com.figma.isOverride": true
+    }
+  },
+  "2xl": {
+    "$type": "number",
+    "$value": 16,
+    "$description": "Radius value for 2xl (tshirt)",
+    "$extensions": {
+      "com.figma.variableId": "VariableID:2:6142",
+      "com.figma.hiddenFromPublishing": true,
+      "com.figma.scopes": [
+        "ALL_SCOPES"
+      ],
+      "com.figma.isOverride": true
+    }
+  },
+  "3xl": {
+    "$type": "number",
+    "$value": 24,
+    "$description": "Radius value for 3xl (tshirt)",
+    "$extensions": {
+      "com.figma.variableId": "VariableID:2:6087",
+      "com.figma.hiddenFromPublishing": true,
+      "com.figma.scopes": [
+        "ALL_SCOPES"
+      ],
+      "com.figma.isOverride": true
+    }
+  },
+  "4xl": {
+    "$type": "number",
+    "$value": 32,
+    "$description": "Radius value for 4xl (tshirt)",
+    "$extensions": {
+      "com.figma.variableId": "VariableID:2:6041",
+      "com.figma.hiddenFromPublishing": true,
+      "com.figma.scopes": [
+        "ALL_SCOPES"
+      ],
+      "com.figma.isOverride": true
+    }
+  },
+  "5xl": {
+    "$type": "number",
+    "$value": 48,
+    "$description": "Radius value for 5xl (tshirt)",
+    "$extensions": {
+      "com.figma.variableId": "VariableID:2:6093",
+      "com.figma.hiddenFromPublishing": true,
+      "com.figma.scopes": [
+        "ALL_SCOPES"
+      ],
+      "com.figma.isOverride": true
+    }
+  },
+  "full": {
+    "$type": "number",
+    "$value": 999,
+    "$description": "Radius value for full (tshirt)",
+    "$extensions": {
+      "com.figma.variableId": "VariableID:2:5908",
+      "com.figma.hiddenFromPublishing": true,
+      "com.figma.scopes": [
+        "ALL_SCOPES"
+      ],
+      "com.figma.isOverride": true
+    }
+  },
+  "$extensions": {
+    "com.figma.modeName": "Default"
+  }
+}
