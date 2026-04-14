@@ -11,19 +11,18 @@ class AskAiScreen extends StatelessWidget {
       backgroundColor: const Color(0xFFF5F5F5), // Neutral 100
       body: Stack(
         children: [
-          // Top Elliptical Glow
+          // 1. Blue Top Glow (Shape-based like Figma Ellipse 2)
           Positioned(
-            top: -100,
-            left: 0,
-            right: 0,
+            top: -250,
+            left: -50,
+            right: -50,
             child: Container(
-              height: 400,
+              height: 500,
               decoration: BoxDecoration(
+                shape: BoxShape.circle,
                 gradient: RadialGradient(
-                  center: Alignment.topCenter,
-                  radius: 1.2,
                   colors: [
-                    const Color(0xFFD0E8FF).withOpacity(0.6), // Soft blue glow
+                    const Color(0xFFD0E8FF).withOpacity(0.8),
                     const Color(0xFFF5F5F5).withOpacity(0),
                   ],
                 ),
@@ -31,19 +30,37 @@ class AskAiScreen extends StatelessWidget {
             ),
           ),
 
-          // Central Watermark
-          Center(
-            child: Opacity(
-              opacity: 0.15, // Adjusted for clear but subtle visibility
-              child: Image.asset(
-                'assets/Figma MCP Assets/CommonAssets/Images/Repeat group 4.png',
-                width: 280,
-                fit: BoxFit.contain,
+          // 2. Pink Bottom Glow (Large Soft Shape)
+          Positioned(
+            bottom: -200,
+            left: -100,
+            right: -100,
+            child: Container(
+              height: 600,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  center: const Alignment(0, 0.5),
+                  colors: [
+                    const Color(0xFFFF96BE).withOpacity(0.6),
+                    const Color(0xFFFF96BE).withOpacity(0),
+                  ],
+                ),
               ),
             ),
           ),
 
-          // Main Content
+          // 3. Central Watermark (High Fidelity)
+          Center(
+            child: Image.asset(
+              'assets/Figma MCP Assets/CommonAssets/Images/Repeat group 4.png',
+              width: 320,
+              opacity: const AlwaysStoppedAnimation(0.25), // Much more visible now
+              fit: BoxFit.contain,
+            ),
+          ),
+
+          // 4. Content Layer
           SafeArea(
             child: Column(
               children: [
@@ -59,18 +76,20 @@ class AskAiScreen extends StatelessWidget {
                         child: Container(
                           width: 40,
                           height: 40,
-                          decoration: const BoxDecoration(
+                          decoration: BoxDecoration(
                             shape: BoxShape.circle,
+                            color: Colors.white.withOpacity(0.1),
                           ),
                           child: const Icon(Icons.close, size: 24, color: Color(0xFF0A0A0A)),
                         ),
                       ),
                       // Chat History Pill
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                         decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.6),
                           borderRadius: BorderRadius.circular(999),
-                          border: Border.all(color: const Color(0xFFE5E5E5)),
+                          border: Border.all(color: const Color(0xFFE5E5E5).withOpacity(0.5)),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -87,6 +106,7 @@ class AskAiScreen extends StatelessWidget {
                               style: TextStyle(
                                 fontFamily: 'Geist',
                                 fontSize: 16,
+                                fontWeight: FontWeight.w400,
                                 color: Color(0xFF737373),
                               ),
                             ),
@@ -99,74 +119,69 @@ class AskAiScreen extends StatelessWidget {
 
                 const Spacer(),
 
-                // Bottom Section with Gradient
-                Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    gradient: RadialGradient(
-                      center: const Alignment(0, 1.8),
-                      radius: 1.2,
-                      colors: [
-                        const Color(0xFFFF96BE).withOpacity(0.5), // Stronger pink
-                        const Color(0xFFF5F5F5).withOpacity(0),
-                      ],
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Column(
-                      children: [
-                        // Options Row
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _buildOptionCard(
-                                'Log symptoms',
-                                'assets/Figma MCP Assets/CommonAssets/Icons/Heartbeat.svg',
-                              ),
+                // Bottom Content (Floating above gradients)
+                Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Options Row
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildOptionCard(
+                              'Log symptoms',
+                              'assets/Figma MCP Assets/CommonAssets/Icons/Heartbeat.svg',
                             ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: _buildOptionCard(
-                                'Analyze Reports',
-                                'assets/Figma MCP Assets/CommonAssets/Icons/Files.svg',
-                              ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: _buildOptionCard(
+                              'Analyze Reports',
+                              'assets/Figma MCP Assets/CommonAssets/Icons/Files.svg',
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      // Ask Section
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.9),
+                          borderRadius: BorderRadius.circular(32),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.05),
+                              blurRadius: 20,
+                              offset: const Offset(0, 4),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 10),
-                        // Ask Section
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(32),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Ask anything about your health',
-                                style: TextStyle(
-                                  fontFamily: 'Geist',
-                                  fontSize: 18,
-                                  color: Color(0xFF737373),
-                                ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Ask anything about your health',
+                              style: TextStyle(
+                                fontFamily: 'Geist',
+                                fontSize: 18,
+                                color: Color(0xFF737373),
                               ),
-                              const SizedBox(height: 24),
-                              Row(
-                                children: [
-                                  _buildRoundButton(Icons.attach_file),
-                                  const Spacer(),
-                                  _buildRoundButton(Icons.mic_none),
-                                ],
-                              ),
-                            ],
-                          ),
+                            ),
+                            const SizedBox(height: 24),
+                            Row(
+                              children: [
+                                _buildRoundButton(Icons.attach_file),
+                                const Spacer(),
+                                _buildRoundButton(Icons.mic_none),
+                              ],
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ],
