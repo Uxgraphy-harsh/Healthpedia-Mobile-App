@@ -61,7 +61,7 @@ class AskAiScreen extends StatelessWidget {
               ]),
               child: Image.asset(
                 'assets/Figma MCP Assets/CommonAssets/Images/Repeat group 4.png',
-                width: 350,
+                width: 180, // Reduced as per Figma comparison
                 fit: BoxFit.contain,
               ),
             ),
@@ -186,6 +186,16 @@ class AskAiScreen extends StatelessWidget {
                               ],
                             ),
                           ],
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      // Home Indicator
+                      Container(
+                        width: 134,
+                        height: 5,
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(100),
                         ),
                       ),
                     ],
