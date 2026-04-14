@@ -15,7 +15,8 @@ Welcome to the Healthpedia mobile application project.
 3. **Advanced Simplicity (Core Philosophy)**: Write code that is **Super Advanced but Simple**. Achieve results through professional, idiomatic, and robust patterns that a senior developer would respect. **Avoid "jugaad" (hacky) solutions** or over-complicating small features with unnecessary "ultra-advanced" techniques.
 4. **Maintainability First**: Keep UI components focused and logic clean. Small changes (asset swaps, color fixes) should be implemented properly, not as convoluted workarounds.
 5. **Reference the Map**: Always keep [SCREENS.md](./SCREENS.md) in context. It is the architectural source of truth.
-6. **Be Concise**: Prioritize execution and code over verbose explanations.
+6. **Icon Policy**: Always prioritize **Material Icons** (`Icons.xxx`) if a matching or sufficiently similar icon exists in the Flutter framework. Only use SVG/PNG assets from the `Figma MCP Assets` folder for unique brand assets or complex multi-color custom icons. This optimizes performance and ensures 100% reliability on the Apple App Store.
+7. **Be Concise**: Prioritize execution and code over verbose explanations.
 
 ---
 
