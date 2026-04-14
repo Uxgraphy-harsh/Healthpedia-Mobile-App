@@ -262,7 +262,7 @@ class _MainScaffoldState extends State<MainScaffold> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SvgPicture.asset(
-                'assets/Figma MCP Assets/Shared Assets/Icons/${isSelected ? selectedIcon : unselectedIcon}',
+                'assets/Figma MCP Assets/CommonAssets/Icons/${isSelected ? selectedIcon : unselectedIcon}',
                 colorFilter: ColorFilter.mode(
                   isSelected ? const Color(0xFF2C0011) : const Color(0xFFA3A3A3),
                   BlendMode.srcIn,

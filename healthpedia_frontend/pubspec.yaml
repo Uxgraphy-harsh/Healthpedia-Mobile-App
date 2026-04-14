@@ -67,8 +67,8 @@ flutter:
     - assets/Figma MCP Assets/Onboarding Screens/Onboarding Screens Icons/
     - assets/Figma MCP Assets/Onboarding Screens/Onboarding Screens Icons/Onboarding/
     - assets/Figma MCP Assets/Onboarding Screens/Onboarding Screens Images/
-    - assets/Figma MCP Assets/Shared Assets/Icons/
-    - assets/Figma MCP Assets/Shared Assets/Images/
+    - assets/Figma MCP Assets/CommonAssets/Icons/
+    - assets/Figma MCP Assets/CommonAssets/Images/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

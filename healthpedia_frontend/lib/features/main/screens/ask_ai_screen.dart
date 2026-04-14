@@ -36,7 +36,7 @@ class AskAiScreen extends StatelessWidget {
             child: Opacity(
               opacity: 0.1, // Subtle watermark
               child: Image.asset(
-                'assets/Figma MCP Assets/Shared Assets/Images/Repeat group 4.png',
+                'assets/Figma MCP Assets/CommonAssets/Images/Repeat group 4.png',
                 width: 250,
                 color: Colors.black.withOpacity(0.2),
                 colorBlendMode: BlendMode.dstIn,
@@ -77,7 +77,7 @@ class AskAiScreen extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             SvgPicture.asset(
-                              'assets/Figma MCP Assets/Shared Assets/Icons/ChatsCircle.svg',
+                              'assets/Figma MCP Assets/CommonAssets/Icons/ChatsCircle.svg',
                               width: 20,
                               height: 20,
                               colorFilter: const ColorFilter.mode(Color(0xFF737373), BlendMode.srcIn),
@@ -123,14 +123,14 @@ class AskAiScreen extends StatelessWidget {
                             Expanded(
                               child: _buildOptionCard(
                                 'Log symptoms',
-                                'assets/Figma MCP Assets/Shared Assets/Icons/Heartbeat.svg',
+                                'assets/Figma MCP Assets/CommonAssets/Icons/Heartbeat.svg',
                               ),
                             ),
                             const SizedBox(width: 10),
                             Expanded(
                               child: _buildOptionCard(
                                 'Analyze Reports',
-                                'assets/Figma MCP Assets/Shared Assets/Icons/Files.svg',
+                                'assets/Figma MCP Assets/CommonAssets/Icons/Files.svg',
                               ),
                             ),
                           ],

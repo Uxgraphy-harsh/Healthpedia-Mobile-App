@@ -410,7 +410,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SvgPicture.asset('assets/Figma MCP Assets/Shared Assets/Icons/$icon', width: 24, height: 24),
+          SvgPicture.asset('assets/Figma MCP Assets/CommonAssets/Icons/$icon', width: 24, height: 24),
           const SizedBox(height: 4),
           Row(
             crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -458,7 +458,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
           child: Row(
             children: [
               SvgPicture.asset(
-                'assets/Figma MCP Assets/Shared Assets/Icons/Reminder Icon Placeholder 1.svg',
+                'assets/Figma MCP Assets/CommonAssets/Icons/Reminder Icon Placeholder 1.svg',
                 width: 24,
                 height: 24,
               ),
