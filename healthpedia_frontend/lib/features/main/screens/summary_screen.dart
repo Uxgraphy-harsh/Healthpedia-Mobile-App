@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/services.dart';
+import 'package:healthpedia_frontend/core/constants/app_colors.dart';
+import 'package:healthpedia_frontend/features/main/screens/family_friend_detail_screen.dart';
+import 'package:healthpedia_frontend/features/main/screens/family_friends_screen.dart';
 import 'main_scaffold.dart';
 
 class SummaryScreen extends StatefulWidget {
@@ -23,7 +26,10 @@ class _SummaryScreenState extends State<SummaryScreen> {
   @override
   Widget build(BuildContext context) {
     // Only show pending reminders on Home, limited to first 3 for visual balance
-    final pendingReminders = widget.reminders.where((r) => r.status == ReminderStatus.pending).take(3).toList();
+    final pendingReminders = widget.reminders
+        .where((r) => r.status == ReminderStatus.pending)
+        .take(3)
+        .toList();
 
     return Container(
       color: const Color(0xFF2C0011),
@@ -31,367 +37,451 @@ class _SummaryScreenState extends State<SummaryScreen> {
         physics: const BouncingScrollPhysics(),
         child: Column(
           children: [
-          // ── TOP HEADER (PINK 950 + GRADIENTS + METRICS) ────────────────
-          Container(
-            width: double.infinity,
-            decoration: const BoxDecoration(
-              color: Color(0xFF2C0011), // Pink 950
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 20,
-                  offset: Offset(0, 10),
-                )
-              ],
-            ),
-            child: Stack(
-              children: [
-                // 1. Background Gradients/Glows
-                Positioned(
-                  right: -100,
-                  top: -50,
-                  child: Container(
-                    width: 300,
-                    height: 300,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: RadialGradient(
-                        colors: [
-                          const Color(0xFFFF96BE).withOpacity(0.3),
-                          const Color(0xFFFF96BE).withOpacity(0),
-                        ],
-                      ),
-                    ),
+            // ── TOP HEADER (PINK 950 + GRADIENTS + METRICS) ────────────────
+            Container(
+              width: double.infinity,
+              decoration: const BoxDecoration(
+                color: Color(0xFF2C0011), // Pink 950
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 20,
+                    offset: Offset(0, 10),
                   ),
-                ),
-                Positioned(
-                  left: -50,
-                  top: 0,
-                  child: Container(
-                    width: 250,
-                    height: 250,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: RadialGradient(
-                        colors: [
-                          const Color(0xFF60A5FA).withOpacity(0.2),
-                          const Color(0xFF60A5FA).withOpacity(0),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-
-                // 2. Content
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 60, 24, 30),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Header Label
-                      const Text(
-                        'TODAY’S SUMMARY',
-                        style: TextStyle(
-                          fontFamily: 'Geist',
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF737373),
-                          letterSpacing: 0.48,
+                ],
+              ),
+              child: Stack(
+                children: [
+                  // 1. Background Gradients/Glows
+                  Positioned(
+                    right: -100,
+                    top: -50,
+                    child: Container(
+                      width: 300,
+                      height: 300,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: RadialGradient(
+                          colors: [
+                            const Color(0xFFFF96BE).withOpacity(0.3),
+                            const Color(0xFFFF96BE).withOpacity(0),
+                          ],
                         ),
                       ),
-                      const SizedBox(height: 10),
+                    ),
+                  ),
+                  Positioned(
+                    left: -50,
+                    top: 0,
+                    child: Container(
+                      width: 250,
+                      height: 250,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: RadialGradient(
+                          colors: [
+                            const Color(0xFF60A5FA).withOpacity(0.2),
+                            const Color(0xFF60A5FA).withOpacity(0),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
 
-                      // Health Score
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                '74',
-                                style: TextStyle(
-                                  fontFamily: 'Geist',
-                                  fontSize: 40,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white,
-                                  height: 1,
-                                ),
-                              ),
-                              const Text(
-                                'Health score',
-                                style: TextStyle(
-                                  fontFamily: 'Geist',
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                  color: Color(0xFFD4D4D4),
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                              // Week comparison
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: const Color(0x1ABBF7C8),
-                                  borderRadius: BorderRadius.circular(999),
-                                  border: Border.all(color: const Color(0x1ABBF7C8)),
-                                ),
-                                child: Row(
-                                  children: [
-                                     const Icon(
-                                       Icons.arrow_upward,
-                                       size: 14,
-                                       color: Color(0xFF4ADE80),
-                                     ),
-                                    const SizedBox(width: 4),
-                                    const Text(
-                                      '+3 from last week',
-                                      style: TextStyle(
-                                        fontFamily: 'Geist',
-                                        fontSize: 12,
-                                        color: Color(0xFF4ADE80),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
+                  // 2. Content
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 60, 24, 30),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Header Label
+                        const Text(
+                          'TODAY’S SUMMARY',
+                          style: TextStyle(
+                            fontFamily: 'Geist',
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF737373),
+                            letterSpacing: 0.48,
                           ),
-                          // Customise Button
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(999),
-                              border: Border.all(color: Colors.white.withOpacity(0.1)),
-                            ),
-                            child: Row(
+                        ),
+                        const SizedBox(height: 10),
+
+                        // Health Score
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Icon(
-                                  Icons.edit,
-                                  size: 14,
-                                  color: Color(0xFFA3A3A3),
-                                ),
-                                const SizedBox(width: 6),
                                 const Text(
-                                  'Customise',
+                                  '74',
+                                  style: TextStyle(
+                                    fontFamily: 'Geist',
+                                    fontSize: 40,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
+                                    height: 1,
+                                  ),
+                                ),
+                                const Text(
+                                  'Health score',
                                   style: TextStyle(
                                     fontFamily: 'Geist',
                                     fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                    color: Color(0xFFA3A3A3),
+                                    fontWeight: FontWeight.w500,
+                                    color: Color(0xFFD4D4D4),
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                // Week comparison
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0x1ABBF7C8),
+                                    borderRadius: BorderRadius.circular(999),
+                                    border: Border.all(
+                                      color: const Color(0x1ABBF7C8),
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.arrow_upward,
+                                        size: 14,
+                                        color: Color(0xFF4ADE80),
+                                      ),
+                                      const SizedBox(width: 4),
+                                      const Text(
+                                        '+3 from last week',
+                                        style: TextStyle(
+                                          fontFamily: 'Geist',
+                                          fontSize: 12,
+                                          color: Color(0xFF4ADE80),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
                             ),
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 24),
-                      const Divider(color: Colors.white10),
-                      const SizedBox(height: 8),
-
-                      // Sync info
-                      Row(
-                        children: [
-                          const Icon(Icons.circle, size: 6, color: Color(0xFF4ADE80)),
-                          const SizedBox(width: 6),
-                          const Text(
-                            'Synced 4 mins ago',
-                            style: TextStyle(
-                              fontFamily: 'Geist',
-                              fontSize: 12,
-                              color: Color(0xFFA3A3A3),
+                            // Customise Button
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(999),
+                                border: Border.all(
+                                  color: Colors.white.withOpacity(0.1),
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.edit,
+                                    size: 14,
+                                    color: Color(0xFFA3A3A3),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  const Text(
+                                    'Customise',
+                                    style: TextStyle(
+                                      fontFamily: 'Geist',
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      color: Color(0xFFA3A3A3),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 24),
-
-                      // Health Stats Scrollable Cards
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        physics: const BouncingScrollPhysics(),
-                        child: Row(
-                          children: [
-                            _buildHealthStatCard('72', 'bpm', 'Heart Rate', 'Normal', 'ecg_heart.svg', const Color(0xFF4ADE80)),
-                            const SizedBox(width: 12),
-                            _buildHealthStatCard('6,240', '', 'Steps', 'Below Goal', 'steps.svg', const Color(0xFFFB923C)),
-                            const SizedBox(width: 12),
-                            _buildHealthStatCard('7 hr 23', 'min', 'Sleep', 'Below Goal', 'partly_cloudy_night.svg', const Color(0xFFFB923C)),
-                            const SizedBox(width: 12),
-                            _buildHealthStatCard('1,847', 'kcal', 'Calories', 'Below Goal', 'mode_heat.svg', const Color(0xFFFB923C)),
                           ],
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
 
-          // ── MAIN CONTENT (WHITE RADIUS 40 SHEET) ───────────────────────
-          Container(
-            width: double.infinity,
-            decoration: const BoxDecoration(
-              color: Color(0xFFFAFAFA),
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(40),
-                topRight: Radius.circular(40),
+                        const SizedBox(height: 24),
+                        const Divider(color: Colors.white10),
+                        const SizedBox(height: 8),
+
+                        // Sync info
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.circle,
+                              size: 6,
+                              color: Color(0xFF4ADE80),
+                            ),
+                            const SizedBox(width: 6),
+                            const Text(
+                              'Synced 4 mins ago',
+                              style: TextStyle(
+                                fontFamily: 'Geist',
+                                fontSize: 12,
+                                color: Color(0xFFA3A3A3),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 24),
+
+                        // Health Stats Scrollable Cards
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          physics: const BouncingScrollPhysics(),
+                          child: Row(
+                            children: [
+                              _buildHealthStatCard(
+                                '72',
+                                'bpm',
+                                'Heart Rate',
+                                'Normal',
+                                'ecg_heart.svg',
+                                const Color(0xFF4ADE80),
+                              ),
+                              const SizedBox(width: 12),
+                              _buildHealthStatCard(
+                                '6,240',
+                                '',
+                                'Steps',
+                                'Below Goal',
+                                'steps.svg',
+                                const Color(0xFFFB923C),
+                              ),
+                              const SizedBox(width: 12),
+                              _buildHealthStatCard(
+                                '7 hr 23',
+                                'min',
+                                'Sleep',
+                                'Below Goal',
+                                'partly_cloudy_night.svg',
+                                const Color(0xFFFB923C),
+                              ),
+                              const SizedBox(width: 12),
+                              _buildHealthStatCard(
+                                '1,847',
+                                'kcal',
+                                'Calories',
+                                'Below Goal',
+                                'mode_heat.svg',
+                                const Color(0xFFFB923C),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // ── Reminders Header ──
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'REMINDERS',
-                      style: TextStyle(
-                        fontFamily: 'Geist',
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF737373),
-                        letterSpacing: 0.56,
+
+            // ── MAIN CONTENT (WHITE RADIUS 40 SHEET) ───────────────────────
+            Container(
+              width: double.infinity,
+              decoration: const BoxDecoration(
+                color: Color(0xFFFAFAFA),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(40),
+                  topRight: Radius.circular(40),
+                ),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // ── Reminders Header ──
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'REMINDERS',
+                        style: TextStyle(
+                          fontFamily: 'Geist',
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF737373),
+                          letterSpacing: 0.56,
+                        ),
                       ),
-                    ),
-                    GestureDetector(
-                      onTap: widget.onNavigateToReminders,
-                      child: Row(
-                        children: [
-                          const Text(
-                            'View all',
-                            style: TextStyle(
-                              fontFamily: 'Geist',
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: Color(0xFF737373),
+                      GestureDetector(
+                        onTap: widget.onNavigateToReminders,
+                        child: Row(
+                          children: [
+                            const Text(
+                              'View all',
+                              style: TextStyle(
+                                fontFamily: 'Geist',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF737373),
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 4),
+                            const SizedBox(width: 4),
                             const Icon(
                               Icons.arrow_forward_ios,
                               size: 14,
                               color: Color(0xFF737373),
                             ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                
-                // Reminders List (Interactive)
-                if (pendingReminders.isEmpty)
-                  _buildEmptyState('No pending reminders')
-                else
-                  ...pendingReminders.map((r) => _buildReminderItem(r)),
-
-                const SizedBox(height: 32),
-
-                // ── Family & Friends ──
-                const Text(
-                  'FAMILY & FRIENDS',
-                  style: TextStyle(
-                    fontFamily: 'Geist',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF737373),
-                    letterSpacing: 0.56,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  physics: const BouncingScrollPhysics(),
-                  child: Row(
-                    children: [
-                      _buildMemberCard('Sujoy Sahu', 'Father • 79 Years', 'Active Today', 'assets/Figma MCP Assets/Onboarding Screens/Onboarding Screens Images/M 81.png'),
-                      const SizedBox(width: 8),
-                      _buildMemberCard('Arko Sahu', 'Brother • 47 Years', '2 days ago', 'assets/Figma MCP Assets/Onboarding Screens/Onboarding Screens Images/M 83.png'),
-                      const SizedBox(width: 8),
-                      _buildAddMemberCard(),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 32),
-
-                // ── Need Action ──
-                const Text(
-                  'NEED ACTION',
-                  style: TextStyle(
-                    fontFamily: 'Geist',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF737373),
-                    letterSpacing: 0.56,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: const Color(0xFFF5F5F5)),
-                  ),
-                  child: Column(
-                    children: [
-                      _buildActionRow('TSH (Thyroid)', '14 Jan 2025', '6.2', 'mIU/L', 'Above range'),
-                      const Divider(color: Color(0xFFF5F5F5), height: 1),
-                      _buildActionRow('Fasting Blood Sugar', '14 Jan 2025', '98', 'mg/dL', 'Severe'),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 16),
-                // Upload Prompt
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF2C0011),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Upload your latest report',
-                              style: TextStyle(fontFamily: 'Geist', fontSize: 14, fontWeight: FontWeight.w600, color: Colors.white),
-                            ),
-                            const Text(
-                              'Some values are over 60 days old',
-                              style: TextStyle(fontFamily: 'Geist', fontSize: 12, color: Color(0xFF737373)),
-                            ),
                           ],
                         ),
                       ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFFFE0E9),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Text('Upload', style: TextStyle(fontFamily: 'Geist', fontSize: 14, fontWeight: FontWeight.w600, color: Color(0xFF2C0011))),
-                      ),
                     ],
                   ),
-                ),
+                  const SizedBox(height: 16),
 
-                const SizedBox(height: 100), // Bottom nav clearance
-              ],
+                  // Reminders List (Interactive)
+                  if (pendingReminders.isEmpty)
+                    _buildEmptyState('No pending reminders')
+                  else
+                    ...pendingReminders.map((r) => _buildReminderItem(r)),
+
+                  const SizedBox(height: 32),
+
+                  // ── Family & Friends ──
+                  const Text(
+                    'FAMILY & FRIENDS',
+                    style: TextStyle(
+                      fontFamily: 'Geist',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF737373),
+                      letterSpacing: 0.56,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    physics: const BouncingScrollPhysics(),
+                    child: Row(
+                      children: [
+                        _buildMemberCard(
+                          'Sujoy Sahu',
+                          'Father • 79 Years',
+                          'Active Today',
+                          'assets/Figma MCP Assets/Onboarding Screens/Onboarding Screens Images/M 81.png',
+                        ),
+                        const SizedBox(width: 8),
+                        _buildMemberCard(
+                          'Arko Sahu',
+                          'Brother • 47 Years',
+                          '2 days ago',
+                          'assets/Figma MCP Assets/Onboarding Screens/Onboarding Screens Images/M 83.png',
+                        ),
+                        const SizedBox(width: 8),
+                        _buildAddMemberCard(),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 32),
+
+                  // ── Need Action ──
+                  const Text(
+                    'NEED ACTION',
+                    style: TextStyle(
+                      fontFamily: 'Geist',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF737373),
+                      letterSpacing: 0.56,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: const Color(0xFFF5F5F5)),
+                    ),
+                    child: Column(
+                      children: [
+                        _buildActionRow(
+                          'TSH (Thyroid)',
+                          '14 Jan 2025',
+                          '6.2',
+                          'mIU/L',
+                          'Above range',
+                        ),
+                        const Divider(color: Color(0xFFF5F5F5), height: 1),
+                        _buildActionRow(
+                          'Fasting Blood Sugar',
+                          '14 Jan 2025',
+                          '98',
+                          'mg/dL',
+                          'Severe',
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+                  // Upload Prompt
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF2C0011),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Upload your latest report',
+                                style: TextStyle(
+                                  fontFamily: 'Geist',
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const Text(
+                                'Some values are over 60 days old',
+                                style: TextStyle(
+                                  fontFamily: 'Geist',
+                                  fontSize: 12,
+                                  color: Color(0xFF737373),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFFE0E9),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Text(
+                            'Upload',
+                            style: TextStyle(
+                              fontFamily: 'Geist',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF2C0011),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 100), // Bottom nav clearance
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
         ),
       ),
     );
@@ -399,7 +489,14 @@ class _SummaryScreenState extends State<SummaryScreen> {
 
   // --- Sub-widgets ---
 
-  Widget _buildHealthStatCard(String value, String unit, String label, String status, String icon, Color statusColor) {
+  Widget _buildHealthStatCard(
+    String value,
+    String unit,
+    String label,
+    String status,
+    String icon,
+    Color statusColor,
+  ) {
     return Container(
       width: 125,
       padding: const EdgeInsets.all(12),
@@ -410,18 +507,44 @@ class _SummaryScreenState extends State<SummaryScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SvgPicture.asset('assets/Figma MCP Assets/CommonAssets/Icons/$icon', width: 24, height: 24),
+          SvgPicture.asset(
+            'assets/Figma MCP Assets/CommonAssets/Icons/$icon',
+            width: 24,
+            height: 24,
+          ),
           const SizedBox(height: 4),
           Row(
             crossAxisAlignment: CrossAxisAlignment.baseline,
             textBaseline: TextBaseline.alphabetic,
             children: [
-              Text(value, style: const TextStyle(fontFamily: 'Geist', fontSize: 24, fontWeight: FontWeight.w600, color: Colors.white)),
+              Text(
+                value,
+                style: const TextStyle(
+                  fontFamily: 'Geist',
+                  fontSize: 24,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+              ),
               const SizedBox(width: 2),
-              Text(unit, style: const TextStyle(fontFamily: 'Geist', fontSize: 14, color: Color(0xFFA3A3A3))),
+              Text(
+                unit,
+                style: const TextStyle(
+                  fontFamily: 'Geist',
+                  fontSize: 14,
+                  color: Color(0xFFA3A3A3),
+                ),
+              ),
             ],
           ),
-          Text(label, style: const TextStyle(fontFamily: 'Geist', fontSize: 12, color: Color(0xFFD4D4D4))),
+          Text(
+            label,
+            style: const TextStyle(
+              fontFamily: 'Geist',
+              fontSize: 12,
+              color: Color(0xFFD4D4D4),
+            ),
+          ),
           const SizedBox(height: 8),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -432,7 +555,11 @@ class _SummaryScreenState extends State<SummaryScreen> {
             ),
             child: Text(
               status,
-              style: TextStyle(fontFamily: 'Geist', fontSize: 10, color: statusColor),
+              style: TextStyle(
+                fontFamily: 'Geist',
+                fontSize: 10,
+                color: statusColor,
+              ),
             ),
           ),
         ],
@@ -467,8 +594,22 @@ class _SummaryScreenState extends State<SummaryScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(data.title, style: const TextStyle(fontFamily: 'Geist', fontSize: 16, fontWeight: FontWeight.w500)),
-                    Text(data.time, style: const TextStyle(fontFamily: 'Geist', fontSize: 12, color: Color(0xFF737373))),
+                    Text(
+                      data.title,
+                      style: const TextStyle(
+                        fontFamily: 'Geist',
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    Text(
+                      data.time,
+                      style: const TextStyle(
+                        fontFamily: 'Geist',
+                        fontSize: 12,
+                        color: Color(0xFF737373),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -480,52 +621,136 @@ class _SummaryScreenState extends State<SummaryScreen> {
   }
 
   Widget _buildMemberCard(String name, String desc, String status, String img) {
-    return Container(
-      width: 140,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE5E5E5)),
-      ),
-      child: Column(
-        children: [
-          CircleAvatar(radius: 40, backgroundImage: AssetImage(img), backgroundColor: const Color(0xFFF3F4F6)),
-          const SizedBox(height: 12),
-          Text(name, style: const TextStyle(fontFamily: 'Geist', fontSize: 14, fontWeight: FontWeight.w500)),
-          Text(desc, style: const TextStyle(fontFamily: 'Geist', fontSize: 12, color: Color(0xFF737373)), textAlign: TextAlign.center),
-          const SizedBox(height: 8),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-            decoration: BoxDecoration(color: const Color(0x1A22C55E), borderRadius: BorderRadius.circular(999)),
-            child: Text(status, style: const TextStyle(fontFamily: 'Geist', fontSize: 12, color: Color(0xFF15803D))),
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => FamilyFriendDetailScreen(
+              name: name,
+              hpid: 'HPID: #8836477253',
+              ageLabel: desc.split('•').last.trim().replaceAll('Years', 'yo'),
+              genderLabel: 'Male',
+              imagePath: img,
+              avatarBackgroundColor: _avatarBackgroundForImage(img),
+              allowedSections: kDefaultFamilyFriendSections,
+              healthpediaId: '#9039443124',
+              abhaId: '70-7463-2446-5247',
+            ),
           ),
-        ],
+        );
+      },
+      child: Container(
+        width: 140,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: const Color(0xFFE5E5E5)),
+        ),
+        child: Column(
+          children: [
+            CircleAvatar(
+              radius: 40,
+              backgroundImage: AssetImage(img),
+              backgroundColor: const Color(0xFFF3F4F6),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              name,
+              style: const TextStyle(
+                fontFamily: 'Geist',
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            Text(
+              desc,
+              style: const TextStyle(
+                fontFamily: 'Geist',
+                fontSize: 12,
+                color: Color(0xFF737373),
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                color: const Color(0x1A22C55E),
+                borderRadius: BorderRadius.circular(999),
+              ),
+              child: Text(
+                status,
+                style: const TextStyle(
+                  fontFamily: 'Geist',
+                  fontSize: 12,
+                  color: Color(0xFF15803D),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildAddMemberCard() {
-    return Container(
-      width: 140,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFCD577F), style: BorderStyle.none), // Custom dashed logic omitted for brevity
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.add_circle_outline, color: Color(0xFFCD577F), size: 32),
-          const SizedBox(height: 8),
-          const Text('Add a member', style: TextStyle(fontFamily: 'Geist', fontSize: 14, fontWeight: FontWeight.w500, color: Color(0xFFCD577F))),
-        ],
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        Navigator.of(
+          context,
+        ).push(MaterialPageRoute(builder: (_) => const FamilyFriendsScreen()));
+      },
+      child: Container(
+        width: 140,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: const Color(0xFFCD577F),
+            style: BorderStyle.none,
+          ), // Custom dashed logic omitted for brevity
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.add_circle_outline,
+              color: Color(0xFFCD577F),
+              size: 32,
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Add a member',
+              style: TextStyle(
+                fontFamily: 'Geist',
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: Color(0xFFCD577F),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildActionRow(String title, String date, String val, String unit, String status) {
+  Color _avatarBackgroundForImage(String img) {
+    if (img.contains('M 81')) return AppColors.red100;
+    if (img.contains('M 83')) return AppColors.orange100;
+    return AppColors.neutral200;
+  }
+
+  Widget _buildActionRow(
+    String title,
+    String date,
+    String val,
+    String unit,
+    String status,
+  ) {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Row(
@@ -534,8 +759,22 @@ class _SummaryScreenState extends State<SummaryScreen> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: const TextStyle(fontFamily: 'Geist', fontSize: 14, fontWeight: FontWeight.w500)),
-              Text(date, style: const TextStyle(fontFamily: 'Geist', fontSize: 12, color: Color(0xFF737373))),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontFamily: 'Geist',
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              Text(
+                date,
+                style: const TextStyle(
+                  fontFamily: 'Geist',
+                  fontSize: 12,
+                  color: Color(0xFF737373),
+                ),
+              ),
             ],
           ),
           Column(
@@ -543,12 +782,33 @@ class _SummaryScreenState extends State<SummaryScreen> {
             children: [
               Row(
                 children: [
-                  Text(val, style: const TextStyle(fontFamily: 'Geist', fontSize: 14, fontWeight: FontWeight.w500)),
+                  Text(
+                    val,
+                    style: const TextStyle(
+                      fontFamily: 'Geist',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
                   const SizedBox(width: 4),
-                  Text(unit, style: const TextStyle(fontFamily: 'Geist', fontSize: 12, color: Color(0xFF737373))),
+                  Text(
+                    unit,
+                    style: const TextStyle(
+                      fontFamily: 'Geist',
+                      fontSize: 12,
+                      color: Color(0xFF737373),
+                    ),
+                  ),
                 ],
               ),
-              Text(status, style: const TextStyle(fontFamily: 'Geist', fontSize: 12, color: Color(0xFFC2410C))),
+              Text(
+                status,
+                style: const TextStyle(
+                  fontFamily: 'Geist',
+                  fontSize: 12,
+                  color: Color(0xFFC2410C),
+                ),
+              ),
             ],
           ),
         ],
@@ -557,6 +817,8 @@ class _SummaryScreenState extends State<SummaryScreen> {
   }
 
   Widget _buildEmptyState(String message) {
-    return Center(child: Text(message, style: const TextStyle(color: Colors.grey)));
+    return Center(
+      child: Text(message, style: const TextStyle(color: Colors.grey)),
+    );
   }
 }

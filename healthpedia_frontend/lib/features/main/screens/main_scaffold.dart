@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/services.dart';
 import 'dart:ui';
-import 'package:healthpedia_frontend/core/constants/app_colors.dart';
 import 'package:healthpedia_frontend/features/main/screens/summary_screen.dart';
 import 'package:healthpedia_frontend/features/main/screens/reminders_screen.dart';
-import 'package:healthpedia_frontend/features/main/screens/reminders_history_screen.dart';
 import 'package:healthpedia_frontend/features/main/screens/ask_ai_screen.dart';
 import 'package:healthpedia_frontend/features/main/screens/records_screen.dart';
+import 'package:healthpedia_frontend/features/main/screens/profile_screen.dart';
 
 enum ReminderStatus { pending, completed, missed }
 
@@ -94,17 +93,15 @@ class _MainScaffoldState extends State<MainScaffold> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFAFAFA), // neutral/50 background for main pages
-      extendBody: true, // Allow content to scroll perfectly behind the glass bottom nav
+      backgroundColor: const Color(
+        0xFFFAFAFA,
+      ), // neutral/50 background for main pages
+      extendBody:
+          true, // Allow content to scroll perfectly behind the glass bottom nav
       body: Stack(
         children: [
           _buildPage(),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: _buildBottomNav(),
-          ),
+          Positioned(left: 0, right: 0, bottom: 0, child: _buildBottomNav()),
         ],
       ),
     );
@@ -130,15 +127,20 @@ class _MainScaffoldState extends State<MainScaffold> {
         );
       case 2:
         return const RecordsScreen();
+      case 3:
+        return const ProfileScreen();
       default:
-        return Center(
-          child: Text(
-            'Screen $_selectedIndex',
-            style: const TextStyle(fontFamily: 'Geist', color: Colors.grey),
-          ),
+        return const SummaryScreen(
+          reminders: [],
+          onToggle: _noopToggle,
+          onNavigateToReminders: _noopNavigate,
         );
     }
   }
+
+  static void _noopToggle(String _) {}
+
+  static void _noopNavigate() {}
 
   /// Builds the unique custom glass-morphism sticky bottom navigation panel mapped from Figma
   Widget _buildBottomNav() {
@@ -154,7 +156,9 @@ class _MainScaffoldState extends State<MainScaffold> {
                 filter: ImageFilter.blur(sigmaX: 12.0, sigmaY: 12.0),
                 child: Container(
                   decoration: const BoxDecoration(
-                    color: Color(0xE6F5F5F5), // Formatted to 90% opacity #f5f5f5
+                    color: Color(
+                      0xE6F5F5F5,
+                    ), // Formatted to 90% opacity #f5f5f5
                   ),
                 ),
               ),
@@ -166,9 +170,21 @@ class _MainScaffoldState extends State<MainScaffold> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildNavItem(0, 'stacks.svg', 'stacks-1.svg', 'Summary'),
-              _buildNavItem(1, 'event_list-1.svg', 'event_list.svg', 'Reminders'),
-              const SizedBox(width: 80), // Gap accommodating the bleeding Ask AI button
-              _buildNavItem(2, 'folder_open-1.svg', 'folder_open.svg', 'Records'),
+              _buildNavItem(
+                1,
+                'event_list-1.svg',
+                'event_list.svg',
+                'Reminders',
+              ),
+              const SizedBox(
+                width: 80,
+              ), // Gap accommodating the bleeding Ask AI button
+              _buildNavItem(
+                2,
+                'folder_open-1.svg',
+                'folder_open.svg',
+                'Records',
+              ),
               _buildNavItem(3, 'person-1.svg', 'person.svg', 'Profile'),
             ],
           ),
@@ -183,14 +199,22 @@ class _MainScaffoldState extends State<MainScaffold> {
                 Navigator.push(
                   context,
                   PageRouteBuilder(
-                    pageBuilder: (context, animation, secondaryAnimation) => const AskAiScreen(),
-                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                      const begin = Offset(0.0, 1.0);
-                      const end = Offset.zero;
-                      const curve = Curves.easeOutQuart;
-                      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-                      return SlideTransition(position: animation.drive(tween), child: child);
-                    },
+                    pageBuilder: (context, animation, secondaryAnimation) =>
+                        const AskAiScreen(),
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) {
+                          const begin = Offset(0.0, 1.0);
+                          const end = Offset.zero;
+                          const curve = Curves.easeOutQuart;
+                          var tween = Tween(
+                            begin: begin,
+                            end: end,
+                          ).chain(CurveTween(curve: curve));
+                          return SlideTransition(
+                            position: animation.drive(tween),
+                            child: child,
+                          );
+                        },
                   ),
                 );
               },
@@ -204,10 +228,10 @@ class _MainScaffoldState extends State<MainScaffold> {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF60A5FA).withOpacity(0.4),
+                          color: const Color(0xFF60A5FA).withValues(alpha: 0.4),
                           blurRadius: 20,
                           offset: const Offset(0, 4),
-                        )
+                        ),
                       ],
                     ),
                     child: ColorFiltered(
@@ -243,8 +267,13 @@ class _MainScaffoldState extends State<MainScaffold> {
     );
   }
 
-  /// Bottom Nav discrete button constructor 
-  Widget _buildNavItem(int index, String selectedIcon, String unselectedIcon, String label) {
+  /// Bottom Nav discrete button constructor
+  Widget _buildNavItem(
+    int index,
+    String selectedIcon,
+    String unselectedIcon,
+    String label,
+  ) {
     bool isSelected = _selectedIndex == index;
     // Active states map to explicit black border-t & pink/950 text versus neutral/400 disabled
     return Expanded(
@@ -267,7 +296,9 @@ class _MainScaffoldState extends State<MainScaffold> {
               SvgPicture.asset(
                 'assets/Figma MCP Assets/CommonAssets/Icons/${isSelected ? selectedIcon : unselectedIcon}',
                 colorFilter: ColorFilter.mode(
-                  isSelected ? const Color(0xFF2C0011) : const Color(0xFFA3A3A3),
+                  isSelected
+                      ? const Color(0xFF2C0011)
+                      : const Color(0xFFA3A3A3),
                   BlendMode.srcIn,
                 ),
                 width: 24,
@@ -280,7 +311,9 @@ class _MainScaffoldState extends State<MainScaffold> {
                   fontFamily: 'Geist',
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
-                  color: isSelected ? const Color(0xFF2C0011) : const Color(0xFFA3A3A3),
+                  color: isSelected
+                      ? const Color(0xFF2C0011)
+                      : const Color(0xFFA3A3A3),
                 ),
               ),
             ],

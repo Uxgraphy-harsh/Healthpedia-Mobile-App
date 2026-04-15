@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../widgets/add_note_bottom_sheet.dart';
 import 'report_folder_screen.dart';
+import 'prescription_detail_screen.dart';
+import '../widgets/add_prescription_bottom_sheet.dart';
+import '../widgets/add_symptom_bottom_sheet.dart';
+import 'symptom_detail_screen.dart';
 
 class RecordsScreen extends StatefulWidget {
   const RecordsScreen({super.key});
@@ -22,8 +27,7 @@ class _RecordsScreenState extends State<RecordsScreen>
       title: 'Thyroid',
       updated: '14 Jan 2025',
       fileCount: 6,
-      imagePath:
-          'assets/Figma MCP Assets/CommonAssets/Images/Report Image.png',
+      imagePath: 'assets/Figma MCP Assets/CommonAssets/Images/Report Image.png',
     ),
     _ReportCard(
       title: 'Diabetes',
@@ -45,6 +49,37 @@ class _RecordsScreenState extends State<RecordsScreen>
       fileCount: 8,
       imagePath:
           'assets/Figma MCP Assets/CommonAssets/Images/Report Image-3.png',
+    ),
+  ];
+
+  // Prescription mock data
+  final List<_PrescriptionEntry> _prescriptions = [
+    const _PrescriptionEntry(
+      date: '28 Feb 2026',
+      doctorName: 'Dr. Sharma',
+      speciality: 'Endocrinology',
+      itemCount: 3,
+    ),
+    const _PrescriptionEntry(
+      date: '28 Feb 2026',
+      doctorName: 'Dr. Sharma',
+      speciality: 'Endocrinology',
+      itemCount: 3,
+    ),
+  ];
+
+  final List<_NoteEntry> _notes = const [
+    _NoteEntry(
+      timestamp: '22 Mar 2025, 3:00 PM',
+      title: 'Dr. Sharma visit — key points',
+      body:
+          'TSH still elevated. Dose might be increased next visit. Need to retest in 6 weeks. She mentioned stress can worsen thyroid levels significantly.',
+    ),
+    _NoteEntry(
+      timestamp: '22 Mar 2025, 3:00 PM',
+      title: 'Dr. Sharma visit — key points',
+      body:
+          'TSH still elevated. Dose might be increased next visit. Need to retest in 6 weeks. She mentioned stress can worsen thyroid levels significantly.',
     ),
   ];
 
@@ -89,8 +124,8 @@ class _RecordsScreenState extends State<RecordsScreen>
                     children: [
                       _buildReportsTab(),
                       _buildSymptomsTab(),
-                      _buildEmptyTab('💊', 'No prescriptions yet'),
-                      _buildEmptyTab('✏️', 'No notes added yet'),
+                      _buildPrescriptionsTab(),
+                      _buildNotesTab(),
                     ],
                   ),
                 ),
@@ -104,12 +139,30 @@ class _RecordsScreenState extends State<RecordsScreen>
               right: 16,
               bottom: 126,
               child: GestureDetector(
-                onTap: () => HapticFeedback.mediumImpact(),
+                onTap: () {
+                  HapticFeedback.mediumImpact();
+                  if (_tabController.index == 1) {
+                    showAddSymptomSheet(
+                      context,
+                      existingSymptoms: _symptoms.map((s) => s.name).toList(),
+                    );
+                  } else if (_tabController.index == 2) {
+                    showAddPrescriptionSheet(context);
+                  } else if (_tabController.index == 3) {
+                    showAddNoteBottomSheet(context);
+                  }
+                },
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFFFFF1F2), // rose/50
-                    border: Border.all(color: const Color(0xFFFFC3D7), width: 1),
+                    border: Border.all(
+                      color: const Color(0xFFFFC3D7),
+                      width: 1,
+                    ),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Row(
@@ -118,28 +171,51 @@ class _RecordsScreenState extends State<RecordsScreen>
                       AnimatedBuilder(
                         animation: _tabController,
                         builder: (_, __) {
-                          final isSymptoms = _tabController.index == 1;
+                          final idx = _tabController.index;
+                          final isSymptoms = idx == 1;
+                          final isPrescriptions = idx == 2;
+                          final isNotes = idx == 3;
+                          final icon = isSymptoms
+                              ? const Icon(
+                                  Icons.add,
+                                  size: 24,
+                                  color: Color(0xFFCD577F),
+                                )
+                              : isPrescriptions
+                              ? const Icon(
+                                  Icons.add,
+                                  size: 24,
+                                  color: Color(0xFFCD577F),
+                                )
+                              : isNotes
+                              ? const Icon(
+                                  Icons.add,
+                                  size: 24,
+                                  color: Color(0xFFCD577F),
+                                )
+                              : SvgPicture.asset(
+                                  'assets/Figma MCP Assets/CommonAssets/Icons/upload.svg',
+                                  width: 24,
+                                  height: 24,
+                                  colorFilter: const ColorFilter.mode(
+                                    Color(0xFFCD577F),
+                                    BlendMode.srcIn,
+                                  ),
+                                );
+                          final label = isSymptoms
+                              ? 'Add New Symptom'
+                              : isPrescriptions
+                              ? 'Add New Prescription'
+                              : isNotes
+                              ? 'Add New Note'
+                              : 'Upload a new report';
                           return Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              isSymptoms
-                                  ? const Icon(
-                                      Icons.add,
-                                      size: 24,
-                                      color: Color(0xFFCD577F),
-                                    )
-                                  : SvgPicture.asset(
-                                      'assets/Figma MCP Assets/CommonAssets/Icons/upload.svg',
-                                      width: 24,
-                                      height: 24,
-                                      colorFilter: const ColorFilter.mode(
-                                        Color(0xFFCD577F),
-                                        BlendMode.srcIn,
-                                      ),
-                                    ),
+                              icon,
                               const SizedBox(width: 12),
                               Text(
-                                isSymptoms ? 'Add New Symptom' : 'Upload a new report',
+                                label,
                                 style: const TextStyle(
                                   fontFamily: 'Geist',
                                   fontSize: 16,
@@ -173,8 +249,7 @@ class _RecordsScreenState extends State<RecordsScreen>
         children: [
           // "Records" title row — 40px height
           Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: SizedBox(
               height: 40,
               child: Align(
@@ -209,11 +284,7 @@ class _RecordsScreenState extends State<RecordsScreen>
                 children: [
                   const SizedBox(width: 12),
                   // Search icon
-                  const Icon(
-                    Icons.search,
-                    size: 20,
-                    color: Color(0xFFA3A3A3),
-                  ),
+                  const Icon(Icons.search, size: 20, color: Color(0xFFA3A3A3)),
                   const SizedBox(width: 4),
                   // Transparent, borderless input
                   Expanded(
@@ -310,26 +381,6 @@ class _RecordsScreenState extends State<RecordsScreen>
     );
   }
 
-  Widget _buildEmptyTab(String emoji, String message) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(emoji, style: const TextStyle(fontSize: 40)),
-          const SizedBox(height: 12),
-          Text(
-            message,
-            style: const TextStyle(
-              fontFamily: 'Geist',
-              fontSize: 15,
-              color: Color(0xFFA3A3A3),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   // ── Symptoms tab ────────────────────────────────────────────────────────────
 
   static const _symptoms = [
@@ -370,7 +421,19 @@ class _RecordsScreenState extends State<RecordsScreen>
 
   Widget _buildSymptomCard(_SymptomEntry s) {
     return GestureDetector(
-      onTap: () => HapticFeedback.lightImpact(),
+      onTap: () {
+        HapticFeedback.lightImpact();
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => SymptomDetailScreen(
+              symptomName: s.name,
+              timesLogged: s.timesLogged,
+              isPassed: s.status == _SymptomStatus.passed,
+            ),
+          ),
+        );
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
@@ -399,9 +462,13 @@ class _RecordsScreenState extends State<RecordsScreen>
                       ),
                       const Padding(
                         padding: EdgeInsets.symmetric(horizontal: 4),
-                        child: Text('•',
-                            style: TextStyle(
-                                fontSize: 12, color: Color(0xFF737373))),
+                        child: Text(
+                          '•',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Color(0xFF737373),
+                          ),
+                        ),
                       ),
                       Text(
                         s.lastLogged,
@@ -468,9 +535,7 @@ class _RecordsScreenState extends State<RecordsScreen>
             ? const Color(0x193B82F6) // rgba(59,130,246,0.1)
             : const Color(0x40FED7AA), // rgba(254,215,170,0.25)
         border: Border.all(
-          color: isPassed
-              ? const Color(0x193B82F6)
-              : const Color(0x40FED7AA),
+          color: isPassed ? const Color(0x193B82F6) : const Color(0x40FED7AA),
         ),
         borderRadius: BorderRadius.circular(999),
       ),
@@ -499,18 +564,26 @@ class _RecordsScreenState extends State<RecordsScreen>
       const ReportFile(name: 'Report_p2.jpg', isPdf: false),
     ];
     final entry2025 = ReportEntry(
-      day: 14, month: 'JAN', year: 2025,
-      fileCount: 3, fileTypeLabel: 'PDF + 2 photos',
+      day: 14,
+      month: 'JAN',
+      year: 2025,
+      fileCount: 3,
+      fileTypeLabel: 'PDF + 2 photos',
       labName: 'SRL Diagnostics, Baner',
       doctorRef: 'Ref. Dr. Meena Sharma',
-      note: note, files: files,
+      note: note,
+      files: files,
     );
     final entry2024 = ReportEntry(
-      day: 14, month: 'JAN', year: 2024,
-      fileCount: 3, fileTypeLabel: 'PDF + 2 photos',
+      day: 14,
+      month: 'JAN',
+      year: 2024,
+      fileCount: 3,
+      fileTypeLabel: 'PDF + 2 photos',
       labName: 'SRL Diagnostics, Baner',
       doctorRef: 'Ref. Dr. Meena Sharma',
-      note: note, files: files,
+      note: note,
+      files: files,
     );
     return [entry2025, entry2025, entry2024, entry2024];
   }
@@ -608,8 +681,7 @@ class _RecordsScreenState extends State<RecordsScreen>
               const SizedBox(height: 8),
               // File count pill
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
                   color: const Color(0xFFF5F5F5),
                   border: Border.all(color: const Color(0xFFE5E5E5)),
@@ -627,6 +699,145 @@ class _RecordsScreenState extends State<RecordsScreen>
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  // ── Prescriptions tab ────────────────────────────────────────────
+  Widget _buildPrescriptionsTab() {
+    return ListView.separated(
+      padding: const EdgeInsets.all(16),
+      itemCount: _prescriptions.length,
+      separatorBuilder: (_, __) => const SizedBox(height: 8),
+      itemBuilder: (_, i) => _buildPrescriptionCard(_prescriptions[i]),
+    );
+  }
+
+  Widget _buildPrescriptionCard(_PrescriptionEntry p) {
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => PrescriptionDetailScreen(
+              labName: 'SRL Diagnostics, Baner',
+              dateLabel: '14 Jan, 2025',
+              doctorName: p.doctorName,
+            ),
+          ),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(color: const Color(0xFFE5E5E5)),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Date
+                  Text(
+                    p.date,
+                    style: const TextStyle(
+                      fontFamily: 'Geist',
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                      color: Color(0xFF737373),
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  // Doctor + Speciality
+                  Text(
+                    '${p.doctorName} — ${p.speciality}',
+                    style: const TextStyle(
+                      fontFamily: 'Geist',
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xFF0A0A0A),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    maxLines: 1,
+                  ),
+                  const SizedBox(height: 2),
+                  // Item count
+                  Text(
+                    '${p.itemCount} items',
+                    style: const TextStyle(
+                      fontFamily: 'Geist',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: Color(0xFF525252),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(Icons.chevron_right, size: 24, color: Color(0xFF737373)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNotesTab() {
+    return ListView.separated(
+      padding: const EdgeInsets.all(16),
+      itemCount: _notes.length,
+      separatorBuilder: (_, __) => const SizedBox(height: 12),
+      itemBuilder: (_, i) => _buildNoteCard(_notes[i]),
+    );
+  }
+
+  Widget _buildNoteCard(_NoteEntry note) {
+    return GestureDetector(
+      onTap: () => HapticFeedback.lightImpact(),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(color: const Color(0xFFE5E5E5)),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              note.timestamp,
+              style: const TextStyle(
+                fontFamily: 'Geist',
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
+                color: Color(0xFF737373),
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              note.title,
+              style: const TextStyle(
+                fontFamily: 'Geist',
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: Color(0xFF0A0A0A),
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              note.body,
+              style: const TextStyle(
+                fontFamily: 'Geist',
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+                color: Color(0xFF525252),
+                height: 1.35,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -660,5 +871,31 @@ class _SymptomEntry {
     required this.lastLogged,
     required this.timesLogged,
     required this.status,
+  });
+}
+
+class _PrescriptionEntry {
+  final String date;
+  final String doctorName;
+  final String speciality;
+  final int itemCount;
+
+  const _PrescriptionEntry({
+    required this.date,
+    required this.doctorName,
+    required this.speciality,
+    required this.itemCount,
+  });
+}
+
+class _NoteEntry {
+  final String timestamp;
+  final String title;
+  final String body;
+
+  const _NoteEntry({
+    required this.timestamp,
+    required this.title,
+    required this.body,
   });
 }
