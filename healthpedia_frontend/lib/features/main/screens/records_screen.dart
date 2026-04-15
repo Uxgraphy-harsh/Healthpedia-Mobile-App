@@ -88,7 +88,7 @@ class _RecordsScreenState extends State<RecordsScreen>
                     controller: _tabController,
                     children: [
                       _buildReportsTab(),
-                      _buildEmptyTab('🤒', 'No symptoms recorded'),
+                      _buildSymptomsTab(),
                       _buildEmptyTab('💊', 'No prescriptions yet'),
                       _buildEmptyTab('✏️', 'No notes added yet'),
                     ],
@@ -99,15 +99,14 @@ class _RecordsScreenState extends State<RecordsScreen>
               ],
             ),
 
-            // Floating "Upload a new report" FAB — consistent bottom:126 with Reminders CTA
+            // FAB — changes label based on active tab
             Positioned(
               right: 16,
               bottom: 126,
               child: GestureDetector(
                 onTap: () => HapticFeedback.mediumImpact(),
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   decoration: BoxDecoration(
                     color: const Color(0xFFFFF1F2), // rose/50
                     border: Border.all(color: const Color(0xFFFFC3D7), width: 1),
@@ -116,24 +115,41 @@ class _RecordsScreenState extends State<RecordsScreen>
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      SvgPicture.asset(
-                        'assets/Figma MCP Assets/CommonAssets/Icons/upload.svg',
-                        width: 24,
-                        height: 24,
-                        colorFilter: const ColorFilter.mode(
-                          Color(0xFFCD577F), // pink/500
-                          BlendMode.srcIn,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      const Text(
-                        'Upload a new report',
-                        style: TextStyle(
-                          fontFamily: 'Geist',
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: Color(0xFFCD577F), // pink/500
-                        ),
+                      AnimatedBuilder(
+                        animation: _tabController,
+                        builder: (_, __) {
+                          final isSymptoms = _tabController.index == 1;
+                          return Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              isSymptoms
+                                  ? const Icon(
+                                      Icons.add,
+                                      size: 24,
+                                      color: Color(0xFFCD577F),
+                                    )
+                                  : SvgPicture.asset(
+                                      'assets/Figma MCP Assets/CommonAssets/Icons/upload.svg',
+                                      width: 24,
+                                      height: 24,
+                                      colorFilter: const ColorFilter.mode(
+                                        Color(0xFFCD577F),
+                                        BlendMode.srcIn,
+                                      ),
+                                    ),
+                              const SizedBox(width: 12),
+                              Text(
+                                isSymptoms ? 'Add New Symptom' : 'Upload a new report',
+                                style: const TextStyle(
+                                  fontFamily: 'Geist',
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(0xFFCD577F),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
                       ),
                     ],
                   ),
@@ -314,6 +330,164 @@ class _RecordsScreenState extends State<RecordsScreen>
     );
   }
 
+  // ── Symptoms tab ────────────────────────────────────────────────────────────
+
+  static const _symptoms = [
+    _SymptomEntry(
+      name: 'Fatigue',
+      lastLogged: 'Today, 3:00 PM',
+      timesLogged: 3,
+      status: _SymptomStatus.passed,
+    ),
+    _SymptomEntry(
+      name: 'Throat tightness',
+      lastLogged: 'Today, 8:00 PM',
+      timesLogged: 7,
+      status: _SymptomStatus.passed,
+    ),
+    _SymptomEntry(
+      name: 'Dizziness',
+      lastLogged: '21 Mar, 6:12 PM',
+      timesLogged: 2,
+      status: _SymptomStatus.passed,
+    ),
+    _SymptomEntry(
+      name: 'Headache',
+      lastLogged: '20 Mar, 9:42 PM',
+      timesLogged: 8,
+      status: _SymptomStatus.ongoing,
+    ),
+  ];
+
+  Widget _buildSymptomsTab() {
+    return ListView.separated(
+      padding: const EdgeInsets.all(16),
+      itemCount: _symptoms.length,
+      separatorBuilder: (_, __) => const SizedBox(height: 8),
+      itemBuilder: (_, i) => _buildSymptomCard(_symptoms[i]),
+    );
+  }
+
+  Widget _buildSymptomCard(_SymptomEntry s) {
+    return GestureDetector(
+      onTap: () => HapticFeedback.lightImpact(),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(color: const Color(0xFFE5E5E5)),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Row(
+          children: [
+            // Left: texts
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // "Last logged • Today, 3:00 PM" — 12px, Neutral 500
+                  Row(
+                    children: [
+                      const Text(
+                        'Last logged',
+                        style: TextStyle(
+                          fontFamily: 'Geist',
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          color: Color(0xFF737373),
+                        ),
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 4),
+                        child: Text('•',
+                            style: TextStyle(
+                                fontSize: 12, color: Color(0xFF737373))),
+                      ),
+                      Text(
+                        s.lastLogged,
+                        style: const TextStyle(
+                          fontFamily: 'Geist',
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          color: Color(0xFF737373),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 2),
+                  // Name + status badge — Geist Medium 16px, Neutral 950
+                  Row(
+                    children: [
+                      Text(
+                        s.name,
+                        style: const TextStyle(
+                          fontFamily: 'Geist',
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xFF0A0A0A),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      _buildStatusBadge(s.status),
+                    ],
+                  ),
+                  const SizedBox(height: 2),
+                  // "X times logged" — 14px, Neutral 600
+                  Text(
+                    '${s.timesLogged} times logged',
+                    style: const TextStyle(
+                      fontFamily: 'Geist',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: Color(0xFF525252),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Right: chevron — arrow_forward_ios Material icon
+            const Icon(
+              Icons.arrow_forward_ios,
+              size: 16,
+              color: Color(0xFF0A0A0A),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatusBadge(_SymptomStatus status) {
+    // Passed: rgba(59,130,246,0.1) bg + border | Blue/600 text
+    // Ongoing: rgba(254,215,170,0.25) bg + border | Orange/700 text
+    final isPassed = status == _SymptomStatus.passed;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: isPassed
+            ? const Color(0x193B82F6) // rgba(59,130,246,0.1)
+            : const Color(0x40FED7AA), // rgba(254,215,170,0.25)
+        border: Border.all(
+          color: isPassed
+              ? const Color(0x193B82F6)
+              : const Color(0x40FED7AA),
+        ),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Text(
+        isPassed ? 'Passed' : 'Ongoing',
+        style: TextStyle(
+          fontFamily: 'Geist',
+          fontSize: 12,
+          fontWeight: FontWeight.w400,
+          color: isPassed
+              ? const Color(0xFF2563EB) // Blue/600
+              : const Color(0xFFC2410C), // Orange/700
+        ),
+      ),
+    );
+  }
+
   List<ReportEntry> _getEntriesFor(String title) {
     const note =
         'TSH came back elevated at 6.2 mIU/L, above the normal range. Free T3 and T4 are within limits. '
@@ -470,5 +644,21 @@ class _ReportCard {
     required this.updated,
     required this.fileCount,
     required this.imagePath,
+  });
+}
+
+enum _SymptomStatus { passed, ongoing }
+
+class _SymptomEntry {
+  final String name;
+  final String lastLogged;
+  final int timesLogged;
+  final _SymptomStatus status;
+
+  const _SymptomEntry({
+    required this.name,
+    required this.lastLogged,
+    required this.timesLogged,
+    required this.status,
   });
 }
