@@ -193,8 +193,14 @@ class _AddInsuranceBottomSheetState extends State<AddInsuranceBottomSheet> {
         Text('INSURANCE TYPE', style: AppTypography.label3.copyWith(color: AppColors.neutral500, fontWeight: FontWeight.w600)),
         const SizedBox(height: 12),
         GridView.builder(
-          shrinkWrap: true, physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 3, mainSpacing: 8, crossSpacing: 8),
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: 3,
+            mainAxisSpacing: 8,
+            crossAxisSpacing: 8,
+          ),
           itemCount: _types.length,
           itemBuilder: (context, index) {
             final type = _types[index];

@@ -112,64 +112,66 @@ class _HealthTrackersScreenState extends State<HealthTrackersScreen> {
           // ── Bottom Controls ──────────
           Align(
             alignment: Alignment.bottomCenter,
-            child: Container(
-              padding: const EdgeInsets.only(
-                left: AppSpacing.space24,
-                right: AppSpacing.space24,
-                bottom: AppSpacing.space48,
-              ),
-              child: Row(
-                children: [
-                  // Back button
-                  Container(
-                    width: 52,
-                    height: 52,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: AppColors.white.withOpacity(0.5),
-                        width: 1,
-                      ),
-                      color: Colors.transparent,
-                    ),
-                    child: IconButton(
-                      icon: const Icon(Icons.arrow_back, color: AppColors.white),
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
-                  ),
-                  const SizedBox(width: AppSpacing.space16),
-                  
-                  // "I'll do it later" Button
-                  Expanded(
-                    child: SizedBox(
+            child: SafeArea(
+              child: Container(
+                padding: const EdgeInsets.only(
+                  left: AppSpacing.space24,
+                  right: AppSpacing.space24,
+                  bottom: AppSpacing.space48,
+                ),
+                child: Row(
+                  children: [
+                    // Back button
+                    Container(
+                      width: 52,
                       height: 52,
-                      child: OutlinedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const PermissionsScreen()),
-                          );
-                        },
-                        style: OutlinedButton.styleFrom(
-                          side: BorderSide(
-                            color: AppColors.white.withOpacity(0.5), 
-                            width: 1,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(26), // Pill shape
-                          ),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: AppColors.white.withOpacity(0.5),
+                          width: 1,
                         ),
-                        child: Text(
-                          'I\'ll do it later',
-                          style: AppTypography.body2.copyWith(
-                            color: const Color(0xFFFFC3D7), // pink100
-                            fontWeight: FontWeight.w500,
+                        color: Colors.transparent,
+                      ),
+                      child: IconButton(
+                        icon: const Icon(Icons.arrow_back, color: AppColors.white),
+                        onPressed: () => Navigator.of(context).pop(),
+                      ),
+                    ),
+                    const SizedBox(width: AppSpacing.space16),
+                    
+                    // "I'll do it later" Button
+                    Expanded(
+                      child: SizedBox(
+                        height: 52,
+                        child: OutlinedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const PermissionsScreen()),
+                            );
+                          },
+                          style: OutlinedButton.styleFrom(
+                            side: BorderSide(
+                              color: AppColors.white.withOpacity(0.5), 
+                              width: 1,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(26), // Pill shape
+                            ),
+                          ),
+                          child: Text(
+                            'I\'ll do it later',
+                            style: AppTypography.body2.copyWith(
+                              color: const Color(0xFFFFC3D7), // pink100
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

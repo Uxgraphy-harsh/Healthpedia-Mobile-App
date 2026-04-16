@@ -7,6 +7,8 @@ import 'package:healthpedia_frontend/features/main/screens/reminders_screen.dart
 import 'package:healthpedia_frontend/features/main/screens/ask_ai_screen.dart';
 import 'package:healthpedia_frontend/features/main/screens/records_screen.dart';
 import 'package:healthpedia_frontend/features/main/screens/profile_screen.dart';
+import 'package:healthpedia_frontend/core/widgets/kinetic_interaction.dart';
+import 'package:healthpedia_frontend/core/navigation/premium_route.dart';
 
 enum ReminderStatus { pending, completed, missed }
 
@@ -41,6 +43,25 @@ class MainScaffold extends StatefulWidget {
 
 class _MainScaffoldState extends State<MainScaffold> {
   int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _configureSystemUI();
+  }
+
+  void _configureSystemUI() {
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarDividerColor: Colors.transparent,
+        systemNavigationBarIconBrightness: Brightness.dark,
+      ),
+    );
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  }
 
   final List<ReminderItem> _reminders = [
     ReminderItem(
@@ -100,8 +121,16 @@ class _MainScaffoldState extends State<MainScaffold> {
           true, // Allow content to scroll perfectly behind the glass bottom nav
       body: Stack(
         children: [
-          _buildPage(),
-          Positioned(left: 0, right: 0, bottom: 0, child: _buildBottomNav()),
+          SafeArea(
+            bottom: false, // Pages handle their own bottom padding/clearance
+            child: _buildPage(),
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: _buildBottomNav(),
+          ),
         ],
       ),
     );
@@ -144,24 +173,39 @@ class _MainScaffoldState extends State<MainScaffold> {
 
   /// Builds the unique custom glass-morphism sticky bottom navigation panel mapped from Figma
   Widget _buildBottomNav() {
-    return SizedBox(
-      height: 85,
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
+    
+    return Container(
+      height: 85 + bottomPadding,
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          // 1. Background Glass Layer (Clipped to prevent global blur)
+          // 1. Background Glass Layer (Full screen width, includes safe area)
           Positioned.fill(
             child: ClipRect(
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 12.0, sigmaY: 12.0),
                 child: Container(
                   decoration: const BoxDecoration(
-                    color: Color(
-                      0xE6F5F5F5,
-                    ), // Formatted to 90% opacity #f5f5f5
+                    color: Color(0xE6F5F5F5), // 90% opacity #f5f5f5
                   ),
                 ),
               ),
+            ),
+          ),
+          
+          // 2. Interactive Navigation Items (Centered higher to account for safe area)
+          Padding(
+            padding: EdgeInsets.only(bottom: bottomPadding),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildNavItem(0, 'stacks.svg', 'stacks-1.svg', 'Summary'),
+                _buildNavItem(1, 'event_list-1.svg', 'event_list.svg', 'Reminders'),
+                const SizedBox(width: 80), // Gap for Ask AI button
+                _buildNavItem(2, 'folder_open-1.svg', 'folder_open.svg', 'Records'),
+                _buildNavItem(3, 'person-1.svg', 'person.svg', 'Profile'),
+              ],
             ),
           ),
 
@@ -191,71 +235,25 @@ class _MainScaffoldState extends State<MainScaffold> {
 
           // 3. Super-Elevated "Ask AI" Central Action Button (Overflowing)
           Positioned(
-            top: -28, // Adjusted height for perfect spill
+            top: -28, 
             left: MediaQuery.of(context).size.width / 2 - 35,
-            child: GestureDetector(
+            child: KineticInteraction(
               onTap: () {
-                HapticFeedback.mediumImpact();
-                Navigator.push(
-                  context,
-                  PageRouteBuilder(
-                    pageBuilder: (context, animation, secondaryAnimation) =>
-                        const AskAiScreen(),
-                    transitionsBuilder:
-                        (context, animation, secondaryAnimation, child) {
-                          const begin = Offset(0.0, 1.0);
-                          const end = Offset.zero;
-                          const curve = Curves.easeOutQuart;
-                          var tween = Tween(
-                            begin: begin,
-                            end: end,
-                          ).chain(CurveTween(curve: curve));
-                          return SlideTransition(
-                            position: animation.drive(tween),
-                            child: child,
-                          );
-                        },
-                  ),
-                );
+                context.pushPremium(const AskAiScreen());
               },
-              child: Column(
+              child: const Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Container(
-                    width: 70,
-                    height: 55,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xFF60A5FA).withValues(alpha: 0.4),
-                          blurRadius: 20,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: ColorFiltered(
-                      colorFilter: const ColorFilter.mode(
-                        Color(0xFF60A5FA),
-                        BlendMode.srcIn,
-                      ),
-                      child: Transform.scale(
-                        scale: 1.1,
-                        child: Image.asset(
-                          'assets/Figma MCP Assets/Onboarding Screens/Onboarding Screens Icons/Flower.png',
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  const Text(
+                  _AskAiIcon(),
+                  SizedBox(height: 4),
+                  Text(
                     'Ask AI',
                     style: TextStyle(
                       fontFamily: 'Geist',
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                       color: Color(0xFF60A5FA),
+                      letterSpacing: -0.2,
                     ),
                   ),
                 ],
@@ -277,10 +275,8 @@ class _MainScaffoldState extends State<MainScaffold> {
     bool isSelected = _selectedIndex == index;
     // Active states map to explicit black border-t & pink/950 text versus neutral/400 disabled
     return Expanded(
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
+      child: KineticInteraction(
         onTap: () {
-          HapticFeedback.lightImpact();
           setState(() => _selectedIndex = index);
         },
         child: Container(
@@ -317,6 +313,41 @@ class _MainScaffoldState extends State<MainScaffold> {
                 ),
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AskAiIcon extends StatelessWidget {
+  const _AskAiIcon();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 70,
+      height: 55,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF60A5FA).withOpacity(0.4),
+            blurRadius: 20,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: ColorFiltered(
+        colorFilter: const ColorFilter.mode(
+          Color(0xFF60A5FA),
+          BlendMode.srcIn,
+        ),
+        child: Transform.scale(
+          scale: 1.1,
+          child: Image.asset(
+            'assets/Figma MCP Assets/Onboarding Screens/Onboarding Screens Icons/Flower.png',
+            fit: BoxFit.contain,
           ),
         ),
       ),

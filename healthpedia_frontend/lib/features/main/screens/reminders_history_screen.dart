@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'main_scaffold.dart'; // To access ReminderItem and ReminderStatus
+import '../widgets/reminder_checkbox.dart';
 
 class RemindersHistoryScreen extends StatefulWidget {
   final List<ReminderItem> reminders;
@@ -165,17 +166,9 @@ class _RemindersHistoryScreenState extends State<RemindersHistoryScreen> with Si
         child: Row(
           children: [
             // Status Icon
-            isMissed 
-              ? SvgPicture.asset(
-                  'assets/Figma MCP Assets/CommonAssets/Icons/Warning Container.svg',
-                  width: 24,
-                  height: 24,
-                )
-              : SvgPicture.asset(
-                  'assets/Figma MCP Assets/CommonAssets/Icons/Reminder Icon Placeholder 3.svg',
-                  width: 24,
-                  height: 24,
-                ),
+            ReminderCheckbox(
+              status: item.status,
+            ),
             const SizedBox(width: 12),
             Expanded(
               child: Column(

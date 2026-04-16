@@ -5,6 +5,9 @@ import 'package:healthpedia_frontend/core/constants/app_colors.dart';
 import 'package:healthpedia_frontend/features/main/screens/family_friend_detail_screen.dart';
 import 'package:healthpedia_frontend/features/main/screens/family_friends_screen.dart';
 import 'main_scaffold.dart';
+import '../widgets/reminder_checkbox.dart';
+import 'package:healthpedia_frontend/core/widgets/kinetic_interaction.dart';
+import 'package:healthpedia_frontend/core/navigation/premium_route.dart';
 
 class SummaryScreen extends StatefulWidget {
   final List<ReminderItem> reminders;
@@ -24,12 +27,26 @@ class SummaryScreen extends StatefulWidget {
 
 class _SummaryScreenState extends State<SummaryScreen> {
   @override
+  void initState() {
+    super.initState();
+    _precacheIcons();
+  }
+
+  void _precacheIcons() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      precacheImage(const AssetImage('assets/Figma MCP Assets/Onboarding Screens/Onboarding Screens Images/M 81.png'), context);
+      precacheImage(const AssetImage('assets/Figma MCP Assets/Onboarding Screens/Onboarding Screens Images/M 83.png'), context);
+    });
+  }
+
+  List<ReminderItem> get _pendingReminders => widget.reminders
+      .where((r) => r.status == ReminderStatus.pending)
+      .take(3)
+      .toList();
+
+  @override
   Widget build(BuildContext context) {
-    // Only show pending reminders on Home, limited to first 3 for visual balance
-    final pendingReminders = widget.reminders
-        .where((r) => r.status == ReminderStatus.pending)
-        .take(3)
-        .toList();
+    final pendingReminders = _pendingReminders;
 
     return Container(
       color: const Color(0xFF2C0011),
@@ -90,118 +107,133 @@ class _SummaryScreenState extends State<SummaryScreen> {
 
                   // 2. Content
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(24, 60, 24, 30),
+                    padding: EdgeInsets.fromLTRB(
+                      0, 
+                      24 + MediaQuery.of(context).padding.top, 
+                      0, 
+                      30
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // Header Label
-                        const Text(
-                          'TODAY’S SUMMARY',
-                          style: TextStyle(
-                            fontFamily: 'Geist',
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF737373),
-                            letterSpacing: 0.48,
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 24),
+                          child: const Text(
+                            'TODAY’S SUMMARY',
+                            style: TextStyle(
+                              fontFamily: 'Geist',
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF737373),
+                              letterSpacing: 0.48,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 10),
 
                         // Health Score
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  '74',
-                                  style: TextStyle(
-                                    fontFamily: 'Geist',
-                                    fontSize: 40,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.white,
-                                    height: 1,
-                                  ),
-                                ),
-                                const Text(
-                                  'Health score',
-                                  style: TextStyle(
-                                    fontFamily: 'Geist',
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                    color: Color(0xFFD4D4D4),
-                                  ),
-                                ),
-                                const SizedBox(height: 12),
-                                // Week comparison
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 4,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: const Color(0x1ABBF7C8),
-                                    borderRadius: BorderRadius.circular(999),
-                                    border: Border.all(
-                                      color: const Color(0x1ABBF7C8),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 24),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    '74',
+                                    style: TextStyle(
+                                      fontFamily: 'Geist',
+                                      fontSize: 40,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white,
+                                      height: 1,
                                     ),
                                   ),
-                                  child: Row(
-                                    children: [
-                                      const Icon(
-                                        Icons.arrow_upward,
-                                        size: 14,
-                                        color: Color(0xFF4ADE80),
+                                  const Text(
+                                    'Health score',
+                                    style: TextStyle(
+                                      fontFamily: 'Geist',
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                      color: Color(0xFFD4D4D4),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  // Week comparison
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 4,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0x1ABBF7C8),
+                                      borderRadius: BorderRadius.circular(999),
+                                      border: Border.all(
+                                        color: const Color(0x1ABBF7C8),
                                       ),
-                                      const SizedBox(width: 4),
-                                      const Text(
-                                        '+3 from last week',
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        const Icon(
+                                          Icons.arrow_upward,
+                                          size: 14,
+                                          color: Color(0xFF4ADE80),
+                                        ),
+                                        const SizedBox(width: 4),
+                                        const Text(
+                                          '+3 from last week',
+                                          style: TextStyle(
+                                            fontFamily: 'Geist',
+                                            fontSize: 12,
+                                            color: Color(0xFF4ADE80),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              // Customise Button
+                              KineticInteraction(
+                                onTap: () {}, // TODO: Implementation
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 6,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(999),
+                                    border: Border.all(
+                                      color: Colors.white.withOpacity(0.1),
+                                    ),
+                                  ),
+                                  child: const Row(
+                                    children: [
+                                      Icon(
+                                        Icons.edit,
+                                        size: 14,
+                                        color: Color(0xFFA3A3A3),
+                                      ),
+                                      SizedBox(width: 6),
+                                      Text(
+                                        'Customise',
                                         style: TextStyle(
                                           fontFamily: 'Geist',
                                           fontSize: 12,
-                                          color: Color(0xFF4ADE80),
+                                          fontWeight: FontWeight.w600,
+                                          color: Color(0xFFA3A3A3),
+                                          letterSpacing: -0.5,
                                         ),
                                       ),
                                     ],
                                   ),
                                 ),
-                              ],
-                            ),
-                            // Customise Button
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 6,
                               ),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(999),
-                                border: Border.all(
-                                  color: Colors.white.withOpacity(0.1),
-                                ),
-                              ),
-                              child: Row(
-                                children: [
-                                  const Icon(
-                                    Icons.edit,
-                                    size: 14,
-                                    color: Color(0xFFA3A3A3),
-                                  ),
-                                  const SizedBox(width: 6),
-                                  const Text(
-                                    'Customise',
-                                    style: TextStyle(
-                                      fontFamily: 'Geist',
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
-                                      color: Color(0xFFA3A3A3),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
 
                         const SizedBox(height: 24),
@@ -209,23 +241,26 @@ class _SummaryScreenState extends State<SummaryScreen> {
                         const SizedBox(height: 8),
 
                         // Sync info
-                        Row(
-                          children: [
-                            const Icon(
-                              Icons.circle,
-                              size: 6,
-                              color: Color(0xFF4ADE80),
-                            ),
-                            const SizedBox(width: 6),
-                            const Text(
-                              'Synced 4 mins ago',
-                              style: TextStyle(
-                                fontFamily: 'Geist',
-                                fontSize: 12,
-                                color: Color(0xFFA3A3A3),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 24),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.circle,
+                                size: 6,
+                                color: Color(0xFF4ADE80),
                               ),
-                            ),
-                          ],
+                              const SizedBox(width: 6),
+                              const Text(
+                                'Synced 4 mins ago',
+                                style: TextStyle(
+                                  fontFamily: 'Geist',
+                                  fontSize: 12,
+                                  color: Color(0xFFA3A3A3),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
 
                         const SizedBox(height: 24),
@@ -234,6 +269,8 @@ class _SummaryScreenState extends State<SummaryScreen> {
                         SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           physics: const BouncingScrollPhysics(),
+                          clipBehavior: Clip.none,
+                          padding: const EdgeInsets.symmetric(horizontal: 24),
                           child: Row(
                             children: [
                               _buildHealthStatCard(
@@ -291,67 +328,82 @@ class _SummaryScreenState extends State<SummaryScreen> {
                   topRight: Radius.circular(40),
                 ),
               ),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+              padding: const EdgeInsets.symmetric(vertical: 24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // ── Reminders Header ──
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'REMINDERS',
-                        style: TextStyle(
-                          fontFamily: 'Geist',
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF737373),
-                          letterSpacing: 0.56,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'REMINDERS',
+                          style: TextStyle(
+                            fontFamily: 'Geist',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF737373),
+                            letterSpacing: 0.56,
+                          ),
                         ),
-                      ),
-                      GestureDetector(
-                        onTap: widget.onNavigateToReminders,
-                        child: Row(
-                          children: [
-                            const Text(
-                              'View all',
-                              style: TextStyle(
-                                fontFamily: 'Geist',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
+                        KineticInteraction(
+                          onTap: widget.onNavigateToReminders,
+                          child: const Row(
+                            children: [
+                              Text(
+                                'View all',
+                                style: TextStyle(
+                                  fontFamily: 'Geist',
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xFF737373),
+                                  letterSpacing: -0.2,
+                                ),
+                              ),
+                              SizedBox(width: 4),
+                              Icon(
+                                Icons.arrow_forward_ios,
+                                size: 14,
                                 color: Color(0xFF737373),
                               ),
-                            ),
-                            const SizedBox(width: 4),
-                            const Icon(
-                              Icons.arrow_forward_ios,
-                              size: 14,
-                              color: Color(0xFF737373),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 16),
 
                   // Reminders List (Interactive)
-                  if (pendingReminders.isEmpty)
-                    _buildEmptyState('No pending reminders')
-                  else
-                    ...pendingReminders.map((r) => _buildReminderItem(r)),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (pendingReminders.isEmpty)
+                          _buildEmptyState('No pending reminders')
+                        else
+                          ...pendingReminders.map((r) => _buildReminderItem(r)),
+                      ],
+                    ),
+                  ),
 
                   const SizedBox(height: 32),
 
                   // ── Family & Friends ──
-                  const Text(
-                    'FAMILY & FRIENDS',
-                    style: TextStyle(
-                      fontFamily: 'Geist',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF737373),
-                      letterSpacing: 0.56,
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(
+                      'FAMILY & FRIENDS',
+                      style: TextStyle(
+                        fontFamily: 'Geist',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF737373),
+                        letterSpacing: 0.56,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -360,6 +412,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
                     physics: const BouncingScrollPhysics(),
                     child: Row(
                       children: [
+                        const SizedBox(width: 16),
                         _buildMemberCard(
                           'Sujoy Sahu',
                           'Father • 79 Years',
@@ -375,6 +428,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
                         ),
                         const SizedBox(width: 8),
                         _buildAddMemberCard(),
+                        const SizedBox(width: 16),
                       ],
                     ),
                   ),
@@ -382,102 +436,115 @@ class _SummaryScreenState extends State<SummaryScreen> {
                   const SizedBox(height: 32),
 
                   // ── Need Action ──
-                  const Text(
-                    'NEED ACTION',
-                    style: TextStyle(
-                      fontFamily: 'Geist',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF737373),
-                      letterSpacing: 0.56,
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(
+                      'NEED ACTION',
+                      style: TextStyle(
+                        fontFamily: 'Geist',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF737373),
+                        letterSpacing: 0.56,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 16),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: const Color(0xFFF5F5F5)),
-                    ),
-                    child: Column(
-                      children: [
-                        _buildActionRow(
-                          'TSH (Thyroid)',
-                          '14 Jan 2025',
-                          '6.2',
-                          'mIU/L',
-                          'Above range',
-                        ),
-                        const Divider(color: Color(0xFFF5F5F5), height: 1),
-                        _buildActionRow(
-                          'Fasting Blood Sugar',
-                          '14 Jan 2025',
-                          '98',
-                          'mg/dL',
-                          'Severe',
-                        ),
-                      ],
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: const Color(0xFFF5F5F5)),
+                      ),
+                      child: Column(
+                        children: [
+                          _buildActionRow(
+                            'TSH (Thyroid)',
+                            '14 Jan 2025',
+                            '6.2',
+                            'mIU/L',
+                            'Above range',
+                          ),
+                          const Divider(color: Color(0xFFF5F5F5), height: 1),
+                          _buildActionRow(
+                            'Fasting Blood Sugar',
+                            '14 Jan 2025',
+                            '128',
+                            'mg/dL',
+                            'High',
+                          ),
+                        ],
+                      ),
                     ),
                   ),
 
                   const SizedBox(height: 16),
                   // Upload Prompt
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF2C0011),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Upload your latest report',
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF171717),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Upload your latest report',
+                                  style: TextStyle(
+                                    fontFamily: 'Geist',
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                const Text(
+                                  'Some values are over 60 days old',
+                                  style: TextStyle(
+                                    fontFamily: 'Geist',
+                                    fontSize: 12,
+                                    color: Color(0xFF737373),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          KineticInteraction(
+                            onTap: () {},
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 8,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFFFE0E9),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: const Text(
+                                'Upload',
                                 style: TextStyle(
                                   fontFamily: 'Geist',
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
-                                  color: Colors.white,
+                                  color: Color(0xFF2C0011),
+                                  letterSpacing: -0.2,
                                 ),
                               ),
-                              const Text(
-                                'Some values are over 60 days old',
-                                style: TextStyle(
-                                  fontFamily: 'Geist',
-                                  fontSize: 12,
-                                  color: Color(0xFF737373),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFFFE0E9),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const Text(
-                            'Upload',
-                            style: TextStyle(
-                              fontFamily: 'Geist',
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: Color(0xFF2C0011),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
 
-                  const SizedBox(height: 100), // Bottom nav clearance
+                  const SizedBox(height: 120), // Bottom nav clearance
                 ],
               ),
             ),
@@ -584,10 +651,8 @@ class _SummaryScreenState extends State<SummaryScreen> {
           ),
           child: Row(
             children: [
-              SvgPicture.asset(
-                'assets/Figma MCP Assets/CommonAssets/Icons/Reminder Icon Placeholder 1.svg',
-                width: 24,
-                height: 24,
+              ReminderCheckbox(
+                status: data.status,
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -621,22 +686,19 @@ class _SummaryScreenState extends State<SummaryScreen> {
   }
 
   Widget _buildMemberCard(String name, String desc, String status, String img) {
-    return GestureDetector(
+    return KineticInteraction(
       onTap: () {
-        HapticFeedback.lightImpact();
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => FamilyFriendDetailScreen(
-              name: name,
-              hpid: 'HPID: #8836477253',
-              ageLabel: desc.split('•').last.trim().replaceAll('Years', 'yo'),
-              genderLabel: 'Male',
-              imagePath: img,
-              avatarBackgroundColor: _avatarBackgroundForImage(img),
-              allowedSections: kDefaultFamilyFriendSections,
-              healthpediaId: '#9039443124',
-              abhaId: '70-7463-2446-5247',
-            ),
+        context.pushPremium(
+          FamilyFriendDetailScreen(
+            name: name,
+            hpid: 'HPID: #8836477253',
+            ageLabel: desc.split('•').last.trim().replaceAll('Years', 'yo'),
+            genderLabel: 'Male',
+            imagePath: img,
+            avatarBackgroundColor: _avatarBackgroundForImage(img),
+            allowedSections: kDefaultFamilyFriendSections,
+            healthpediaId: '#9039443124',
+            abhaId: '70-7463-2446-5247',
           ),
         );
       },
@@ -650,10 +712,13 @@ class _SummaryScreenState extends State<SummaryScreen> {
         ),
         child: Column(
           children: [
-            CircleAvatar(
-              radius: 40,
-              backgroundImage: AssetImage(img),
-              backgroundColor: const Color(0xFFF3F4F6),
+            Hero(
+              tag: 'avatar_$img',
+              child: CircleAvatar(
+                radius: 40,
+                backgroundImage: AssetImage(img),
+                backgroundColor: const Color(0xFFF3F4F6),
+              ),
             ),
             const SizedBox(height: 12),
             Text(
@@ -662,6 +727,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
                 fontFamily: 'Geist',
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
+                letterSpacing: -0.2,
               ),
             ),
             Text(
@@ -670,6 +736,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
                 fontFamily: 'Geist',
                 fontSize: 12,
                 color: Color(0xFF737373),
+                letterSpacing: -0.2,
               ),
               textAlign: TextAlign.center,
             ),
@@ -686,6 +753,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
                   fontFamily: 'Geist',
                   fontSize: 12,
                   color: Color(0xFF15803D),
+                  letterSpacing: -0.2,
                 ),
               ),
             ),
@@ -696,40 +764,39 @@ class _SummaryScreenState extends State<SummaryScreen> {
   }
 
   Widget _buildAddMemberCard() {
-    return GestureDetector(
+    return KineticInteraction(
       onTap: () {
-        HapticFeedback.lightImpact();
-        Navigator.of(
-          context,
-        ).push(MaterialPageRoute(builder: (_) => const FamilyFriendsScreen()));
+        context.pushPremium(const FamilyFriendsScreen());
       },
       child: Container(
         width: 140,
+        height: 180, // Adjusted for consistency
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: const Color(0xFFCD577F),
-            style: BorderStyle.none,
-          ), // Custom dashed logic omitted for brevity
+            width: 1.5,
+          ),
         ),
-        child: Column(
+        child: const Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
+            Icon(
               Icons.add_circle_outline,
               color: Color(0xFFCD577F),
               size: 32,
             ),
-            const SizedBox(height: 8),
-            const Text(
+            SizedBox(height: 8),
+            Text(
               'Add a member',
               style: TextStyle(
                 fontFamily: 'Geist',
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 color: Color(0xFFCD577F),
+                letterSpacing: -0.2,
               ),
             ),
           ],

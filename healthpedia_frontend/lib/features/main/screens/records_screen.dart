@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:healthpedia_frontend/core/widgets/kinetic_interaction.dart';
+import 'package:healthpedia_frontend/core/navigation/premium_route.dart';
 import '../widgets/add_note_bottom_sheet.dart';
 import 'report_folder_screen.dart';
 import 'prescription_detail_screen.dart';
@@ -121,6 +123,7 @@ class _RecordsScreenState extends State<RecordsScreen>
                 Expanded(
                   child: TabBarView(
                     controller: _tabController,
+                    physics: const BouncingScrollPhysics(),
                     children: [
                       _buildReportsTab(),
                       _buildSymptomsTab(),
@@ -130,7 +133,7 @@ class _RecordsScreenState extends State<RecordsScreen>
                   ),
                 ),
                 // Bottom nav padding
-                const SizedBox(height: 85),
+                const SizedBox(height: 120),
               ],
             ),
 
@@ -211,7 +214,8 @@ class _RecordsScreenState extends State<RecordsScreen>
                               : 'Upload a new report';
                           return Row(
                             mainAxisSize: MainAxisSize.min,
-                            children: [
+                            
+        children: [
                               icon,
                               const SizedBox(width: 12),
                               Text(
@@ -246,6 +250,7 @@ class _RecordsScreenState extends State<RecordsScreen>
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        
         children: [
           // "Records" title row — 40px height
           Padding(
@@ -316,7 +321,7 @@ class _RecordsScreenState extends State<RecordsScreen>
                   ),
                   // Clear (X) button — only when text is present
                   if (_searchQuery.isNotEmpty)
-                    GestureDetector(
+                    KineticInteraction(
                       onTap: () {
                         _searchController.clear();
                         FocusScope.of(context).unfocus();
@@ -372,7 +377,7 @@ class _RecordsScreenState extends State<RecordsScreen>
   /// 2-column wrap grid for report cards
   Widget _buildReportsTab() {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 120),
       child: Wrap(
         spacing: 8,
         runSpacing: 8,
@@ -412,7 +417,7 @@ class _RecordsScreenState extends State<RecordsScreen>
 
   Widget _buildSymptomsTab() {
     return ListView.separated(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 120),
       itemCount: _symptoms.length,
       separatorBuilder: (_, __) => const SizedBox(height: 8),
       itemBuilder: (_, i) => _buildSymptomCard(_symptoms[i]),
@@ -707,6 +712,7 @@ class _RecordsScreenState extends State<RecordsScreen>
   // ── Prescriptions tab ────────────────────────────────────────────
   Widget _buildPrescriptionsTab() {
     return ListView.separated(
+      physics: const BouncingScrollPhysics(),
       padding: const EdgeInsets.all(16),
       itemCount: _prescriptions.length,
       separatorBuilder: (_, __) => const SizedBox(height: 8),
@@ -715,16 +721,13 @@ class _RecordsScreenState extends State<RecordsScreen>
   }
 
   Widget _buildPrescriptionCard(_PrescriptionEntry p) {
-    return GestureDetector(
+    return KineticInteraction(
       onTap: () {
-        HapticFeedback.lightImpact();
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => PrescriptionDetailScreen(
-              labName: 'SRL Diagnostics, Baner',
-              dateLabel: '14 Jan, 2025',
-              doctorName: p.doctorName,
-            ),
+        context.pushPremium(
+          PrescriptionDetailScreen(
+            labName: 'SRL Diagnostics, Baner',
+            dateLabel: '14 Jan, 2025',
+            doctorName: p.doctorName,
           ),
         );
       },
@@ -795,8 +798,8 @@ class _RecordsScreenState extends State<RecordsScreen>
   }
 
   Widget _buildNoteCard(_NoteEntry note) {
-    return GestureDetector(
-      onTap: () => HapticFeedback.lightImpact(),
+    return KineticInteraction(
+      onTap: () {},
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(

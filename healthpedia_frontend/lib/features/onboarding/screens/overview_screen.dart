@@ -259,6 +259,7 @@ class _BasePage extends StatelessWidget {
               ),
             ),
           ),
+          const SizedBox(height: AppSpacing.space24),
         ],
       ),
     );

@@ -4,6 +4,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:healthpedia_frontend/core/constants/app_colors.dart';
 import 'package:healthpedia_frontend/core/constants/app_spacing.dart';
 import 'package:healthpedia_frontend/core/constants/app_typography.dart';
+import 'package:healthpedia_frontend/core/widgets/kinetic_interaction.dart';
+import 'package:healthpedia_frontend/core/navigation/premium_route.dart';
 import 'family_friends_screen.dart';
 import '../widgets/change_profile_photo_bottom_sheet.dart';
 import 'personal_information_screen.dart';
@@ -17,8 +19,6 @@ import 'notifications_screen.dart';
 import 'app_settings_screen.dart';
 import 'data_privacy_screen.dart';
 import 'legals_screen.dart';
-import '../widgets/blood_group_bottom_sheet.dart';
-import '../widgets/city_autocomplete_bottom_sheet.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -30,6 +30,7 @@ class ProfileScreen extends StatelessWidget {
       body: SafeArea(
         bottom: false,
         child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
           padding: const EdgeInsets.fromLTRB(
             AppSpacing.space16,
             AppSpacing.space24,
@@ -38,7 +39,7 @@ class ProfileScreen extends StatelessWidget {
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: const [
+            children: [
               _ProfileHero(),
               SizedBox(height: AppSpacing.space24),
               _PremiumCards(),
@@ -54,12 +55,7 @@ class ProfileScreen extends StatelessWidget {
                         'assets/Figma MCP Assets/CommonAssets/Icons/Devices & Apps big icon.svg',
                     iconBackground: const Color(0xFFA855F7),
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const DevicesAppsScreen(),
-                        ),
-                      );
+                      context.pushPremium(const DevicesAppsScreen());
                     },
                   ),
                 ],
@@ -74,12 +70,7 @@ class ProfileScreen extends StatelessWidget {
                         'assets/Figma MCP Assets/CommonAssets/Icons/Notifications big icon.svg',
                     iconBackground: const Color(0xFFF97316),
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const NotificationsScreen(),
-                        ),
-                      );
+                      context.pushPremium(const NotificationsScreen());
                     },
                   ),
                   _ProfileMenuData(
@@ -89,12 +80,7 @@ class ProfileScreen extends StatelessWidget {
                         'assets/Figma MCP Assets/CommonAssets/Icons/App Settings big icon.svg',
                     iconBackground: const Color(0xFF737373),
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const AppSettingsScreen(),
-                        ),
-                      );
+                      context.pushPremium(const AppSettingsScreen());
                     },
                   ),
                 ],
@@ -109,12 +95,7 @@ class ProfileScreen extends StatelessWidget {
                         'assets/Figma MCP Assets/CommonAssets/Icons/Data & Privacy big icon.svg',
                     iconBackground: const Color(0xFF6366F1),
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const DataPrivacyScreen(),
-                        ),
-                      );
+                      context.pushPremium(const DataPrivacyScreen());
                     },
                   ),
                 ],
@@ -137,12 +118,7 @@ class ProfileScreen extends StatelessWidget {
                         'assets/Figma MCP Assets/CommonAssets/Icons/Legals big icon.svg',
                     iconBackground: const Color(0xFF06B6D4),
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const LegalsScreen(),
-                        ),
-                      );
+                      context.pushPremium(const LegalsScreen());
                     },
                   ),
                 ],
@@ -166,6 +142,7 @@ class ProfileScreen extends StatelessWidget {
               _SocialLinks(),
               SizedBox(height: AppSpacing.space20),
               _AppFooter(),
+              const SizedBox(height: 120),
             ],
           ),
         ),
@@ -181,9 +158,8 @@ class _ProfileHero extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        GestureDetector(
+        KineticInteraction(
           onTap: () {
-            HapticFeedback.lightImpact();
             showChangeProfilePhotoSheet(context);
           },
           child: Stack(
@@ -416,12 +392,7 @@ class _PrimaryProfileSection extends StatelessWidget {
               'assets/Figma MCP Assets/CommonAssets/Icons/Personal Information big icon.svg',
           iconBackground: AppColors.blue500,
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const PersonalInformationScreen(),
-              ),
-            );
+            context.pushPremium(const PersonalInformationScreen());
           },
         ),
         _ProfileMenuData(
@@ -431,12 +402,7 @@ class _PrimaryProfileSection extends StatelessWidget {
               'assets/Figma MCP Assets/CommonAssets/Icons/Conditions big icon.svg',
           iconBackground: AppColors.rose500,
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const ConditionsScreen(),
-              ),
-            );
+            context.pushPremium(const ConditionsScreen());
           },
         ),
         _ProfileMenuData(
@@ -446,12 +412,7 @@ class _PrimaryProfileSection extends StatelessWidget {
               'assets/Figma MCP Assets/CommonAssets/Icons/Allergies big icon.svg',
           iconBackground: AppColors.orange500,
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const AllergiesScreen(),
-              ),
-            );
+            context.pushPremium(const AllergiesScreen());
           },
         ),
         _ProfileMenuData(
@@ -461,12 +422,7 @@ class _PrimaryProfileSection extends StatelessWidget {
               'assets/Figma MCP Assets/CommonAssets/Icons/Family History big icon.svg',
           iconBackground: AppColors.indigo500,
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const FamilyHistoryScreen(),
-              ),
-            );
+            context.pushPremium(const FamilyHistoryScreen());
           },
         ),
         _ProfileMenuData(
@@ -476,12 +432,7 @@ class _PrimaryProfileSection extends StatelessWidget {
               'assets/Figma MCP Assets/CommonAssets/Icons/Insurance big icon.svg',
           iconBackground: AppColors.teal500,
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const InsuranceScreen(),
-              ),
-            );
+            context.pushPremium(const InsuranceScreen());
           },
         ),
         _ProfileMenuData(
@@ -491,12 +442,7 @@ class _PrimaryProfileSection extends StatelessWidget {
               'assets/Figma MCP Assets/CommonAssets/Icons/Family & Friends big icon.png',
           trailingType: _TrailingType.chevron,
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const FamilyFriendsScreen(),
-              ),
-            );
+            context.pushPremium(const FamilyFriendsScreen());
           },
         ),
         _ProfileMenuData(
@@ -508,12 +454,7 @@ class _PrimaryProfileSection extends StatelessWidget {
           trailingType: _TrailingType.chevron,
           secondaryColor: AppColors.orange500,
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const AbhaIdScreen(),
-              ),
-            );
+            context.pushPremium(const AbhaIdScreen());
           },
         ),
       ],
@@ -552,11 +493,8 @@ class _ProfileMenuRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        HapticFeedback.lightImpact();
-        data.onTap?.call();
-      },
+    return KineticInteraction(
+      onTap: data.onTap,
       child: Padding(
         padding: const EdgeInsets.only(left: 16),
         child: Row(

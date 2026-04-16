@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'main_scaffold.dart';
 import 'reminders_history_screen.dart';
 import '../widgets/add_reminder_bottom_sheet.dart';
+import '../widgets/reminder_checkbox.dart';
 
 class RemindersScreen extends StatefulWidget {
   final List<ReminderItem> reminders;
@@ -243,10 +244,8 @@ class _RemindersScreenState extends State<RemindersScreen> with SingleTickerProv
         child: Row(
           children: [
             // Checklist Icon (Dotted circle for pending)
-            SvgPicture.asset(
-              'assets/Figma MCP Assets/CommonAssets/Icons/Reminder Icon Placeholder 1.svg',
-              width: 24,
-              height: 24,
+            ReminderCheckbox(
+              status: item.status,
             ),
             const SizedBox(width: 12),
             Expanded(

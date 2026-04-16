@@ -11,7 +11,7 @@ class Overview3Hero extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 480, // Height matching the scaled composition
+      height: 400, // Height matching the scaled composition
       width: double.infinity,
       child: Stack(
         clipBehavior: Clip.none,

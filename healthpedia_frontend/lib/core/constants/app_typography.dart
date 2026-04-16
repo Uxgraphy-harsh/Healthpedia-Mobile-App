@@ -28,8 +28,8 @@ class AppTypography {
   static const TextStyle title1 = TextStyle(
     fontFamily: fontFamilySecondary,
     fontSize: 72,
-    height: 88 / 72, // lineHeight / fontSize
-    letterSpacing: -0.8,
+    height: 88 / 72,
+    letterSpacing: -0.5,
     fontWeight: FontWeight.w700,
   );
 
@@ -38,7 +38,7 @@ class AppTypography {
     fontFamily: fontFamilySecondary,
     fontSize: 64,
     height: 76 / 64,
-    letterSpacing: -0.8,
+    letterSpacing: -0.5,
     fontWeight: FontWeight.w700,
   );
 
@@ -47,7 +47,7 @@ class AppTypography {
     fontFamily: fontFamilySecondary,
     fontSize: 56,
     height: 68 / 56,
-    letterSpacing: -0.6,
+    letterSpacing: -0.5,
     fontWeight: FontWeight.w700,
   );
 
@@ -100,12 +100,12 @@ class AppTypography {
     fontWeight: FontWeight.w700,
   );
 
-  /// H6: 20px, lineHeight 24px, letterSpacing 0
+  /// H6: 20px, lineHeight 24px, letterSpacing -0.5
   static const TextStyle h6 = TextStyle(
     fontFamily: fontFamilyPrimary,
     fontSize: 20,
     height: 24 / 20,
-    letterSpacing: 0,
+    letterSpacing: -0.5,
     fontWeight: FontWeight.w700,
   );
 
@@ -130,7 +130,7 @@ class AppTypography {
     fontFamily: fontFamilyPrimary,
     fontSize: 16,
     height: 22 / 16,
-    letterSpacing: -0.18,
+    letterSpacing: -0.2,
     fontWeight: FontWeight.w500,
   );
 
@@ -171,7 +171,7 @@ class AppTypography {
     fontFamily: fontFamilyPrimary,
     fontSize: 18,
     height: 28 / 18,
-    letterSpacing: 0,
+    letterSpacing: -0.2,
     fontWeight: FontWeight.w400,
   );
 
@@ -180,7 +180,7 @@ class AppTypography {
     fontFamily: fontFamilyPrimary,
     fontSize: 16,
     height: 24 / 16,
-    letterSpacing: 0,
+    letterSpacing: -0.2,
     fontWeight: FontWeight.w400,
   );
 
@@ -189,7 +189,7 @@ class AppTypography {
     fontFamily: fontFamilyPrimary,
     fontSize: 14,
     height: 20 / 14,
-    letterSpacing: 0,
+    letterSpacing: -0.2,
     fontWeight: FontWeight.w400,
   );
 
@@ -198,7 +198,7 @@ class AppTypography {
     fontFamily: fontFamilyPrimary,
     fontSize: 12,
     height: 16 / 12,
-    letterSpacing: 0,
+    letterSpacing: -0.2,
     fontWeight: FontWeight.w400,
   );
 
@@ -223,7 +223,7 @@ class AppTypography {
     fontFamily: fontFamilyPrimary,
     fontSize: 10,
     height: 12 / 10,
-    letterSpacing: 0,
+    letterSpacing: -0.2,
     fontWeight: FontWeight.w400,
   );
 
@@ -232,7 +232,7 @@ class AppTypography {
     fontFamily: fontFamilyPrimary,
     fontSize: 9,
     height: 10 / 9,
-    letterSpacing: 0,
+    letterSpacing: -0.2,
     fontWeight: FontWeight.w400,
   );
 }
