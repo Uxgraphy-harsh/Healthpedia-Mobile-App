@@ -3,28 +3,65 @@ import 'package:flutter/services.dart';
 import 'package:healthpedia_frontend/core/constants/app_colors.dart';
 import 'package:healthpedia_frontend/core/constants/app_spacing.dart';
 import 'package:healthpedia_frontend/core/constants/app_typography.dart';
+import 'package:healthpedia_frontend/core/widgets/premium_sheet_header.dart';
+import 'package:healthpedia_frontend/core/widgets/premium_bottom_sheet.dart';
 
-void showAddMedicalRecordSheet(BuildContext context) {
+import 'package:healthpedia_frontend/core/widgets/premium_inputs/premium_text_field.dart';
+
+void showAddMedicalRecordSheet(
+  BuildContext context, {
+  required Function(String hpid, List<Map<String, String>> conditions) onAdd,
+  String? initialHpid,
+  List<Map<String, String>>? initialConditions,
+}) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
-    builder: (context) => const AddMedicalRecordBottomSheet(),
+    builder: (context) => AddMedicalRecordBottomSheet(
+      onAdd: onAdd,
+      initialHpid: initialHpid,
+      initialConditions: initialConditions,
+    ),
   );
 }
 
 class AddMedicalRecordBottomSheet extends StatefulWidget {
-  const AddMedicalRecordBottomSheet({super.key});
+  final Function(String hpid, List<Map<String, String>> conditions) onAdd;
+  final String? initialHpid;
+  final List<Map<String, String>>? initialConditions;
+
+  const AddMedicalRecordBottomSheet({
+    super.key, 
+    required this.onAdd,
+    this.initialHpid,
+    this.initialConditions,
+  });
 
   @override
   State<AddMedicalRecordBottomSheet> createState() => _AddMedicalRecordBottomSheetState();
 }
 
 class _AddMedicalRecordBottomSheetState extends State<AddMedicalRecordBottomSheet> {
-  final _hpidController = TextEditingController();
-  final List<_ConditionInput> _conditions = [
-    _ConditionInput(name: TextEditingController(), date: TextEditingController()),
-  ];
+  late final TextEditingController _hpidController;
+  final List<_ConditionInput> _conditions = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _hpidController = TextEditingController(text: widget.initialHpid);
+    
+    if (widget.initialConditions != null && widget.initialConditions!.isNotEmpty) {
+      for (var c in widget.initialConditions!) {
+        _conditions.add(_ConditionInput(
+          name: TextEditingController(text: c['name']),
+          date: TextEditingController(text: c['date']?.replaceAll('Diagnosed • ', '')),
+        ));
+      }
+    } else {
+      _conditions.add(_ConditionInput(name: TextEditingController(), date: TextEditingController()));
+    }
+  }
 
   @override
   void dispose() {
@@ -52,87 +89,64 @@ class _AddMedicalRecordBottomSheetState extends State<AddMedicalRecordBottomShee
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.9),
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom + AppSpacing.space24,
-        left: 16,
-        right: 16,
-        top: 8,
-      ),
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: Container(
-                width: 40, height: 4,
-                decoration: BoxDecoration(color: AppColors.neutral200, borderRadius: BorderRadius.circular(2)),
+    return PremiumBottomSheet(
+      title: widget.initialHpid != null ? 'Edit Medical Record' : 'Add a Medical Record',
+      isDark: false,
+      footer: Row(
+        children: [
+          Expanded(
+            child: OutlinedButton.icon(
+              onPressed: _addCondition,
+              icon: const Icon(Icons.add, color: Color(0xFFE11D48)),
+              label: Text('Add More', style: AppTypography.label1.copyWith(color: const Color(0xFFE11D48), fontWeight: FontWeight.w500)),
+              style: OutlinedButton.styleFrom(
+                minimumSize: const Size(0, 56),
+                side: const BorderSide(color: Color(0xFFFFD1D5)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(99)),
               ),
             ),
-            const SizedBox(height: 16),
-            _buildHeader(),
-            const SizedBox(height: 32),
-            TextField(
-              controller: _hpidController,
-              decoration: _inputDecoration('Healthpedia ID*', '#000000000000'),
-            ),
-            const SizedBox(height: 24),
-            ..._conditions.asMap().entries.map((entry) => _buildConditionForm(entry.key, entry.value)),
-            const SizedBox(height: 32),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: _addCondition,
-                    icon: const Icon(Icons.add, color: Color(0xFFE11D48)),
-                    label: Text('Add More', style: AppTypography.label1.copyWith(color: const Color(0xFFE11D48), fontWeight: FontWeight.w500)),
-                    style: OutlinedButton.styleFrom(
-                      minimumSize: const Size(0, 56),
-                      side: const BorderSide(color: Color(0xFFFFD1D5)),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(99)),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () { HapticFeedback.mediumImpact(); Navigator.pop(context); },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.neutral950,
-                      foregroundColor: AppColors.white,
-                      minimumSize: const Size(0, 56),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(99)),
-                    ),
-                    child: Text('Save', style: AppTypography.label1.copyWith(fontWeight: FontWeight.w500)),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        Align(
-          alignment: Alignment.centerLeft,
-          child: GestureDetector(
-            onTap: () => Navigator.pop(context),
-            child: Text('Cancel', style: AppTypography.label1.copyWith(color: AppColors.blue600, fontWeight: FontWeight.w400)),
           ),
-        ),
-        Text('Add a Medical Record', style: AppTypography.h6.copyWith(color: AppColors.neutral950, fontWeight: FontWeight.w600)),
-      ],
+          const SizedBox(width: 12),
+          Expanded(
+            child: ElevatedButton(
+              onPressed: () { 
+                if (_hpidController.text.isNotEmpty && _conditions.every((c) => c.name.text.isNotEmpty)) {
+                  HapticFeedback.mediumImpact(); 
+                  final conditionsData = _conditions.map((c) => {
+                    'name': c.name.text,
+                    'date': 'Diagnosed • ${c.date.text.isEmpty ? "early 50s" : c.date.text}',
+                  }).toList();
+                  
+                  widget.onAdd(_hpidController.text, conditionsData);
+                  Navigator.pop(context); 
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.neutral950,
+                foregroundColor: AppColors.white,
+                minimumSize: const Size(0, 56),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(99)),
+              ),
+              child: Text('Save', style: AppTypography.label1.copyWith(fontWeight: FontWeight.w500)),
+            ),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          PremiumTextField(
+            controller: _hpidController,
+            label: 'Healthpedia ID*',
+            placeholder: '#000000000000',
+            isDark: false,
+            minHeight: 64,
+            forceLabelInside: true,
+          ),
+          const SizedBox(height: 24),
+          ..._conditions.asMap().entries.map((entry) => _buildConditionForm(entry.key, entry.value)),
+        ],
+      ),
     );
   }
 
@@ -154,14 +168,22 @@ class _AddMedicalRecordBottomSheetState extends State<AddMedicalRecordBottomShee
             ],
           ),
           const SizedBox(height: 12),
-          TextField(
+          PremiumTextField(
             controller: input.name,
-            decoration: _inputDecoration('Condition name*', 'e.g. Hypothyroidism'),
+            label: 'Condition name*',
+            placeholder: 'e.g. Hypothyroidism',
+            isDark: false,
+            minHeight: 64,
+            forceLabelInside: true,
           ),
           const SizedBox(height: 16),
-          TextField(
+          PremiumTextField(
             controller: input.date,
-            decoration: _inputDecoration('Diagnosis date', '00/00/0000'),
+            label: 'Diagnosis date',
+            placeholder: 'e.g. late 40s',
+            isDark: false,
+            minHeight: 64,
+            forceLabelInside: true,
           ),
         ],
       ),

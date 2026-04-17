@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:healthpedia_frontend/core/widgets/premium_inputs/premium_text_field.dart';
+import 'package:healthpedia_frontend/core/widgets/premium_inputs/premium_file_drop.dart';
+import 'package:healthpedia_frontend/core/constants/app_colors.dart';
+import 'package:healthpedia_frontend/core/widgets/premium_sheet_header.dart';
 
 /// Shows the "Add symptom" bottom sheet (≤60% screen height, scrollable).
 Future<void> showAddSymptomSheet(
@@ -213,8 +217,8 @@ class _AddSymptomBottomSheetState extends State<AddSymptomBottomSheet> {
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
-    // Apple HIG: bottom sheet should not exceed ~60% of screen
-    final maxHeight = screenHeight * 0.60;
+    // Standard consistent height for Medium data entry sheets
+    final maxHeight = screenHeight * 0.70;
 
     return Container(
       constraints: BoxConstraints(maxHeight: maxHeight),
@@ -229,51 +233,13 @@ class _AddSymptomBottomSheetState extends State<AddSymptomBottomSheet> {
         mainAxisSize: MainAxisSize.min,
         children: [
           // ── Drag handle ──
-          Container(
-            margin: const EdgeInsets.symmetric(vertical: 8),
-            width: 40,
-            height: 5,
-            decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(100),
-            ),
+          // Removed manual bar as Android provides default, keeping space
+          PremiumSheetHeader(
+            title: 'Add symptom',
+            leadingLabel: 'Cancel',
+            onLeadingTap: () => Navigator.of(context).pop(),
           ),
-
-          // ── Header: Cancel | "Add symptom" ──
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: GestureDetector(
-                    onTap: () => Navigator.of(context).pop(),
-                    child: const Text(
-                      'Cancel',
-                      style: TextStyle(
-                        fontFamily: 'Geist',
-                        fontSize: 14,
-                        color: Color(0xFF2563EB), // Blue 600
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ),
-                ),
-                const Text(
-                  'Add symptom',
-                  style: TextStyle(
-                    fontFamily: 'Geist',
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF0A0A0A),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          const Divider(height: 1, color: Color(0xFFE5E5E5)),
+          const SizedBox(height: 0),
 
           // ── Scrollable content ──
           Expanded(
@@ -337,10 +303,14 @@ class _AddSymptomBottomSheetState extends State<AddSymptomBottomSheet> {
                   const SizedBox(height: 24),
 
                   // ── Save Symptom CTA ──
-                  _buildSaveButton(),
+                  // Removed from here to make it sticky
                 ],
               ),
             ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+            child: _buildSaveButton(),
           ),
         ],
       ),
@@ -364,43 +334,11 @@ class _AddSymptomBottomSheetState extends State<AddSymptomBottomSheet> {
 
   // ─── Symptom name field ────────────────────────────────────────────
   Widget _buildNameField() {
-    return TextField(
+    return PremiumTextField(
       controller: _nameController,
-      focusNode: _nameFocus,
-      style: const TextStyle(
-        fontFamily: 'Geist',
-        fontSize: 15,
-        fontWeight: FontWeight.w400,
-        color: Color(0xFF0A0A0A),
-      ),
-      decoration: InputDecoration(
-        labelText: 'Symptom name *',
-        labelStyle: const TextStyle(
-          fontFamily: 'Geist',
-          fontSize: 14,
-          color: Color(0xFF737373),
-        ),
-        hintText: 'Type to add or search existing symptom...',
-        hintStyle: const TextStyle(
-          fontFamily: 'Geist',
-          fontSize: 14,
-          color: Color(0xFFA3A3A3),
-        ),
-        floatingLabelBehavior: FloatingLabelBehavior.always,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFFD4D4D4)),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFF0A0A0A), width: 1.5),
-        ),
-        filled: true,
-        fillColor: Colors.white,
-      ),
-      cursorColor: const Color(0xFF0A0A0A),
+      label: 'Symptom name',
+      placeholder: 'Type to add or search...',
+      isDark: false,
     );
   }
 
@@ -456,129 +394,50 @@ class _AddSymptomBottomSheetState extends State<AddSymptomBottomSheet> {
 
   // ─── Date field ────────────────────────────────────────────────────
   Widget _buildDateField() {
-    return GestureDetector(
+    return PremiumTextField(
+      label: 'Date',
+      placeholder: _selectedDate != null ? _formatDate(_selectedDate!) : '00/00/0000',
       onTap: _selectDate,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border.all(color: const Color(0xFFD4D4D4)),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Date',
-              style: TextStyle(
-                fontFamily: 'Geist',
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
-                color: Color(0xFF737373),
-              ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              _selectedDate != null
-                  ? _formatDate(_selectedDate!)
-                  : '00/00/0000',
-              style: TextStyle(
-                fontFamily: 'Geist',
-                fontSize: 15,
-                fontWeight: FontWeight.w400,
-                color: _selectedDate != null
-                    ? const Color(0xFF0A0A0A)
-                    : const Color(0xFFA3A3A3),
-              ),
-            ),
-          ],
-        ),
-      ),
+      isDark: false,
     );
   }
 
   // ─── Time field ────────────────────────────────────────────────────
   Widget _buildTimeField() {
-    return GestureDetector(
+    return PremiumTextField(
+      label: 'Time',
+      placeholder: _selectedTime != null ? _formatTime(_selectedTime!) : '00:00',
       onTap: _selectTime,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border.all(color: const Color(0xFFD4D4D4)),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Time',
-                    style: TextStyle(
-                      fontFamily: 'Geist',
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                      color: Color(0xFF737373),
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    _selectedTime != null
-                        ? _formatTime(_selectedTime!)
-                        : '00:00',
-                    style: TextStyle(
-                      fontFamily: 'Geist',
-                      fontSize: 15,
-                      fontWeight: FontWeight.w400,
-                      color: _selectedTime != null
-                          ? const Color(0xFF0A0A0A)
-                          : const Color(0xFFA3A3A3),
-                    ),
-                  ),
-                ],
+      isDark: false,
+      suffix: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          GestureDetector(
+            onTap: () => setState(() => _isAM = true),
+            child: Text(
+              'AM',
+              style: TextStyle(
+                fontFamily: 'Geist',
+                fontSize: 14,
+                fontWeight: _isAM ? FontWeight.w600 : FontWeight.w400,
+                color: _isAM ? const Color(0xFF0A0A0A) : const Color(0xFFA3A3A3),
               ),
             ),
-            // AM / PM toggle
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                GestureDetector(
-                  onTap: () => setState(() => _isAM = true),
-                  child: Text(
-                    'AM',
-                    style: TextStyle(
-                      fontFamily: 'Geist',
-                      fontSize: 14,
-                      fontWeight:
-                          _isAM ? FontWeight.w600 : FontWeight.w400,
-                      color: _isAM
-                          ? const Color(0xFF0A0A0A)
-                          : const Color(0xFFA3A3A3),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                GestureDetector(
-                  onTap: () => setState(() => _isAM = false),
-                  child: Text(
-                    'PM',
-                    style: TextStyle(
-                      fontFamily: 'Geist',
-                      fontSize: 14,
-                      fontWeight:
-                          !_isAM ? FontWeight.w600 : FontWeight.w400,
-                      color: !_isAM
-                          ? const Color(0xFF0A0A0A)
-                          : const Color(0xFFA3A3A3),
-                    ),
-                  ),
-                ),
-              ],
+          ),
+          const SizedBox(width: 8),
+          GestureDetector(
+            onTap: () => setState(() => _isAM = false),
+            child: Text(
+              'PM',
+              style: TextStyle(
+                fontFamily: 'Geist',
+                fontSize: 14,
+                fontWeight: !_isAM ? FontWeight.w600 : FontWeight.w400,
+                color: !_isAM ? const Color(0xFF0A0A0A) : const Color(0xFFA3A3A3),
+              ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -738,146 +597,53 @@ class _AddSymptomBottomSheetState extends State<AddSymptomBottomSheet> {
 
   // ─── Additional info / Note textarea ───────────────────────────────
   Widget _buildNoteField() {
-    return TextField(
+    return PremiumTextField(
       controller: _noteController,
+      label: 'Note',
+      placeholder: 'Write or paste a link',
       maxLines: 4,
-      minLines: 3,
-      style: const TextStyle(
-        fontFamily: 'Geist',
-        fontSize: 14,
-        color: Color(0xFF0A0A0A),
-      ),
-      decoration: InputDecoration(
-        labelText: 'Note',
-        labelStyle: const TextStyle(
-          fontFamily: 'Geist',
-          fontSize: 14,
-          color: Color(0xFF737373),
-        ),
-        hintText: 'Write or paste a link',
-        hintStyle: const TextStyle(
-          fontFamily: 'Geist',
-          fontSize: 14,
-          color: Color(0xFFA3A3A3),
-        ),
-        floatingLabelBehavior: FloatingLabelBehavior.always,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFFD4D4D4)),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFF0A0A0A), width: 1.5),
-        ),
-        filled: true,
-        fillColor: Colors.white,
-      ),
-      cursorColor: const Color(0xFF0A0A0A),
+      isDark: false,
     );
   }
 
   // ─── Upload area ───────────────────────────────────────────────────
   Widget _buildUploadArea() {
-    return GestureDetector(
-      onTap: _pickFiles,
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 24),
-        decoration: BoxDecoration(
-          color: const Color(0xFFFAFAFA),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: const Color(0xFFD4D4D4),
-            style: BorderStyle.solid,
-          ),
-        ),
-        child: Column(
-          children: [
-            // Upload icon
-            Icon(
-              Icons.upload_outlined,
-              size: 28,
-              color: const Color(0xFFCD577F), // pink/500
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Tap to upload',
-              style: TextStyle(
-                fontFamily: 'Geist',
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFF0A0A0A),
-              ),
-            ),
-            const SizedBox(height: 4),
-            const Text(
-              'Max upto 2 mb per file upload',
-              style: TextStyle(
-                fontFamily: 'Geist',
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
-                color: Color(0xFF737373),
-              ),
-            ),
-            const SizedBox(height: 8),
-            // File type badges
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: ['PDF', 'JPG', 'PNG'].map((ext) {
-                return Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 10, vertical: 2),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: const Color(0xFFD4D4D4)),
-                    borderRadius: BorderRadius.circular(999),
-                  ),
-                  child: Text(
-                    ext,
-                    style: const TextStyle(
-                      fontFamily: 'Geist',
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                      color: Color(0xFF525252),
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-          ],
-        ),
-      ),
+    return PremiumFileDrop(
+      onBrowse: _pickFiles,
+      isDark: false,
     );
   }
 
   // ─── Attachment tile ───────────────────────────────────────────────
   Widget _buildAttachmentTile(int index, PlatformFile file) {
-    // Determine icon color based on extension
     final ext = file.extension?.toLowerCase() ?? '';
     final isPdf = ext == 'pdf';
+    final isImage = ext == 'jpg' || ext == 'jpeg' || ext == 'png';
+    
+    IconData iconData = Icons.insert_drive_file_outlined;
+    Color iconColor = const Color(0xFFA3A3A3); // AppColors.neutral500
+    
+    if (isPdf) {
+      iconData = Icons.picture_as_pdf_outlined;
+      iconColor = const Color(0xFFDC2626); // AppColors.red600
+    } else if (isImage) {
+      iconData = Icons.image_outlined;
+      iconColor = ext == 'png' ? const Color(0xFF0284C7) : const Color(0xFFEA580C); // AppColors.sky600 : AppColors.orange600
+      if (ext == 'png') iconColor = const Color(0xFF14B8A6); // Teal 500 matching screenshot
+    }
 
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: const Color(0xFFE5E5E5)),
+        color: Colors.white, // AppColors.white
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFE5E5E5)), // AppColors.neutral200
       ),
       child: Row(
         children: [
-          // File icon
-          Icon(
-            isPdf ? Icons.picture_as_pdf : Icons.image,
-            size: 20,
-            color: isPdf
-                ? const Color(0xFFEF4444)  // red PDF icon
-                : const Color(0xFF3B82F6), // blue image icon
-          ),
-          const SizedBox(width: 8),
-          // File name
+          Icon(iconData, color: iconColor, size: 24),
+          const SizedBox(width: 12),
           Expanded(
             child: Text(
               file.name,

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:healthpedia_frontend/core/constants/app_colors.dart';
 import 'package:healthpedia_frontend/core/constants/app_spacing.dart';
@@ -19,6 +18,8 @@ import 'notifications_screen.dart';
 import 'app_settings_screen.dart';
 import 'data_privacy_screen.dart';
 import 'legals_screen.dart';
+import 'package:healthpedia_frontend/features/onboarding/screens/overview_screen.dart';
+import 'package:healthpedia_frontend/core/widgets/premium_alert_dialog.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -163,46 +164,66 @@ class _ProfileHero extends StatelessWidget {
             showChangeProfilePhotoSheet(context);
           },
           child: Stack(
-            clipBehavior: Clip.none,
+            alignment: Alignment.center,
             children: [
-              Container(
-                width: 136,
-                height: 136,
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: AppColors.pink200, width: 3),
-                ),
-                child: Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: AppColors.orange200,
-                    border: Border.all(color: AppColors.white, width: 3),
-                  ),
-                  child: ClipOval(
-                    child: Image.asset(
-                      'assets/Figma MCP Assets/Onboarding Screens/Onboarding Screens Images/M 84.png',
-                      fit: BoxFit.cover,
+              // Health Score Ring (Perfect Proximity)
+              SizedBox(
+                width: 108,
+                height: 108,
+                child: CustomPaint(
+                  painter: _HealthScorePainter(
+                    score: 0.74,
+                    color: const Color(0xFFFF96BE),
+                    backgroundColor: AppColors.neutral200.withValues(
+                      alpha: 0.2,
                     ),
                   ),
                 ),
               ),
+              // Main Avatar Frame (Clean & Thin)
+              Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppColors.neutral100,
+                  border: Border.all(color: AppColors.neutral300, width: 1),
+                ),
+                child: ClipOval(
+                  child: Image.asset(
+                    'assets/Figma MCP Assets/Onboarding Screens/Onboarding Screens Images/M 84.png',
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              // 32px Refined Edit Icon
               Positioned(
                 right: 0,
                 bottom: 4,
                 child: Container(
-                  width: 48,
-                  height: 48,
+                  width: 32,
+                  height: 32,
                   decoration: BoxDecoration(
-                    color: AppColors.neutral100,
+                    color: AppColors.white,
                     shape: BoxShape.circle,
-                    border: Border.all(color: AppColors.neutral300, width: 2),
+                    border: Border.all(color: AppColors.neutral300, width: 1),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.08),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
                   child: Center(
                     child: SvgPicture.asset(
                       'assets/Figma MCP Assets/CommonAssets/Icons/edit.svg',
-                      width: 24,
-                      height: 24,
+                      width: 16,
+                      height: 16,
+                      colorFilter: const ColorFilter.mode(
+                        AppColors.blue600,
+                        BlendMode.srcIn,
+                      ),
                     ),
                   ),
                 ),
@@ -263,50 +284,40 @@ class _PremiumCards extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(AppSpacing.radius2xl),
-      ),
-      child: Column(
-        children: [
-          _PromoCard(
-            iconPath:
-                'assets/Figma MCP Assets/CommonAssets/Icons/Upgrade to Premium icon.svg',
-            title: 'Upgrade to Premium',
-            subtitle: '7 days free trial',
-            titleColor: AppColors.purple950,
-            subtitleColor: AppColors.purple600,
-            borderColor: AppColors.purple500,
-            gradient: const LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: [AppColors.white, AppColors.purple50],
-            ),
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(AppSpacing.radius2xl),
-              topRight: Radius.circular(AppSpacing.radius2xl),
-            ),
+    return Column(
+      children: [
+        _PromoCard(
+          iconPath:
+              'assets/Figma MCP Assets/CommonAssets/Icons/Upgrade to Premium icon.svg',
+          title: 'Upgrade to Premium',
+          subtitle: '7 days free trial',
+          titleColor: AppColors.purple950,
+          subtitleColor: AppColors.purple600,
+          borderColor: AppColors.purple500,
+          gradient: const LinearGradient(
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            colors: [AppColors.white, AppColors.purple50],
           ),
-          _PromoCard(
-            iconPath:
-                'assets/Figma MCP Assets/CommonAssets/Icons/Refer & Earn icon.svg',
-            title: 'Refer & Earn',
-            subtitle: 'Extend trial by 1 month on each referral.',
-            titleColor: AppColors.amber950,
-            subtitleColor: AppColors.amber600,
-            borderColor: AppColors.amber400,
-            gradient: const LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: [AppColors.white, AppColors.amber50],
-            ),
-            borderRadius: const BorderRadius.only(
-              bottomLeft: Radius.circular(AppSpacing.radius2xl),
-              bottomRight: Radius.circular(AppSpacing.radius2xl),
-            ),
+          borderRadius: BorderRadius.circular(AppSpacing.radius2xl),
+        ),
+        const SizedBox(height: AppSpacing.space12),
+        _PromoCard(
+          iconPath:
+              'assets/Figma MCP Assets/CommonAssets/Icons/Refer & Earn icon.svg',
+          title: 'Refer & Earn',
+          subtitle: 'Extend trial by 1 month on each referral.',
+          titleColor: AppColors.amber950,
+          subtitleColor: AppColors.amber600,
+          borderColor: AppColors.amber400,
+          gradient: const LinearGradient(
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            colors: [AppColors.white, AppColors.amber50],
           ),
-        ],
-      ),
+          borderRadius: BorderRadius.circular(AppSpacing.radius2xl),
+        ),
+      ],
     );
   }
 }
@@ -335,41 +346,42 @@ class _PromoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 75,
-      padding: const EdgeInsets.only(left: 16),
+      constraints: const BoxConstraints(minHeight: 80),
+      margin: const EdgeInsets.only(bottom: 1),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
+        color: AppColors.white,
         gradient: gradient,
-        border: Border.all(color: borderColor),
+        border: Border.all(color: borderColor, width: 1),
         borderRadius: borderRadius,
       ),
       child: Row(
         children: [
-          SvgPicture.asset(iconPath, width: 44, height: 44),
+          SvgPicture.asset(iconPath, width: 48, height: 48),
           const SizedBox(width: AppSpacing.space12),
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(right: 16),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: AppTypography.label1.copyWith(
-                      color: titleColor,
-                      fontWeight: FontWeight.w500,
-                    ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: AppTypography.label1.copyWith(
+                    color: titleColor,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: -0.2,
                   ),
-                  const SizedBox(height: AppSpacing.space4),
-                  Text(
-                    subtitle,
-                    style: AppTypography.label2.copyWith(
-                      color: subtitleColor,
-                      fontWeight: FontWeight.w300,
-                    ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  subtitle,
+                  style: AppTypography.label2.copyWith(
+                    color: subtitleColor,
+                    fontWeight: FontWeight.w400,
+                    fontSize: 13,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ],
@@ -544,12 +556,12 @@ class _ProfileMenuRow extends StatelessWidget {
                             ),
                     ),
                     if (data.trailingType == _TrailingType.chevron)
-                      Padding(
-                        padding: const EdgeInsets.only(right: 16),
-                        child: SvgPicture.asset(
-                          'assets/Figma MCP Assets/CommonAssets/Icons/Field Icon V1.svg',
-                          width: 24,
-                          height: 24,
+                      const Padding(
+                        padding: EdgeInsets.only(right: 16),
+                        child: Icon(
+                          Icons.chevron_right_rounded,
+                          color: AppColors.neutral400,
+                          size: 24,
                         ),
                       ),
                     if (data.trailingType == _TrailingType.external)
@@ -613,27 +625,47 @@ class _LogoutSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(AppSpacing.radius2xl),
-      ),
-      child: const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10.5),
-        child: Row(
-          children: [
-            SizedBox(width: 32, height: 32, child: _LogoutIcon()),
-            SizedBox(width: AppSpacing.space12),
-            Text(
-              'Logout',
-              style: TextStyle(
-                fontFamily: 'Geist',
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: AppColors.red500,
+    return KineticInteraction(
+      onTap: () {
+        showDialog(
+          context: context,
+          builder: (context) => PremiumAlertDialog(
+            title: 'Logout',
+            description: 'Are you sure you want to logout from this device?',
+            primaryLabel: 'Logout',
+            isDestructive: true,
+            onPrimaryPressed: () {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const OverviewScreen()),
+                (route) => false,
+              );
+            },
+          ),
+        );
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(AppSpacing.radius2xl),
+        ),
+        child: const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10.5),
+          child: Row(
+            children: [
+              SizedBox(width: 32, height: 32, child: _LogoutIcon()),
+              SizedBox(width: AppSpacing.space12),
+              Text(
+                'Logout',
+                style: TextStyle(
+                  fontFamily: 'Geist',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.red500,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -841,3 +873,54 @@ class _SocialData {
 enum _ProfileIconType { svg, image }
 
 enum _TrailingType { chevron, external, none }
+
+class _HealthScorePainter extends CustomPainter {
+  final double score; // 0.0 to 1.0
+  final Color color;
+  final Color backgroundColor;
+
+  _HealthScorePainter({
+    required this.score,
+    required this.color,
+    required this.backgroundColor,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = (size.width - 4) / 2;
+    const strokeWidth = 4.0;
+
+    // Draw Background Circle (Implicit track)
+    final bgPaint = Paint()
+      ..color = backgroundColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth
+      ..strokeCap = StrokeCap.round;
+
+    canvas.drawCircle(center, radius, bgPaint);
+
+    // Draw Score Arc
+    final scorePaint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth
+      ..strokeCap = StrokeCap.round;
+
+    // Start from top (-pi/2)
+    canvas.drawArc(
+      Rect.fromCircle(center: center, radius: radius),
+      -1.5708, // -90 degrees in radians
+      6.28319 * score, // 2*pi * score
+      false,
+      scorePaint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant _HealthScorePainter oldDelegate) {
+    return oldDelegate.score != score ||
+        oldDelegate.color != color ||
+        oldDelegate.backgroundColor != backgroundColor;
+  }
+}

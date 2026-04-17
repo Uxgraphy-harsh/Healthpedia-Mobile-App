@@ -16,6 +16,36 @@ Use this file as a low-cost lookup before scanning the codebase. It is intention
 - Theme: `lib/core/theme/app_theme.dart`
 - Shared widgets: `lib/shared/widgets/app_button.dart`, `lib/shared/widgets/app_card.dart`, `lib/shared/widgets/app_text_field.dart`
 
+## ❖ Premium Design System (Standardized Master Components)
+
+All input components MUST derive from `BaseInputContainer` and ideally reuse `PremiumTextField` for consistent tactile depth.
+
+### Core Implementation Rules
+1. **Vertical Padding**: Mandatory **20px** vertical padding (Uber Tall) for all main fields.
+2. **Corner Radius**: Default **16px** for forms. Use **100px** (Pill) for Search.
+3. **Implicit Icon Reactivity**: Prefix icons MUST use the `prefixIcon` property to allow automated focus-state coloring (Primary Pink on focus).
+4. **Automated State Icons**:
+   - `state: PremiumFieldState.loading` → Shows automated Spinner.
+   - `state: PremiumFieldState.success` → Shows automated Checkmark.
+   - `state: PremiumFieldState.error` → Shows automated Exclamation.
+5. **Selection Pattern**: Drodown-style selects (`PremiumSelect`) MUST appear as floating overlays under the field, not bottom sheets, unless accessibility requires otherwise.
+
+### The Master Suite
+- **PremiumTextField**: The foundation for all text-based entry.
+- **PremiumSelect**: Stateful floating dropdown overlay.
+- **PremiumCountryField**: Dual-box (Uber-style) layout for picker + input.
+- **PremiumPINField**: Multi-box (Discrete) layout with 16px radius and 64px height.
+- **PremiumSearchField**: Pill-shaped with automated clear-on-text logic.
+- **PremiumPasswordField**: Includes synchronized visibility toggle and autofill support.
+- **PremiumDatePicker**: Inherits field aesthetics and triggers themed selection.
+- **PremiumSegmentedControl**: Tactical horizontal switch for gender, status toggles, etc.
+- Specialized Master Inputs:
+  - `lib/core/widgets/premium_inputs/premium_segmented_control.dart` (Official choice toggle pattern)
+  - `lib/core/widgets/premium_inputs/premium_country_field.dart` (Integrated phone/flag logic)
+  - `lib/core/widgets/premium_inputs/premium_pin_field.dart` (High-fidelity OTP/PIN entry)
+  - `lib/core/widgets/premium_inputs/premium_field_group.dart` (Visual bonding for related fields)
+- Note: Use this suite for all onboarding and core records screens to maintain the "Tactile Depth" design language.
+
 ## Onboarding Patterns
 
 - Overview carousel shell and CTA style: `lib/features/onboarding/screens/overview_screen.dart`

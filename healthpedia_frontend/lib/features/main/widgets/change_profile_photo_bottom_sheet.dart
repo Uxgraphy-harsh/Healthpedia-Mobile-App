@@ -4,6 +4,9 @@ import 'package:file_picker/file_picker.dart';
 import 'package:healthpedia_frontend/core/constants/app_colors.dart';
 import 'package:healthpedia_frontend/core/constants/app_spacing.dart';
 import 'package:healthpedia_frontend/core/constants/app_typography.dart';
+import 'package:healthpedia_frontend/core/widgets/premium_sheet_header.dart';
+
+import 'package:healthpedia_frontend/core/constants/app_avatars.dart';
 
 void showChangeProfilePhotoSheet(BuildContext context) {
   showModalBottomSheet(
@@ -26,22 +29,9 @@ class _ChangeProfilePhotoBottomSheetState extends State<ChangeProfilePhotoBottom
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   PlatformFile? _uploadedFile;
-  int _selectedAvatarIndex = 2; // Default selected avatar (Dr. Sharma/Mahesh)
+  int _selectedAvatarIndex = 6; // Adjusted default
 
-  final List<String> _avatars = [
-    'assets/Figma MCP Assets/Onboarding Screens/Onboarding Screens Images/M 82.png',
-    'assets/Figma MCP Assets/Onboarding Screens/Onboarding Screens Images/M 83.png',
-    'assets/Figma MCP Assets/Onboarding Screens/Onboarding Screens Images/M 84.png',
-    'assets/Figma MCP Assets/Onboarding Screens/Onboarding Screens Images/M 85.png',
-    'assets/Figma MCP Assets/Onboarding Screens/Onboarding Screens Images/M 86.png',
-    'assets/Figma MCP Assets/Onboarding Screens/Onboarding Screens Images/M 87.png',
-    'assets/Figma MCP Assets/Onboarding Screens/Onboarding Screens Images/M 88.png',
-    'assets/Figma MCP Assets/Onboarding Screens/Onboarding Screens Images/M 89.png',
-    'assets/Figma MCP Assets/Onboarding Screens/Onboarding Screens Images/M 90.png',
-    'assets/Figma MCP Assets/Onboarding Screens/Onboarding Screens Images/M 91.png',
-    'assets/Figma MCP Assets/Onboarding Screens/Onboarding Screens Images/M 92.png',
-    'assets/Figma MCP Assets/Onboarding Screens/Onboarding Screens Images/M 93.png',
-  ];
+  final List<String> _avatars = AppAvatars.all;
 
   @override
   void initState() {
@@ -91,43 +81,10 @@ class _ChangeProfilePhotoBottomSheetState extends State<ChangeProfilePhotoBottom
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const SizedBox(height: 8),
-          Container(
-            width: 40,
-            height: 4,
-            decoration: BoxDecoration(
-              color: AppColors.neutral200,
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-          const SizedBox(height: 16),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: Text(
-                      'Cancel',
-                      style: AppTypography.label1.copyWith(
-                        color: AppColors.blue600,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ),
-                ),
-                Text(
-                  'Change profile photo',
-                  style: AppTypography.h6.copyWith(
-                    color: AppColors.neutral950,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
+          PremiumSheetHeader(
+            title: 'Change profile photo',
+            leadingLabel: 'Cancel',
+            onLeadingTap: () => Navigator.pop(context),
           ),
           const SizedBox(height: 16),
           TabBar(
@@ -284,24 +241,18 @@ class _ChangeProfilePhotoBottomSheetState extends State<ChangeProfilePhotoBottom
   Widget _buildAvatarTab() {
     return Column(
       children: [
+        // Preview Avatar (Cleaned)
         Container(
           width: 100,
           height: 100,
-          padding: const EdgeInsets.all(4),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            border: Border.all(color: AppColors.pink200, width: 2),
+            border: Border.all(color: AppColors.pink300, width: 1.5),
           ),
-          child: Container(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: AppColors.orange200,
-            ),
-            child: ClipOval(
-              child: Image.asset(
-                _avatars[_selectedAvatarIndex],
-                fit: BoxFit.cover,
-              ),
+          child: ClipOval(
+            child: Image.asset(
+              _avatars[_selectedAvatarIndex],
+              fit: BoxFit.cover,
             ),
           ),
         ),
@@ -322,12 +273,11 @@ class _ChangeProfilePhotoBottomSheetState extends State<ChangeProfilePhotoBottom
                   setState(() => _selectedAvatarIndex = index);
                 },
                 child: Container(
-                  padding: const EdgeInsets.all(2),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: isSelected ? AppColors.blue600 : Colors.transparent,
-                      width: 2,
+                      color: isSelected ? AppColors.blue600 : AppColors.neutral200,
+                      width: isSelected ? 2 : 1,
                     ),
                   ),
                   child: ClipOval(

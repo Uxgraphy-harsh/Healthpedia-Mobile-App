@@ -4,7 +4,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:healthpedia_frontend/core/constants/app_colors.dart';
 import 'package:healthpedia_frontend/core/constants/app_spacing.dart';
 import 'package:healthpedia_frontend/core/constants/app_typography.dart';
+import 'package:healthpedia_frontend/core/navigation/premium_route.dart';
+import 'package:healthpedia_frontend/core/utils/app_responsive.dart';
 import 'package:healthpedia_frontend/features/onboarding/screens/loading_screen.dart';
+import 'package:healthpedia_frontend/features/onboarding/widgets/onboarding_footer_actions.dart';
 
 /// The Permissions onboarding screen.
 /// "Last step!" screen requesting Contacts and Notifications permissions.
@@ -21,6 +24,11 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final horizontalPadding = AppResponsive.horizontalPadding(context);
+    final titleSize = AppResponsive.onboardingTitleSize(context);
+    final titleTopSpacing = AppResponsive.onboardingHeaderTopSpacing(context);
+    final sectionSpacing = AppResponsive.onboardingSectionSpacing(context);
+
     return Scaffold(
       backgroundColor: AppColors.maroon700,
       body: Stack(
@@ -32,10 +40,11 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
             child: Opacity(
               opacity: 0.1,
               child: Image.asset(
-                'assets/Figma MCP Assets/Onboarding Screens/Onboarding Screens Images/Repeat group 4.png',
+                'assets/Figma MCP Assets/Onboarding Screens/Onboarding Screens Icons/Repeat group 4.png',
                 width: 1045,
                 height: 1045,
                 fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) => const SizedBox(),
               ),
             ),
           ),
@@ -47,24 +56,28 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
               children: [
                 // ── Progress Bar ──────────
                 Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.space16,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: horizontalPadding,
                     vertical: AppSpacing.space16,
                   ),
-                  child: Container(
-                    height: 4,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: AppColors.white.withOpacity(0.2), // Inactive track
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        width: double.infinity, // 100% width per Figma
-                        decoration: BoxDecoration(
-                          color: AppColors.pink200, // Active indicator
-                          borderRadius: BorderRadius.circular(2),
+                  child: ResponsiveConstrainedContent(
+                    maxWidth: AppResponsive.onboardingContentMaxWidth(context),
+                    alignment: Alignment.topLeft,
+                    child: Container(
+                      height: 4,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: AppColors.white.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: AppColors.pink200,
+                            borderRadius: BorderRadius.circular(2),
+                          ),
                         ),
                       ),
                     ),
@@ -73,41 +86,51 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
 
                 Expanded(
                   child: SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.space16),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: horizontalPadding,
+                    ),
+                    child: ResponsiveConstrainedContent(
+                      maxWidth: AppResponsive.onboardingContentMaxWidth(
+                        context,
+                      ),
+                      alignment: Alignment.topLeft,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const SizedBox(height: AppSpacing.space24),
-                          // ── Title ──────────
-                          const Text(
+                          SizedBox(height: titleTopSpacing),
+                          Text(
                             'Last step!',
                             style: TextStyle(
                               fontFamily: 'Geist',
-                              fontSize: 56, // Title-3
-                              height: 68 / 56, // line-height
+                              fontSize: titleSize,
+                              height: (titleSize + 12) / titleSize,
                               color: AppColors.rose50,
                               fontWeight: FontWeight.w400,
                             ),
                           ),
 
-                          const SizedBox(height: AppSpacing.space32),
+                          SizedBox(height: sectionSpacing),
 
                           // ── Permission Cards ──────────
                           _buildPermissionCard(
-                            iconPath: 'assets/Figma MCP Assets/Onboarding Screens/Onboarding Screens Icons/contacts.svg',
+                            iconPath:
+                                'assets/Figma MCP Assets/Onboarding Screens/Onboarding Screens Icons/contacts.svg',
                             title: 'Check contacts',
-                            description: 'Connect with your family members easily.\nWe do not store nor share this data, and\nwe\'ll never contact anyone on your behalf.',
+                            description:
+                                'Connect with your family members easily.\nWe do not store nor share this data, and\nwe\'ll never contact anyone on your behalf.',
                             value: _contactsEnabled,
-                            onChanged: (val) => setState(() => _contactsEnabled = val),
+                            onChanged: (val) =>
+                                setState(() => _contactsEnabled = val),
                           ),
                           const SizedBox(height: 12),
                           _buildPermissionCard(
-                            iconPath: 'assets/Figma MCP Assets/Onboarding Screens/Onboarding Screens Icons/notifications.svg',
+                            iconPath:
+                                'assets/Figma MCP Assets/Onboarding Screens/Onboarding Screens Icons/notifications.svg',
                             title: 'Notifications',
                             description: 'We go light on notifications.',
                             value: _notificationsEnabled,
-                            onChanged: (val) => setState(() => _notificationsEnabled = val),
+                            onChanged: (val) =>
+                                setState(() => _notificationsEnabled = val),
                           ),
 
                           const SizedBox(height: 32),
@@ -146,78 +169,37 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
                               ],
                             ),
                           ),
-
-                          const SizedBox(height: 120.0), // Padding to clear bottom CTA
+                          SizedBox(
+                            height: AppResponsive.clampBottomSpacer(
+                              context,
+                              min: 16,
+                              max: 28,
+                            ),
+                          ),
                         ],
                       ),
                     ),
                   ),
                 ),
+                OnboardingFooterActions(
+                  primary: FilledButton(
+                    onPressed: () {
+                      context.pushPremium(const LoadingScreen());
+                    },
+                    style: FilledButton.styleFrom(
+                      backgroundColor: const Color(0xFFF66B9A),
+                      foregroundColor: const Color(0xFF49001E),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(26),
+                      ),
+                      textStyle: AppTypography.body2.copyWith(
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    child: const Text('Continue'),
+                  ),
+                ),
               ],
-            ),
-          ),
-
-          // ── Bottom Controls ──────────
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: SafeArea(
-              child: Container(
-                padding: const EdgeInsets.only(
-                  left: AppSpacing.space24,
-                  right: AppSpacing.space24,
-                  bottom: AppSpacing.space48,
-                ),
-                child: Row(
-                  children: [
-                    // Back button
-                    Container(
-                      width: 52,
-                      height: 52,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: AppColors.white.withOpacity(0.5),
-                          width: 1,
-                        ),
-                        color: Colors.transparent,
-                      ),
-                      child: IconButton(
-                        icon: const Icon(Icons.arrow_back, color: AppColors.white),
-                        onPressed: () => Navigator.of(context).pop(),
-                      ),
-                    ),
-                    const SizedBox(width: AppSpacing.space16),
-                    
-                    // Continue Button
-                    Expanded(
-                      child: SizedBox(
-                        height: 52,
-                        child: FilledButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => const LoadingScreen()),
-                            );
-                          },
-                          style: FilledButton.styleFrom(
-                            backgroundColor: const Color(0xFFF66B9A), // pink300 
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(26), // Pill shape
-                            ),
-                          ),
-                          child: Text(
-                            'Continue',
-                            style: AppTypography.body2.copyWith(
-                              color: const Color(0xFF49001E), // pink900 text
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
             ),
           ),
         ],
@@ -233,11 +215,14 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
     required ValueChanged<bool> onChanged,
   }) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0x1AFFFFFF), // Glass effect
+        color: AppColors.white.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0x26FFFFFF), width: 0.5),
+        border: Border.all(
+          color: AppColors.white.withValues(alpha: 0.15),
+          width: 0.5,
+        ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -250,30 +235,28 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
                   children: [
                     SvgPicture.asset(
                       iconPath,
-                      width: 24,
-                      height: 24,
-                      colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                      width: 20,
+                      height: 20,
+                      colorFilter: const ColorFilter.mode(
+                        AppColors.white,
+                        BlendMode.srcIn,
+                      ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 10),
                     Text(
                       title,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        fontFamily: 'Geist',
+                      style: AppTypography.body2SemiBold.copyWith(
+                        color: AppColors.white,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 6),
                 Text(
                   description,
-                  style: const TextStyle(
-                    color: Color(0xFFD4D4D4), // neutral/300
-                    fontSize: 14,
-                    height: 1.3,
-                    fontFamily: 'Geist',
+                  style: AppTypography.label3.copyWith(
+                    color: AppColors.neutral300,
+                    height: 1.4,
                   ),
                 ),
               ],
@@ -284,7 +267,7 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
             scale: 0.75, // Scale down to match Figma perfectly
             child: CupertinoSwitch(
               value: value,
-              activeColor: Colors.blue[400],
+              activeTrackColor: Colors.blue[400],
               onChanged: onChanged,
             ),
           ),

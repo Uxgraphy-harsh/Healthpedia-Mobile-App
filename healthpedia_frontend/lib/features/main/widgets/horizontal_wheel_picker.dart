@@ -9,6 +9,7 @@ class HorizontalWheelPicker extends StatefulWidget {
   final int initialValue;
   final String unit;
   final ValueChanged<int> onChanged;
+  final bool isDark;
 
   const HorizontalWheelPicker({
     super.key,
@@ -17,6 +18,7 @@ class HorizontalWheelPicker extends StatefulWidget {
     required this.initialValue,
     required this.unit,
     required this.onChanged,
+    this.isDark = false,
   });
 
   @override
@@ -44,15 +46,19 @@ class _HorizontalWheelPickerState extends State<HorizontalWheelPicker> {
 
   @override
   Widget build(BuildContext context) {
+    final Color selectedColor = widget.isDark ? AppColors.white : AppColors.neutral950;
+    final Color unselectedColor = widget.isDark ? AppColors.white.withValues(alpha: 0.4) : AppColors.neutral400;
+    final Color unitColor = widget.isDark ? AppColors.white.withValues(alpha: 0.6) : AppColors.neutral500;
+
     return Column(
       children: [
         SizedBox(
-          height: 80,
+          height: 92,
           child: RotatedBox(
             quarterTurns: -1,
             child: ListWheelScrollView.useDelegate(
               controller: _controller,
-              itemExtent: 60,
+              itemExtent: 68,
               physics: const FixedExtentScrollPhysics(),
               onSelectedItemChanged: (index) {
                 HapticFeedback.lightImpact();
@@ -68,18 +74,27 @@ class _HorizontalWheelPickerState extends State<HorizontalWheelPicker> {
                   return RotatedBox(
                     quarterTurns: 1,
                     child: Center(
-                      child: AnimatedDefaultTextStyle(
-                        duration: const Duration(milliseconds: 100),
-                        style: isSelected
-                            ? AppTypography.h3.copyWith(
-                                color: AppColors.neutral950,
-                                fontWeight: FontWeight.w600,
-                              )
-                            : AppTypography.h5.copyWith(
-                                color: AppColors.neutral400,
-                                fontWeight: FontWeight.w400,
-                              ),
-                        child: Text('$value'),
+                      child: SizedBox(
+                        width: 64,
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            '$value',
+                            maxLines: 1,
+                            softWrap: false,
+                            style: isSelected
+                                ? AppTypography.h4.copyWith(
+                                    color: selectedColor,
+                                    fontWeight: FontWeight.w600,
+                                    height: 1,
+                                  )
+                                : AppTypography.h5.copyWith(
+                                    color: unselectedColor,
+                                    fontWeight: FontWeight.w400,
+                                    height: 1,
+                                  ),
+                          ),
+                        ),
                       ),
                     ),
                   );
@@ -92,7 +107,7 @@ class _HorizontalWheelPickerState extends State<HorizontalWheelPicker> {
         Text(
           widget.unit,
           style: AppTypography.label2.copyWith(
-            color: AppColors.neutral500,
+            color: unitColor,
             fontWeight: FontWeight.w400,
           ),
         ),

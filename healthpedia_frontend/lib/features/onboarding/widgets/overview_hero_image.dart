@@ -13,8 +13,11 @@ class OverviewHeroImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final heroHeight = screenHeight * 0.42; // Dynamic height (~42% of screen)
+
     return SizedBox(
-      height: 360,
+      height: heroHeight,
       child: Stack(
         clipBehavior: Clip.none,
         children: [

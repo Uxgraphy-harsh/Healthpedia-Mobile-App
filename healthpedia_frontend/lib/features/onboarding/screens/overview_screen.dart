@@ -8,6 +8,7 @@ import 'package:healthpedia_frontend/features/onboarding/widgets/overview_2_hero
 import 'package:healthpedia_frontend/features/onboarding/widgets/overview_3_hero.dart';
 import 'package:healthpedia_frontend/features/onboarding/widgets/overview_page_indicator.dart';
 import 'package:healthpedia_frontend/features/onboarding/screens/basic_details_screen.dart';
+import 'package:healthpedia_frontend/core/navigation/premium_route.dart';
 
 /// Overview carousel screen — final production version with floral background and robust CTAs.
 class OverviewScreen extends StatefulWidget {
@@ -43,8 +44,9 @@ class _OverviewScreenState extends State<OverviewScreen> {
               child: Opacity(
                 opacity: 0.08,
                 child: Image.asset(
-                  'assets/Figma MCP Assets/Onboarding Screens/Onboarding Screens Images/Flower.png',
+                  'assets/Figma MCP Assets/Onboarding Screens/Flower.png',
                   fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) => const SizedBox(),
                 ),
               ),
             ),
@@ -85,19 +87,13 @@ class _OverviewScreenState extends State<OverviewScreen> {
                     children: [
                       _GoogleSignInButton(
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const BasicDetailsScreen()),
-                          );
+                          context.pushPremium(const BasicDetailsScreen());
                         },
                       ),
                       const SizedBox(height: AppSpacing.space12),
                       _ExploreAsGuestButton(
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const BasicDetailsScreen()),
-                          );
+                          context.pushPremium(const BasicDetailsScreen());
                         },
                       ),
                     ],
@@ -243,24 +239,31 @@ class _BasePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.space16),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          hero,
-          const SizedBox(height: AppSpacing.space32),
-          SizedBox(
-            width: double.infinity,
-            child: Text(
-              title,
-              textAlign: TextAlign.center,
-              style: AppTypography.h4.copyWith(
-                color: AppColors.pink950,
-                fontWeight: FontWeight.w400,
+      child: Center(
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              hero,
+              const SizedBox(height: AppSpacing.space24),
+              SizedBox(
+                width: double.infinity,
+                child: Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  style: AppTypography.h4.copyWith(
+                    color: AppColors.pink950,
+                    fontWeight: FontWeight.w400,
+                    fontSize: 32, // Slightly smaller to fit mobile screens better
+                  ),
+                ),
               ),
-            ),
+              const SizedBox(height: AppSpacing.space16),
+            ],
           ),
-          const SizedBox(height: AppSpacing.space24),
-        ],
+        ),
       ),
     );
   }

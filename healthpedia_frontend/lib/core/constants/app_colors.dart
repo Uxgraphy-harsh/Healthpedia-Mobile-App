@@ -373,6 +373,9 @@ class AppColors {
   /// Surface cards / sheets
   static const Color surface = white;
 
+  /// Secondary background for gallery / community inputs
+  static const Color backgroundTertiary = Color(0xFFE8E8E8);
+
   /// Divider / border lines
   static const Color border = neutral200;
 

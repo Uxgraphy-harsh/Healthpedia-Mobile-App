@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:healthpedia_frontend/core/constants/app_colors.dart';
+import 'package:healthpedia_frontend/core/constants/app_conditions.dart';
 import 'package:healthpedia_frontend/core/constants/app_spacing.dart';
 import 'package:healthpedia_frontend/core/constants/app_typography.dart';
+import 'package:healthpedia_frontend/core/widgets/premium_inputs/premium_search_field.dart';
 import 'package:healthpedia_frontend/features/main/screens/family_friend_detail_screen.dart';
 import 'package:healthpedia_frontend/features/main/screens/report_folder_screen.dart';
 
@@ -56,20 +58,17 @@ class FamilyFriendConditionsScreen extends StatelessWidget {
     _ConditionCardData(
       title: 'Thyroid',
       subtitle: 'Diagnosed • early 50s',
-      imagePath:
-          'assets/Figma MCP Assets/Onboarding Screens/Onboarding Screens Images/M 33.png',
+      iconPath: AppConditions.thyroid,
     ),
     _ConditionCardData(
       title: 'Diabetes',
       subtitle: 'Diagnosed • early 50s',
-      imagePath:
-          'assets/Figma MCP Assets/Onboarding Screens/Onboarding Screens Images/M 34.png',
+      iconPath: AppConditions.diabetes,
     ),
     _ConditionCardData(
       title: 'Cardiovascular',
       subtitle: 'Diagnosed • early 50s',
-      imagePath:
-          'assets/Figma MCP Assets/Onboarding Screens/Onboarding Screens Images/M 35.png',
+      iconPath: AppConditions.heart,
     ),
   ];
 
@@ -99,7 +98,7 @@ class FamilyFriendConditionsScreen extends StatelessWidget {
                       .map(
                         (card) => _ConditionCard(
                           data: card,
-                          width: (MediaQuery.of(context).size.width - 44) / 2,
+                          width: (MediaQuery.of(context).size.width - 48) / 2,
                         ),
                       )
                       .toList(),
@@ -269,28 +268,25 @@ class FamilyFriendReportsScreen extends StatelessWidget {
       title: 'Thyroid',
       updated: '14 Jan 2025',
       fileCount: 6,
-      imagePath:
-          'assets/Figma MCP Assets/Onboarding Screens/Onboarding Screens Images/M 33.png',
+      imagePath: AppConditions.thyroid,
     ),
     _ReportFolderCardData(
       title: 'Diabetes',
       updated: '14 Jan 2025',
       fileCount: 4,
-      imagePath:
-          'assets/Figma MCP Assets/Onboarding Screens/Onboarding Screens Images/M 34.png',
+      imagePath: AppConditions.diabetes,
     ),
     _ReportFolderCardData(
       title: 'Cardiovascular',
       updated: '2 Nov 2024',
       fileCount: 3,
-      imagePath:
-          'assets/Figma MCP Assets/Onboarding Screens/Onboarding Screens Images/M 35.png',
+      imagePath: AppConditions.heart,
     ),
     _ReportFolderCardData(
       title: 'General',
       updated: '2 Nov 2024',
       fileCount: 8,
-      imagePath: 'assets/Figma MCP Assets/CommonAssets/Images/Report Image.png',
+      imagePath: AppConditions.folder,
     ),
   ];
 
@@ -314,14 +310,14 @@ class FamilyFriendReportsScreen extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(AppSpacing.space16),
                 child: Wrap(
-                  spacing: AppSpacing.space12,
-                  runSpacing: AppSpacing.space12,
+                  spacing: AppSpacing.space8,
+                  runSpacing: AppSpacing.space8,
                   children: _cards
                       .map(
                         (card) => _ReportFolderCard(
                           data: card,
                           memberName: memberName,
-                          width: (MediaQuery.of(context).size.width - 44) / 2,
+                          width: (MediaQuery.of(context).size.width - 40) / 2,
                         ),
                       )
                       .toList(),
@@ -481,7 +477,7 @@ class FamilyFriendInsuranceScreen extends StatelessWidget {
       statusBg: AppColors.orange50,
       typeColor: AppColors.green600,
       iconPath:
-          'assets/Figma MCP Assets/CommonAssets/Icons/Health Insurance Icon.svg',
+          'assets/Figma MCP Assets/CommonAssets/Icons/Insurance/Health Insurance Icon.svg',
       fileName: 'SH-2024-738291.pdf',
       fileSize: '4.1 MB',
       data: ['₹10,00,000', '₹12,400/yr', "Dec '25"],
@@ -496,7 +492,7 @@ class FamilyFriendInsuranceScreen extends StatelessWidget {
       statusBg: AppColors.green50,
       typeColor: AppColors.red600,
       iconPath:
-          'assets/Figma MCP Assets/CommonAssets/Icons/Life Insurance Icon.svg',
+          'assets/Figma MCP Assets/CommonAssets/Icons/Insurance/Life Insurance Icon.svg',
       fileName: 'LIC-776421-20.pdf',
       fileSize: '4.1 MB',
       data: ['₹50,00,000', '₹28,000/yr', '2045'],
@@ -511,7 +507,7 @@ class FamilyFriendInsuranceScreen extends StatelessWidget {
       statusBg: AppColors.green50,
       typeColor: AppColors.indigo600,
       iconPath:
-          'assets/Figma MCP Assets/CommonAssets/Icons/Term Insurance Icon.svg',
+          'assets/Figma MCP Assets/CommonAssets/Icons/Insurance/Term Insurance Icon.svg',
       fileName: 'HDFC-TRM-20240089.pdf',
       fileSize: '4.1 MB',
       data: ['₹1 Cr', '₹9,800/yr', '2054'],
@@ -526,7 +522,7 @@ class FamilyFriendInsuranceScreen extends StatelessWidget {
       statusBg: AppColors.green50,
       typeColor: AppColors.amber600,
       iconPath:
-          'assets/Figma MCP Assets/CommonAssets/Icons/Vehicle Insurance Icon.svg',
+          'assets/Figma MCP Assets/CommonAssets/Icons/Insurance/Vehicle Insurance Icon.svg',
       fileName: 'BAJ-2024-MH12AB1234.pdf',
       fileSize: '4.1 MB',
       data: ['Honda City', '₹8,20,000', "Mar '26"],
@@ -640,12 +636,12 @@ class _ConditionCardData {
   const _ConditionCardData({
     required this.title,
     required this.subtitle,
-    required this.imagePath,
+    required this.iconPath,
   });
 
   final String title;
   final String subtitle;
-  final String imagePath;
+  final String iconPath;
 }
 
 class _ConditionCard extends StatelessWidget {
@@ -658,30 +654,39 @@ class _ConditionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: width,
-      height: 111,
-      padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.circular(AppSpacing.radius2xl),
         border: Border.all(color: AppColors.neutral200),
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Image.asset(data.imagePath, width: 40, height: 40),
+          SvgPicture.asset(
+            data.iconPath,
+            width: 48,
+            height: 48,
+            fit: BoxFit.contain,
+            placeholderBuilder: (context) => Container(
+              width: 48,
+              height: 48,
+              decoration: const BoxDecoration(
+                color: AppColors.neutral100,
+                shape: BoxShape.circle,
+              ),
+            ),
+          ),
           const SizedBox(height: AppSpacing.space12),
           Text(
             data.title,
-            textAlign: TextAlign.center,
             style: AppTypography.label1.copyWith(
               color: AppColors.neutral950,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w600,
             ),
           ),
           const SizedBox(height: AppSpacing.space4),
           Text(
             data.subtitle,
-            textAlign: TextAlign.center,
             style: AppTypography.label3.copyWith(
               color: AppColors.neutral500,
               fontWeight: FontWeight.w400,
@@ -1020,6 +1025,7 @@ class _ReportFolderCard extends StatelessWidget {
             builder: (_) => FamilyFriendReportFolderScreen(
               memberName: memberName,
               folderTitle: data.title,
+              imagePath: data.imagePath,
               totalFiles: data.fileCount,
               entries: _reportEntriesFor(data.title, data.fileCount),
             ),
@@ -1028,51 +1034,84 @@ class _ReportFolderCard extends StatelessWidget {
       },
       child: Container(
         width: width,
-        height: 149,
-        padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
+        padding: const EdgeInsets.only(top: 10),
         decoration: BoxDecoration(
-          color: AppColors.white,
+          color: AppColors.neutral100,
           borderRadius: BorderRadius.circular(AppSpacing.radius2xl),
           border: Border.all(color: AppColors.neutral200),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Image.asset(
-              data.imagePath,
-              width: 40,
-              height: 40,
-              fit: BoxFit.cover,
-            ),
-            const SizedBox(height: AppSpacing.space12),
-            Text(
-              data.title,
-              style: AppTypography.label1.copyWith(
-                color: AppColors.neutral950,
-                fontWeight: FontWeight.w500,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          decoration: BoxDecoration(
+            color: AppColors.white,
+            border: Border.all(color: AppColors.neutral200),
+            borderRadius: BorderRadius.circular(AppSpacing.radius2xl),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SvgPicture.asset(
+                data.imagePath,
+                width: 40,
+                height: 40,
+                fit: BoxFit.contain,
               ),
-            ),
-            const SizedBox(height: AppSpacing.space4),
-            Text(
-              'Updated • ${data.updated}',
-              style: AppTypography.body3.copyWith(color: AppColors.neutral500),
-            ),
-            const Spacer(),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-              decoration: BoxDecoration(
-                color: AppColors.neutral100,
-                borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
-                border: Border.all(color: AppColors.neutral200),
-              ),
-              child: Text(
-                '${data.fileCount} files',
-                style: AppTypography.label3.copyWith(
-                  color: AppColors.neutral600,
+              const SizedBox(height: AppSpacing.space12),
+              Text(
+                data.title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: AppTypography.label1.copyWith(
+                  color: AppColors.neutral950,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
-            ),
-          ],
+              const SizedBox(height: 2),
+              Row(
+                children: [
+                  Text(
+                    'Updated',
+                    style: AppTypography.label3.copyWith(
+                      color: AppColors.neutral500,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    '•',
+                    style: AppTypography.label3.copyWith(
+                      color: AppColors.neutral500,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    data.updated,
+                    style: AppTypography.label3.copyWith(
+                      color: AppColors.neutral500,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: AppColors.neutral100,
+                  borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
+                  border: Border.all(color: AppColors.neutral200),
+                ),
+                child: Text(
+                  '${data.fileCount} files',
+                  style: AppTypography.label3.copyWith(
+                    color: AppColors.neutral600,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -1203,12 +1242,14 @@ class FamilyFriendReportFolderScreen extends StatefulWidget {
     super.key,
     required this.memberName,
     required this.folderTitle,
+    required this.imagePath,
     required this.totalFiles,
     required this.entries,
   });
 
   final String memberName;
   final String folderTitle;
+  final String imagePath;
   final int totalFiles;
   final List<ReportEntry> entries;
 
@@ -1269,6 +1310,7 @@ class _FamilyFriendReportFolderScreenState
           children: [
             _FamilyFriendFolderHeader(
               title: widget.folderTitle,
+              imagePath: widget.imagePath,
               totalFiles: widget.totalFiles,
               controller: _searchController,
               hasText: _searchQuery.isNotEmpty,
@@ -1311,6 +1353,7 @@ class _FamilyFriendReportFolderScreenState
 class _FamilyFriendFolderHeader extends StatelessWidget {
   const _FamilyFriendFolderHeader({
     required this.title,
+    required this.imagePath,
     required this.totalFiles,
     required this.controller,
     required this.hasText,
@@ -1318,6 +1361,7 @@ class _FamilyFriendFolderHeader extends StatelessWidget {
   });
 
   final String title;
+  final String imagePath;
   final int totalFiles;
   final TextEditingController controller;
   final bool hasText;
@@ -1354,7 +1398,22 @@ class _FamilyFriendFolderHeader extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(width: AppSpacing.space16),
+                const SizedBox(width: AppSpacing.space8),
+                SvgPicture.asset(
+                  imagePath,
+                  width: AppSpacing.size40,
+                  height: AppSpacing.size40,
+                  fit: BoxFit.contain,
+                  placeholderBuilder: (context) => Container(
+                    width: AppSpacing.size40,
+                    height: AppSpacing.size40,
+                    decoration: const BoxDecoration(
+                      color: AppColors.neutral100,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.space12),
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
@@ -1392,63 +1451,17 @@ class _FamilyFriendFolderHeader extends StatelessWidget {
             child: Row(
               children: [
                 Expanded(
-                  child: Container(
-                    height: AppSpacing.size44,
-                    decoration: BoxDecoration(
-                      color: AppColors.white,
-                      border: Border.all(color: AppColors.neutral300),
-                      borderRadius: BorderRadius.circular(
-                        AppSpacing.radiusFull,
-                      ),
+                  child: PremiumSearchField(
+                    controller: controller,
+                    placeholder: 'Search report name, symptom, note...',
+                    isDark: false,
+                    backgroundColor: AppColors.white,
+                    minHeight: AppSpacing.size44,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.space12,
+                      vertical: 10,
                     ),
-                    child: Row(
-                      children: [
-                        const SizedBox(width: AppSpacing.space12),
-                        const Icon(
-                          Icons.search,
-                          size: 20,
-                          color: AppColors.neutral400,
-                        ),
-                        const SizedBox(width: AppSpacing.space4),
-                        Expanded(
-                          child: TextField(
-                            controller: controller,
-                            style: AppTypography.body3.copyWith(
-                              color: AppColors.neutral950,
-                            ),
-                            decoration: InputDecoration(
-                              hintText: 'Search report name, symptom, note...',
-                              hintStyle: AppTypography.body3.copyWith(
-                                color: AppColors.neutral400,
-                              ),
-                              border: InputBorder.none,
-                              enabledBorder: InputBorder.none,
-                              focusedBorder: InputBorder.none,
-                              filled: false,
-                              isDense: true,
-                              contentPadding: EdgeInsets.zero,
-                            ),
-                            cursorColor: AppColors.neutral950,
-                          ),
-                        ),
-                        if (hasText)
-                          GestureDetector(
-                            onTap: onClear,
-                            child: const Padding(
-                              padding: EdgeInsets.only(
-                                right: AppSpacing.space10,
-                              ),
-                              child: Icon(
-                                Icons.cancel_rounded,
-                                size: 20,
-                                color: AppColors.neutral400,
-                              ),
-                            ),
-                          )
-                        else
-                          const SizedBox(width: AppSpacing.space12),
-                      ],
-                    ),
+                    onClear: onClear,
                   ),
                 ),
                 const SizedBox(width: AppSpacing.space8),
@@ -1530,7 +1543,7 @@ class _FamilyFriendReportEntryCard extends StatelessWidget {
         );
       },
       child: Container(
-        height: 259,
+        margin: const EdgeInsets.only(bottom: AppSpacing.space8),
         padding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.space16,
           vertical: AppSpacing.space10,
@@ -2861,34 +2874,18 @@ class _ReadOnlyInsuranceCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.white,
-        borderRadius: BorderRadius.circular(AppSpacing.radius2xl),
+        borderRadius: BorderRadius.circular(24),
         border: Border.all(color: AppColors.neutral200),
       ),
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+            padding: const EdgeInsets.all(16),
             child: Row(
               children: [
-                Container(
-                  width: 60,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    color: data.typeColor.withValues(alpha: 0.10),
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: Center(
-                    child: SvgPicture.asset(
-                      data.iconPath,
-                      width: 45,
-                      height: 45,
-                      colorFilter: ColorFilter.mode(
-                        data.typeColor,
-                        BlendMode.srcIn,
-                      ),
-                    ),
-                  ),
-                ),
+                data.iconPath.endsWith('.svg')
+                    ? SvgPicture.asset(data.iconPath, width: 60, height: 60)
+                    : Image.asset(data.iconPath, width: 60, height: 60),
                 const SizedBox(width: AppSpacing.space12),
                 Expanded(
                   child: Column(
@@ -2898,13 +2895,14 @@ class _ReadOnlyInsuranceCard extends StatelessWidget {
                         data.type,
                         style: AppTypography.label3.copyWith(
                           color: data.typeColor,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                       Text(
                         data.name,
                         style: AppTypography.label1.copyWith(
                           color: AppColors.neutral950,
-                          fontWeight: FontWeight.w500,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                       Row(
@@ -2913,14 +2911,12 @@ class _ReadOnlyInsuranceCard extends StatelessWidget {
                             'Policy: ${data.policyNumber}',
                             style: AppTypography.label3.copyWith(
                               color: AppColors.blue600,
-                              decoration: TextDecoration.underline,
-                              decorationColor: AppColors.blue600,
                             ),
                           ),
                           const SizedBox(width: 4),
                           const Icon(
-                            Icons.content_copy,
-                            size: 16,
+                            Icons.copy,
+                            size: 14,
                             color: AppColors.blue600,
                           ),
                         ],
@@ -2930,91 +2926,83 @@ class _ReadOnlyInsuranceCard extends StatelessWidget {
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
+                    horizontal: 10,
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: data.statusBg,
-                    borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
+                    color: data.statusColor.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(99),
+                    border: Border.all(
+                      color: data.statusColor.withValues(alpha: 0.1),
+                    ),
                   ),
                   child: Text(
                     data.status,
                     style: AppTypography.label3.copyWith(
                       color: data.statusColor,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: AppSpacing.space16),
           const Divider(height: 1, color: AppColors.neutral200),
-          Row(
-            children: List.generate(3, (index) {
-              return Expanded(
-                child: Container(
-                  padding: const EdgeInsets.all(AppSpacing.space16),
-                  decoration: BoxDecoration(
-                    border: index < 2
-                        ? const Border(
-                            right: BorderSide(color: AppColors.neutral200),
-                          )
-                        : null,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        data.data[index],
-                        style: AppTypography.label1.copyWith(
-                          color: AppColors.neutral950,
-                          fontWeight: FontWeight.w400,
-                        ),
+          IntrinsicHeight(
+            child: Row(
+              children: [
+                for (int i = 0; i < data.data.length; i++) ...[
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            data.data[i],
+                            style: AppTypography.label2.copyWith(
+                              color: AppColors.neutral950,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Text(
+                            data.labels[i],
+                            style: AppTypography.label3.copyWith(
+                              color: AppColors.neutral500,
+                            ),
+                          ),
+                        ],
                       ),
-                      Text(
-                        data.labels[index],
-                        style: AppTypography.label3.copyWith(
-                          color: AppColors.neutral500,
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-              );
-            }),
+                  if (i < data.data.length - 1)
+                    const VerticalDivider(
+                      width: 1,
+                      thickness: 1,
+                      color: AppColors.neutral200,
+                    ),
+                ],
+              ],
+            ),
           ),
           const Divider(height: 1, color: AppColors.neutral200),
           Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.space16,
-              vertical: AppSpacing.space12,
-            ),
+            padding: const EdgeInsets.all(16),
             child: Row(
               children: [
-                Container(
-                  width: 24,
-                  height: 24,
-                  decoration: BoxDecoration(
-                    color: AppColors.red500,
-                    borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
-                  ),
-                  alignment: Alignment.center,
-                  child: Text(
-                    'PDF',
-                    style: AppTypography.caption1.copyWith(
-                      color: AppColors.white,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
+                SvgPicture.asset(
+                  'assets/Figma MCP Assets/CommonAssets/Icons/picture_as_pdf.svg',
+                  width: 28,
+                  height: 28,
                 ),
-                const SizedBox(width: AppSpacing.space12),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         data.fileName,
-                        style: AppTypography.label1.copyWith(
+                        style: AppTypography.label2.copyWith(
                           color: AppColors.neutral950,
                           fontWeight: FontWeight.w500,
                         ),
@@ -3028,7 +3016,11 @@ class _ReadOnlyInsuranceCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                const Icon(Icons.north_east, color: AppColors.neutral500),
+                const Icon(
+                  Icons.north_east,
+                  color: AppColors.neutral400,
+                  size: 20,
+                ),
               ],
             ),
           ),

@@ -12,7 +12,7 @@ class LegalsScreen extends StatelessWidget {
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
         backgroundColor: AppColors.white, elevation: 0,
-        leading: IconButton(onPressed: () => Navigator.pop(context), icon: SvgPicture.asset('assets/Figma MCP Assets/CommonAssets/Icons/arrow_back.svg', width: 24)),
+        leading: IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.arrow_back_rounded, color: Color(0xFF0A0A0A))),
         title: Row(children: [
           SvgPicture.asset('assets/Figma MCP Assets/CommonAssets/Icons/Legals big icon.svg', width: 24),
           const SizedBox(width: 8),

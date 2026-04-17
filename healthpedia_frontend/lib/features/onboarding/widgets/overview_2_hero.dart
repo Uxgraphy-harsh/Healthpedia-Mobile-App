@@ -11,8 +11,11 @@ class Overview2Hero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final heroHeight = screenHeight * 0.42;
+
     return SizedBox(
-      height: 360,
+      height: heroHeight,
       width: double.infinity,
       child: Stack(
         alignment: Alignment.center,

@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import '../screens/main_scaffold.dart'; // To access ReminderStatus
+import 'package:healthpedia_frontend/core/constants/app_colors.dart';
 
 class ReminderCheckbox extends StatelessWidget {
   final ReminderStatus status;
@@ -28,20 +29,20 @@ class ReminderCheckbox extends StatelessWidget {
     switch (status) {
       case ReminderStatus.pending:
         return CustomPaint(
-          painter: DashedCirclePainter(color: const Color(0xFFF97316)),
+          painter: DashedCirclePainter(color: AppColors.yellow500),
         );
       case ReminderStatus.completed:
         return Container(
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: const Color(0xFF3B82F6).withOpacity(0.1),
-            border: Border.all(color: const Color(0xFF3B82F6), width: 1.5),
+            color: AppColors.blue500.withOpacity(0.1),
+            border: Border.all(color: AppColors.blue500, width: 1.5),
           ),
           child: const Center(
             child: Icon(
               Icons.check_rounded,
               size: 16,
-              color: Color(0xFF3B82F6),
+              color: AppColors.blue500,
             ),
           ),
         );
@@ -49,14 +50,14 @@ class ReminderCheckbox extends StatelessWidget {
         return Container(
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: const Color(0xFFC2410C).withOpacity(0.1),
-            border: Border.all(color: const Color(0xFFC2410C), width: 1.5),
+            color: AppColors.orange600.withOpacity(0.1),
+            border: Border.all(color: AppColors.orange600, width: 1.5),
           ),
           child: const Center(
             child: Icon(
               Icons.priority_high_rounded,
               size: 16,
-              color: Color(0xFFC2410C),
+              color: AppColors.orange600,
             ),
           ),
         );

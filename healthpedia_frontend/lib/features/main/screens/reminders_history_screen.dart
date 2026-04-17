@@ -36,7 +36,7 @@ class _RemindersHistoryScreenState extends State<RemindersHistoryScreen> with Si
 
   @override
   Widget build(BuildContext context) {
-    final historyItems = widget.reminders.where((r) => r.status != ReminderStatus.pending).toList();
+    final historyItems = widget.reminders.where((r) => r.status != ReminderStatus.pending || r.isAwaitingRemoval).toList();
 
     return Scaffold(
       backgroundColor: const Color(0xFFFAFAFA), // Figma Neutral/50
@@ -147,15 +147,9 @@ class _RemindersHistoryScreenState extends State<RemindersHistoryScreen> with Si
   }
 
   Widget _buildHistoryCard(ReminderItem item) {
-    final bool isMissed = item.status == ReminderStatus.missed;
-    
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          widget.onToggle(item.id);
-          HapticFeedback.lightImpact();
-        });
-      },
+    return AnimatedOpacity(
+      duration: const Duration(milliseconds: 300),
+      opacity: item.status == ReminderStatus.pending ? 0.6 : 1.0,
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -168,6 +162,10 @@ class _RemindersHistoryScreenState extends State<RemindersHistoryScreen> with Si
             // Status Icon
             ReminderCheckbox(
               status: item.status,
+              onTap: () {
+                widget.onToggle(item.id);
+                HapticFeedback.lightImpact();
+              },
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -185,12 +183,16 @@ class _RemindersHistoryScreenState extends State<RemindersHistoryScreen> with Si
                   const SizedBox(height: 2),
                   Text(
                     item.title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: 'Geist',
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
-                      color: Color(0xFFA3A3A3), // Neutral/400
-                      decoration: TextDecoration.lineThrough,
+                      color: item.status == ReminderStatus.completed 
+                          ? const Color(0xFFA3A3A3) 
+                          : const Color(0xFF0A0A0A),
+                      decoration: item.status == ReminderStatus.completed 
+                          ? TextDecoration.lineThrough 
+                          : TextDecoration.none,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

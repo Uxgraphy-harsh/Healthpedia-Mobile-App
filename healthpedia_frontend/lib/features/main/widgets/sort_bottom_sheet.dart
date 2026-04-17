@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:healthpedia_frontend/core/widgets/premium_sheet_header.dart';
 
 enum SortOption { newestFirst, oldestFirst, mostFiles, labNameAZ }
 
@@ -47,61 +48,21 @@ class _SortBottomSheetState extends State<SortBottomSheet> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // ── Home indicator ──────────────────────────────────────────────
-          SizedBox(
-            height: 24,
-            child: Center(
-              child: Container(
-                width: 40,
-                height: 5,
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(100),
+          PremiumSheetHeader(
+            title: 'Sort by',
+            leading: GestureDetector(
+              onTap: () => Navigator.of(context).pop(null),
+              child: const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  'Cancel',
+                  style: TextStyle(
+                    fontFamily: 'Geist',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    color: Color(0xFF2563EB), // Blue 600
+                  ),
                 ),
-              ),
-            ),
-          ),
-
-          // ── Header: Cancel | Sort by ────────────────────────────────────
-          SizedBox(
-            height: 60,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  // Cancel — left, Blue 600, Regular 14px
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: TextButton(
-                      onPressed: () => Navigator.of(context).pop(null),
-                      style: TextButton.styleFrom(
-                        padding: EdgeInsets.zero,
-                        minimumSize: Size.zero,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                      child: const Text(
-                        'Cancel',
-                        style: TextStyle(
-                          fontFamily: 'Geist',
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: Color(0xFF2563EB), // Blue 600
-                        ),
-                      ),
-                    ),
-                  ),
-                  // Title — centred, SemiBold 16px, Neutral 950
-                  const Text(
-                    'Sort by',
-                    style: TextStyle(
-                      fontFamily: 'Geist',
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF0A0A0A),
-                    ),
-                  ),
-                ],
               ),
             ),
           ),

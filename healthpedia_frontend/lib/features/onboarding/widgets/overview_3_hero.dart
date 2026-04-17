@@ -10,8 +10,11 @@ class Overview3Hero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final heroHeight = screenHeight * 0.44; // Give slightly more room for the phone
+
     return SizedBox(
-      height: 400, // Height matching the scaled composition
+      height: heroHeight, // Height matching the scaled composition
       width: double.infinity,
       child: Stack(
         clipBehavior: Clip.none,
@@ -36,10 +39,10 @@ class Overview3Hero extends StatelessWidget {
 
           // ── Bottom Gradient Fade (Spill-off effect) ──
           Positioned(
-            bottom: -20, // Offset to spill outside the hero area slightly
+            bottom: -40, // Extended downwards to fully cover the phone image bottom
             left: 0,
             right: 0,
-            height: 120,
+            height: 140, // Increased height for a smoother fade transition
             child: IgnorePointer(
               child: DecoratedBox(
                 decoration: BoxDecoration(

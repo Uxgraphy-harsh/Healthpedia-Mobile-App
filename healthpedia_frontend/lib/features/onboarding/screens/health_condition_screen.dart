@@ -3,7 +3,12 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:healthpedia_frontend/core/constants/app_colors.dart';
 import 'package:healthpedia_frontend/core/constants/app_typography.dart';
 import 'package:healthpedia_frontend/core/constants/app_spacing.dart';
+import 'package:healthpedia_frontend/core/navigation/premium_route.dart';
+import 'package:healthpedia_frontend/core/utils/app_responsive.dart';
 import 'package:healthpedia_frontend/features/onboarding/screens/health_trackers_screen.dart';
+import 'package:healthpedia_frontend/features/onboarding/widgets/add_custom_condition_bottom_sheet.dart';
+import 'package:healthpedia_frontend/features/onboarding/widgets/onboarding_footer_actions.dart';
+import 'package:healthpedia_frontend/core/widgets/premium_inputs/premium_search_field.dart';
 
 /// The Health Condition onboarding screen.
 /// Allows the user to select existing conditions or search/add customs.
@@ -16,27 +21,42 @@ class HealthConditionScreen extends StatefulWidget {
 
 class _HealthConditionScreenState extends State<HealthConditionScreen> {
   final TextEditingController _searchController = TextEditingController();
-  
-  // Example conditions matching the Figma screenshot exactly
-  final List<String> availableConditions = [
-    'Hypertension',
-    'Asthma',
-    'Arthritis',
-    'Chronic Obstructive Pulmonary Disease (COPD)',
-    'Cancer',
-    'Heart Disease',
-    'Kidney Disease',
-    'Stroke',
-    'Alzheimer\'s Disease',
-    'Multiple Sclerosis',
-  ];
+
+  // List of conditions that can be expanded with custom entries
+  late List<String> availableConditions;
 
   final Set<String> _selectedConditions = {'Hypertension'};
+
+  @override
+  void initState() {
+    super.initState();
+    availableConditions = [
+      'Hypertension',
+      'Asthma',
+      'Arthritis',
+      'Chronic Obstructive Pulmonary Disease (COPD)',
+      'Cancer',
+      'Heart Disease',
+      'Kidney Disease',
+      'Stroke',
+      'Alzheimer\'s Disease',
+      'Multiple Sclerosis',
+    ];
+  }
 
   @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
+  }
+
+  void _addCustomCondition(String condition) {
+    setState(() {
+      if (!availableConditions.contains(condition)) {
+        availableConditions.add(condition);
+      }
+      _selectedConditions.add(condition);
+    });
   }
 
   void _toggleCondition(String condition) {
@@ -51,6 +71,11 @@ class _HealthConditionScreenState extends State<HealthConditionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final horizontalPadding = AppResponsive.horizontalPadding(context);
+    final titleSize = AppResponsive.onboardingTitleSize(context);
+    final titleTopSpacing = AppResponsive.onboardingHeaderTopSpacing(context);
+    final sectionSpacing = AppResponsive.onboardingSectionSpacing(context);
+
     return Scaffold(
       backgroundColor: AppColors.maroon700,
       body: Stack(
@@ -62,10 +87,11 @@ class _HealthConditionScreenState extends State<HealthConditionScreen> {
             child: Opacity(
               opacity: 0.1,
               child: Image.asset(
-                'assets/Figma MCP Assets/Onboarding Screens/Onboarding Screens Images/Repeat group 4.png',
+                'assets/Figma MCP Assets/Onboarding Screens/Onboarding Screens Icons/Repeat group 4.png',
                 width: 1045,
                 height: 1045,
                 fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) => const SizedBox(),
               ),
             ),
           ),
@@ -77,24 +103,30 @@ class _HealthConditionScreenState extends State<HealthConditionScreen> {
               children: [
                 // ── Progress Bar ──────────
                 Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.space16,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: horizontalPadding,
                     vertical: AppSpacing.space16,
                   ),
-                  child: Container(
-                    height: 4,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: AppColors.white.withOpacity(0.2), // Inactive track
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        width: 179.0, // 50% width per Figma (179 out of 358)
-                        decoration: BoxDecoration(
-                          color: AppColors.pink200, // Active indicator
-                          borderRadius: BorderRadius.circular(2),
+                  child: ResponsiveConstrainedContent(
+                    maxWidth: AppResponsive.onboardingContentMaxWidth(context),
+                    alignment: Alignment.topLeft,
+                    child: Container(
+                      height: 4,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: AppColors.white.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: FractionallySizedBox(
+                          widthFactor: 0.5,
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: AppColors.pink200,
+                              borderRadius: BorderRadius.circular(2),
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -103,27 +135,31 @@ class _HealthConditionScreenState extends State<HealthConditionScreen> {
 
                 Expanded(
                   child: SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.space16),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: horizontalPadding,
+                    ),
+                    child: ResponsiveConstrainedContent(
+                      maxWidth: AppResponsive.onboardingContentMaxWidth(
+                        context,
+                      ),
+                      alignment: Alignment.topLeft,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const SizedBox(height: AppSpacing.space24),
-                          // ── Title ──────────
-                          const Text(
+                          SizedBox(height: titleTopSpacing),
+                          Text(
                             'Any health\ncondition?',
                             style: TextStyle(
                               fontFamily: 'Geist',
-                              fontSize: 56, // Title-3
-                              height: 68 / 56, // line-height
+                              fontSize: titleSize,
+                              height: (titleSize + 12) / titleSize,
                               color: AppColors.rose50,
                               fontWeight: FontWeight.w400,
                             ),
                           ),
 
-                          const SizedBox(height: AppSpacing.space32),
+                          SizedBox(height: sectionSpacing),
 
-                          // ── Search Bar ──────────
                           _buildSearchBar(),
 
                           const SizedBox(height: AppSpacing.space24),
@@ -133,80 +169,45 @@ class _HealthConditionScreenState extends State<HealthConditionScreen> {
                             spacing: 12.0,
                             runSpacing: 12.0,
                             children: [
-                              ...availableConditions.map((condition) => _buildChip(condition)),
+                              ...availableConditions.map(
+                                (condition) => _buildChip(condition),
+                              ),
                               _buildCustomChip(),
                             ],
                           ),
-                          
-                          const SizedBox(height: 120.0), // Padding to clear bottom CTA
+
+                          const SizedBox(height: 48),
+                          SizedBox(
+                            height: AppResponsive.clampBottomSpacer(
+                              context,
+                              min: 16,
+                              max: 28,
+                            ),
+                          ),
                         ],
                       ),
                     ),
                   ),
                 ),
+                OnboardingFooterActions(
+                  primary: FilledButton(
+                    onPressed: () {
+                      context.pushPremium(const HealthTrackersScreen());
+                    },
+                    style: FilledButton.styleFrom(
+                      backgroundColor: AppColors.pink600,
+                      foregroundColor: AppColors.rose950,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(26),
+                      ),
+                      textStyle: AppTypography.body2.copyWith(
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    child: const Text('Continue'),
+                  ),
+                ),
               ],
-            ),
-          ),
-
-          // ── Bottom Controls ──────────
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: SafeArea(
-              child: Container(
-                padding: const EdgeInsets.only(
-                  left: AppSpacing.space24,
-                  right: AppSpacing.space24,
-                  bottom: AppSpacing.space48,
-                ),
-                child: Row(
-                  children: [
-                    // Back button
-                    Container(
-                      width: 52,
-                      height: 52,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: AppColors.white.withOpacity(0.5),
-                          width: 1,
-                        ),
-                        color: Colors.transparent,
-                      ),
-                      child: IconButton(
-                        icon: const Icon(Icons.arrow_back, color: AppColors.white),
-                        onPressed: () => Navigator.of(context).pop(),
-                      ),
-                    ),
-                    const SizedBox(width: AppSpacing.space16),
-                    // Continue Button
-                    Expanded(
-                      child: SizedBox(
-                        height: 52,
-                        child: FilledButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => const HealthTrackersScreen()),
-                            );
-                          },
-                          style: FilledButton.styleFrom(
-                            backgroundColor: AppColors.pink600, // Matching dark theme button
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(26), // Pill shape
-                            ),
-                          ),
-                          child: Text(
-                            'Continue',
-                            style: AppTypography.body3SemiBold.copyWith(
-                              color: AppColors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
             ),
           ),
         ],
@@ -215,67 +216,38 @@ class _HealthConditionScreenState extends State<HealthConditionScreen> {
   }
 
   Widget _buildSearchBar() {
-    return Container(
-      height: 44,
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      decoration: BoxDecoration(
-        color: const Color(0x1AFFFFFF), // 10% white for glass effect
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(
-          color: const Color(0x26FFFFFF),
-          width: 0.5,
-        ),
-      ),
-      child: Row(
-        children: [
-          const Icon(Icons.search, color: AppColors.rose50, size: 20),
-          const SizedBox(width: 8),
-          Expanded(
-            child: TextField(
-              controller: _searchController,
-              style: const TextStyle(
-                color: AppColors.rose50,
-                fontSize: 15,
-                fontFamily: 'Geist',
-              ),
-              decoration: InputDecoration(
-                filled: false,
-                hintText: 'Search condition...',
-                hintStyle: TextStyle(
-                  color: AppColors.rose50.withOpacity(0.5),
-                  fontSize: 15,
-                  fontFamily: 'Geist',
-                ),
-                border: InputBorder.none,
-                enabledBorder: InputBorder.none,
-                focusedBorder: InputBorder.none,
-                isDense: true,
-                contentPadding: EdgeInsets.zero,
-              ),
-            ),
-          ),
-          GestureDetector(
-            onTap: () {
-              _searchController.clear();
-            },
-            child: SvgPicture.asset(
-              'assets/Figma MCP Assets/Onboarding Screens/Onboarding Screens Icons/Clear Search.svg',
-              width: 24,
-              height: 24,
-            ),
-          ),
-        ],
-      ),
+    return PremiumSearchField(
+      controller: _searchController,
+      placeholder: 'Search condition...',
+      isDark: true,
+      backgroundColor: const Color(0x1AFFFFFF),
+      textColor: AppColors.rose50,
+      placeholderColor: AppColors.rose50,
+      minHeight: 44,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+      onChanged: (value) {
+        setState(() {}); // Trigger filter
+      },
+      onClear: () {
+        _searchController.clear();
+        setState(() {});
+      },
     );
   }
 
   Widget _buildChip(String label) {
     final isSelected = _selectedConditions.contains(label);
-    
+
     // Using Figma tokens for active/inactive state
-    final Color bgColor = isSelected ? const Color(0xFFFFE0E9) : const Color(0x1AFFFFFF);
-    final Color textColor = isSelected ? const Color(0xFF49001E) : AppColors.rose50;
-    final Color borderColor = isSelected ? Colors.transparent : const Color(0x26FFFFFF);
+    final Color bgColor = isSelected
+        ? const Color(0xFFFFE0E9)
+        : const Color(0x1AFFFFFF);
+    final Color textColor = isSelected
+        ? const Color(0xFF49001E)
+        : AppColors.rose50;
+    final Color borderColor = isSelected
+        ? Colors.transparent
+        : const Color(0x26FFFFFF);
 
     return GestureDetector(
       onTap: () => _toggleCondition(label),
@@ -291,12 +263,15 @@ class _HealthConditionScreenState extends State<HealthConditionScreen> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              label,
-              style: TextStyle(
-                color: textColor,
-                fontSize: 15,
-                fontFamily: 'Geist',
+            Flexible(
+              child: Text(
+                label,
+                style: TextStyle(
+                  color: textColor,
+                  fontSize: 15,
+                  fontFamily: 'Geist',
+                ),
+                softWrap: true,
               ),
             ),
             if (isSelected) ...[
@@ -305,7 +280,10 @@ class _HealthConditionScreenState extends State<HealthConditionScreen> {
                 'assets/Figma MCP Assets/Onboarding Screens/Onboarding Screens Icons/check_circle.svg',
                 width: 16,
                 height: 16,
-                colorFilter: const ColorFilter.mode(Color(0xFF49001E), BlendMode.srcIn),
+                colorFilter: const ColorFilter.mode(
+                  Color(0xFF49001E),
+                  BlendMode.srcIn,
+                ),
               ),
             ],
           ],
@@ -317,7 +295,10 @@ class _HealthConditionScreenState extends State<HealthConditionScreen> {
   Widget _buildCustomChip() {
     return GestureDetector(
       onTap: () {
-        // Implement custom add logic
+        showAddCustomConditionSheet(
+          context,
+          onAdded: (condition) => _addCustomCondition(condition),
+        );
       },
       child: Container(
         height: 44,
@@ -339,11 +320,7 @@ class _HealthConditionScreenState extends State<HealthConditionScreen> {
               ),
             ),
             const SizedBox(width: 8),
-            const Icon(
-              Icons.add,
-              color: AppColors.rose50,
-              size: 20,
-            ),
+            const Icon(Icons.add, color: AppColors.rose50, size: 20),
           ],
         ),
       ),

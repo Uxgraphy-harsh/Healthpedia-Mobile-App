@@ -5,9 +5,44 @@ import 'package:healthpedia_frontend/core/constants/app_colors.dart';
 import 'package:healthpedia_frontend/core/constants/app_spacing.dart';
 import 'package:healthpedia_frontend/core/constants/app_typography.dart';
 import '../widgets/add_condition_bottom_sheet.dart';
+import 'package:healthpedia_frontend/core/widgets/premium_floating_cta.dart';
+import 'package:healthpedia_frontend/core/constants/app_conditions.dart';
 
-class ConditionsScreen extends StatelessWidget {
+class ConditionsScreen extends StatefulWidget {
   const ConditionsScreen({super.key});
+
+  @override
+  State<ConditionsScreen> createState() => _ConditionsScreenState();
+}
+
+class _ConditionsScreenState extends State<ConditionsScreen> {
+  final List<Map<String, String>> _conditions = [
+    {
+      'title': 'Thyroid',
+      'subtitle': 'Diagnosed • early 50s',
+      'iconPath': AppConditions.thyroid,
+    },
+    {
+      'title': 'Diabetes',
+      'subtitle': 'Diagnosed • early 50s',
+      'iconPath': AppConditions.diabetes,
+    },
+    {
+      'title': 'Cardiovascular',
+      'subtitle': 'Diagnosed • early 50s',
+      'iconPath': AppConditions.heart,
+    },
+  ];
+
+  void _addCondition(String title, String subtitle, String iconPath) {
+    setState(() {
+      _conditions.add({
+        'title': title,
+        'subtitle': subtitle,
+        'iconPath': iconPath,
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,49 +80,31 @@ class ConditionsScreen extends StatelessWidget {
         ),
         centerTitle: false,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(AppSpacing.space16),
+      body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.all(16),
         child: Wrap(
           spacing: 16,
           runSpacing: 16,
-          children: [
-            _ConditionCard(
-              title: 'Thyroid',
-              subtitle: 'Diagnosed • early 50s',
-              iconPath: 'assets/Figma MCP Assets/Onboarding Screens/Onboarding Screens Images/M 33.png',
-            ),
-            _ConditionCard(
-              title: 'Diabetes',
-              subtitle: 'Diagnosed • early 50s',
-              iconPath: 'assets/Figma MCP Assets/Onboarding Screens/Onboarding Screens Images/M 34.png',
-            ),
-            _ConditionCard(
-              title: 'Cardiovascular',
-              subtitle: 'Diagnosed • early 50s',
-              iconPath: 'assets/Figma MCP Assets/Onboarding Screens/Onboarding Screens Images/M 35.png',
-            ),
-          ],
+          children: _conditions.map((condition) => _ConditionCard(
+            title: condition['title']!,
+            subtitle: condition['subtitle']!,
+            iconPath: condition['iconPath']!,
+          )).toList(),
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          HapticFeedback.mediumImpact();
-          showAddConditionSheet(context);
-        },
-        backgroundColor: const Color(0xFFFFF1F2),
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(99),
-          side: const BorderSide(color: Color(0xFFFFD1D5)),
-        ),
-        label: Text(
-          'Add a Condition',
-          style: AppTypography.label1.copyWith(
-            color: const Color(0xFFE11D48),
-            fontWeight: FontWeight.w500,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 16),
+        child: PremiumFloatingCTA(
+          label: 'Add a Condition',
+          icon: Icons.add_rounded,
+          onTap: () => showAddConditionSheet(
+            context,
+            onAdd: (name, date, illustration) {
+              _addCondition(name, date, illustration);
+            },
           ),
         ),
-        icon: const Icon(Icons.add, color: Color(0xFFE11D48)),
       ),
     );
   }
@@ -116,7 +133,20 @@ class _ConditionCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Image.asset(iconPath, width: 48, height: 48),
+          SvgPicture.asset(
+            iconPath,
+            width: 48,
+            height: 48,
+            fit: BoxFit.contain,
+            placeholderBuilder: (context) => Container(
+              width: 48,
+              height: 48,
+              decoration: const BoxDecoration(
+                color: AppColors.neutral100,
+                shape: BoxShape.circle,
+              ),
+            ),
+          ),
           const SizedBox(height: 12),
           Text(
             title,

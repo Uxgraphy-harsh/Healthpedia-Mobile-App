@@ -4,16 +4,38 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:healthpedia_frontend/core/constants/app_colors.dart';
 import 'package:healthpedia_frontend/core/constants/app_spacing.dart';
 import 'package:healthpedia_frontend/core/constants/app_typography.dart';
+import 'package:healthpedia_frontend/core/utils/app_responsive.dart';
+import 'package:healthpedia_frontend/core/widgets/app_modal_bottom_sheet.dart';
 import '../widgets/edit_name_bottom_sheet.dart';
 import '../widgets/edit_email_bottom_sheet.dart';
 import '../widgets/edit_phone_bottom_sheet.dart';
 import '../widgets/personal_info_bottom_sheets.dart';
 
-class PersonalInformationScreen extends StatelessWidget {
+class PersonalInformationScreen extends StatefulWidget {
   const PersonalInformationScreen({super.key});
 
   @override
+  State<PersonalInformationScreen> createState() =>
+      _PersonalInformationScreenState();
+}
+
+class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
+  // Mock State
+  String _name = 'Mahesh Sahu';
+  String _email = 'samarth@uxgraphy.com';
+  String _phone = '9039443124';
+  DateTime _dob = DateTime(2001, 12, 4);
+  int _age = 47;
+  String _gender = 'Male';
+  int _height = 169;
+  int _weight = 68;
+  String _bloodGroup = 'O+';
+  String _city = 'Pune, Maharashtra';
+
+  @override
   Widget build(BuildContext context) {
+    final horizontalPadding = AppResponsive.horizontalPadding(context);
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -26,9 +48,7 @@ class PersonalInformationScreen extends StatelessWidget {
             child: Container(
               width: 40,
               height: 40,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-              ),
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
               child: Center(
                 child: SvgPicture.asset(
                   'assets/Figma MCP Assets/CommonAssets/Icons/arrow_back.svg',
@@ -50,52 +70,132 @@ class PersonalInformationScreen extends StatelessWidget {
         centerTitle: false,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        child: Column(
-          children: [
-            _InfoSection(
-              items: [
-                _InfoItem(label: 'Name', value: 'Mahesh Sahu'),
-                _InfoItem(label: 'Email', value: 'samarth@uxgraphy.com'),
+        padding: EdgeInsets.symmetric(
+          horizontal: horizontalPadding,
+          vertical: 16,
+        ),
+        child: ResponsiveConstrainedContent(
+          child: Column(
+            children: [
+              _buildSection([
+                _InfoItem(
+                  label: 'Name',
+                  value: _name,
+                  onTap: () => showEditNameSheet(
+                    context,
+                    initialName: _name,
+                    onUpdate: (val) => setState(() => _name = val),
+                  ),
+                ),
+                _InfoItem(
+                  label: 'Email',
+                  value: _email,
+                  onTap: () => showEditEmailSheet(
+                    context,
+                    initialEmail: _email,
+                    onUpdate: (val) => setState(() => _email = val),
+                  ),
+                ),
                 _InfoItem(
                   label: 'Phone',
-                  value: '9039443124',
+                  value: _phone,
                   prefix: '+91',
+                  onTap: () => showEditPhoneSheet(
+                    context,
+                    initialPhone: _phone,
+                    onUpdate: (val) => setState(() => _phone = val),
+                  ),
                 ),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.space16),
-            _InfoSection(
-              items: [
+              ]),
+              const SizedBox(height: AppSpacing.space16),
+              _buildSection([
                 _InfoItem(
                   label: 'Date of birth',
-                  value: '', // Handled specially
+                  value: '',
                   isDate: true,
+                  onTap: () => _showSheet(
+                    EditDOBBottomSheet(
+                      initialDate: _dob,
+                      onUpdate: (val) => setState(() => _dob = val),
+                    ),
+                  ),
                 ),
-                _InfoItem(label: 'Age', value: '47 years'),
-                _InfoItem(label: 'Gender', value: 'Male'),
-                _InfoItem(label: 'Height', value: '169 cm'),
-                _InfoItem(label: 'Weight', value: '68 kg'),
-                _InfoItem(label: 'Blood Group', value: 'O+'),
-                _InfoItem(label: 'City', value: 'Pune, Maharashtra'),
-              ],
-            ),
-          ],
+                _InfoItem(
+                  label: 'Age',
+                  value: '$_age years',
+                  onTap: () => _showSheet(
+                    EditAgeBottomSheet(
+                      initialAge: _age,
+                      onUpdate: (val) => setState(() => _age = val),
+                    ),
+                  ),
+                ),
+                _InfoItem(
+                  label: 'Gender',
+                  value: _gender,
+                  onTap: () => _showSheet(
+                    EditGenderBottomSheet(
+                      initialGender: _gender,
+                      onUpdate: (val) => setState(() => _gender = val),
+                    ),
+                  ),
+                ),
+                _InfoItem(
+                  label: 'Height',
+                  value: '$_height cm',
+                  onTap: () => _showSheet(
+                    EditHeightBottomSheet(
+                      initialHeight: _height,
+                      onUpdate: (val) => setState(() => _height = val),
+                    ),
+                  ),
+                ),
+                _InfoItem(
+                  label: 'Weight',
+                  value: '$_weight kg',
+                  onTap: () => _showSheet(
+                    EditWeightBottomSheet(
+                      initialWeight: _weight,
+                      onUpdate: (val) => setState(() => _weight = val),
+                    ),
+                  ),
+                ),
+                _InfoItem(
+                  label: 'Blood Group',
+                  value: _bloodGroup,
+                  onTap: () => _showSheet(
+                    EditBloodGroupBottomSheet(
+                      initialGroup: _bloodGroup,
+                      onUpdate: (val) => setState(() => _bloodGroup = val),
+                    ),
+                  ),
+                ),
+                _InfoItem(
+                  label: 'City',
+                  value: _city,
+                  onTap: () => _showSheet(
+                    EditCityBottomSheet(
+                      initialCity: _city,
+                      onUpdate: (val) => setState(() => _city = val),
+                    ),
+                  ),
+                ),
+              ]),
+            ],
+          ),
         ),
       ),
     );
   }
-}
 
-class _InfoSection extends StatelessWidget {
-  const _InfoSection({required this.items});
-  final List<_InfoItem> items;
+  void _showSheet(Widget sheet) {
+    showAppModalBottomSheet(context: context, builder: (context) => sheet);
+  }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildSection(List<_InfoItem> items) {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFFF5F5F5), // Neutral/100
+        color: const Color(0xFFF5F5F5),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -104,37 +204,17 @@ class _InfoSection extends StatelessWidget {
           final item = entry.value;
           final isLast = index == items.length - 1;
 
-          return _buildRow(item, !isLast, context);
+          return _buildRow(item, !isLast);
         }).toList(),
       ),
     );
   }
 
-  Widget _buildRow(_InfoItem item, bool showBorder, BuildContext context) {
+  Widget _buildRow(_InfoItem item, bool showBorder) {
     return InkWell(
       onTap: () {
         HapticFeedback.lightImpact();
-        if (item.label == 'Name') {
-          showEditNameSheet(context);
-        } else if (item.label == 'Email') {
-          showEditEmailSheet(context);
-        } else if (item.label == 'Phone') {
-          showEditPhoneSheet(context);
-        } else if (item.label == 'Date of birth') {
-          showModalBottomSheet(context: context, isScrollControlled: true, backgroundColor: Colors.transparent, builder: (context) => const EditDOBBottomSheet());
-        } else if (item.label == 'Age') {
-          showModalBottomSheet(context: context, isScrollControlled: true, backgroundColor: Colors.transparent, builder: (context) => const EditAgeBottomSheet());
-        } else if (item.label == 'Gender') {
-          showModalBottomSheet(context: context, isScrollControlled: true, backgroundColor: Colors.transparent, builder: (context) => const EditGenderBottomSheet());
-        } else if (item.label == 'Height') {
-          showModalBottomSheet(context: context, isScrollControlled: true, backgroundColor: Colors.transparent, builder: (context) => const EditHeightBottomSheet());
-        } else if (item.label == 'Weight') {
-          showModalBottomSheet(context: context, isScrollControlled: true, backgroundColor: Colors.transparent, builder: (context) => const EditWeightBottomSheet());
-        } else if (item.label == 'Blood Group') {
-          showModalBottomSheet(context: context, isScrollControlled: true, backgroundColor: Colors.transparent, builder: (context) => const EditBloodGroupBottomSheet());
-        } else if (item.label == 'City') {
-          showModalBottomSheet(context: context, isScrollControlled: true, backgroundColor: Colors.transparent, builder: (context) => const EditCityBottomSheet());
-        }
+        item.onTap();
       },
       child: Container(
         padding: const EdgeInsets.only(left: 16),
@@ -142,40 +222,55 @@ class _InfoSection extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(0, 16, 16, 16),
           decoration: BoxDecoration(
             border: showBorder
-                ? const Border(
-                    bottom: BorderSide(color: AppColors.neutral200),
-                  )
+                ? const Border(bottom: BorderSide(color: AppColors.neutral200))
                 : null,
           ),
           child: Row(
             children: [
-              Text(
-                item.label,
-                style: AppTypography.label1.copyWith(
-                  color: AppColors.neutral950,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 16,
-                ),
-              ),
-              const Spacer(),
-              if (item.isDate)
-                _buildDateValue()
-              else if (item.prefix != null)
-                _buildPhoneValue(item)
-              else
-                Text(
-                  item.value,
+              Expanded(
+                child: Text(
+                  item.label,
                   style: AppTypography.label1.copyWith(
                     color: AppColors.neutral950,
                     fontWeight: FontWeight.w400,
                     fontSize: 16,
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-              const SizedBox(width: 0),
-              SvgPicture.asset(
-                'assets/Figma MCP Assets/CommonAssets/Icons/Field Icon V1.svg',
-                width: 24,
-                height: 24,
+              ),
+              const SizedBox(width: 8),
+              Flexible(
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: item.isDate
+                      ? FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: _buildDateValue(_dob),
+                        )
+                      : item.prefix != null
+                      ? FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: _buildPhoneValue(item),
+                        )
+                      : Text(
+                          item.value,
+                          style: AppTypography.label1.copyWith(
+                            color: AppColors.neutral950,
+                            fontWeight: FontWeight.w400,
+                            fontSize: 16,
+                          ),
+                          textAlign: TextAlign.right,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              const Icon(
+                Icons.chevron_right_rounded,
+                color: AppColors.neutral400,
+                size: 20,
               ),
             ],
           ),
@@ -184,7 +279,7 @@ class _InfoSection extends StatelessWidget {
     );
   }
 
-  Widget _buildDateValue() {
+  Widget _buildDateValue(DateTime d) {
     const dividerStyle = TextStyle(
       fontFamily: 'Geist',
       fontSize: 16,
@@ -197,12 +292,12 @@ class _InfoSection extends StatelessWidget {
     );
 
     return Row(
-      children: const [
-        Text('04', style: valueStyle),
-        Text(' / ', style: dividerStyle),
-        Text('12', style: valueStyle),
-        Text(' / ', style: dividerStyle),
-        Text('2001', style: valueStyle),
+      children: [
+        Text(d.day.toString().padLeft(2, '0'), style: valueStyle),
+        const Text(' / ', style: dividerStyle),
+        Text(d.month.toString().padLeft(2, '0'), style: valueStyle),
+        const Text(' / ', style: dividerStyle),
+        Text(d.year.toString(), style: valueStyle),
       ],
     );
   }
@@ -237,11 +332,12 @@ class _InfoItem {
   final String value;
   final String? prefix;
   final bool isDate;
+  final VoidCallback onTap;
   _InfoItem({
     required this.label,
     required this.value,
+    required this.onTap,
     this.prefix,
     this.isDate = false,
   });
 }
-

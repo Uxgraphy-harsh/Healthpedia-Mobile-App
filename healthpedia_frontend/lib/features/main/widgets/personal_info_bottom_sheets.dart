@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:healthpedia_frontend/core/constants/app_colors.dart';
-import 'package:healthpedia_frontend/core/constants/app_spacing.dart';
-import 'package:healthpedia_frontend/core/constants/app_typography.dart';
+import 'package:healthpedia_frontend/core/widgets/premium_inputs/premium_date_picker.dart';
+import 'package:healthpedia_frontend/core/widgets/premium_inputs/premium_select.dart';
+import 'package:healthpedia_frontend/core/widgets/premium_inputs/premium_text_field.dart';
+import 'package:healthpedia_frontend/features/main/widgets/profile_info_sheet_scaffold.dart';
 import 'horizontal_wheel_picker.dart';
 
-// --- Base Widget for Common UI ---
 class _BaseInfoSheet extends StatelessWidget {
   final String title;
   final Widget child;
@@ -19,121 +18,52 @@ class _BaseInfoSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom + AppSpacing.space24,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const SizedBox(height: 8),
-          Container(
-            width: 40, height: 4,
-            decoration: BoxDecoration(
-              color: AppColors.neutral200,
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-          const SizedBox(height: 16),
-          _buildHeader(context),
-          const SizedBox(height: 24),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: child,
-          ),
-          const SizedBox(height: 24),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: ElevatedButton(
-              onPressed: () {
-                HapticFeedback.mediumImpact();
-                onUpdate();
-                Navigator.pop(context);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.neutral950,
-                foregroundColor: AppColors.white,
-                minimumSize: const Size(double.infinity, 56),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(99)),
-                elevation: 0,
-              ),
-              child: Text('Update', style: AppTypography.label1.copyWith(fontWeight: FontWeight.w500)),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Align(
-            alignment: Alignment.centerLeft,
-            child: GestureDetector(
-              onTap: () => Navigator.pop(context),
-              child: Text('Cancel', style: AppTypography.label1.copyWith(color: AppColors.blue600, fontWeight: FontWeight.w400)),
-            ),
-          ),
-          Text(title, style: AppTypography.h6.copyWith(color: AppColors.neutral950, fontWeight: FontWeight.w600)),
-        ],
-      ),
+    return ProfileInfoSheetScaffold(
+      title: title,
+      primaryLabel: 'Update',
+      onPrimaryTap: () {
+        onUpdate();
+        Navigator.pop(context);
+      },
+      child: child,
     );
   }
 }
 
 // --- 1. Edit Date of Birth ---
 class EditDOBBottomSheet extends StatefulWidget {
-  const EditDOBBottomSheet({super.key});
+  final DateTime initialDate;
+  final ValueChanged<DateTime> onUpdate;
+
+  const EditDOBBottomSheet({
+    super.key,
+    required this.initialDate,
+    required this.onUpdate,
+  });
+
   @override
   State<EditDOBBottomSheet> createState() => _EditDOBBottomSheetState();
 }
 
 class _EditDOBBottomSheetState extends State<EditDOBBottomSheet> {
-  DateTime _selectedDate = DateTime(2001, 12, 4);
+  late DateTime _selectedDate;
 
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: _selectedDate,
-      firstDate: DateTime(1920),
-      lastDate: DateTime.now(),
-      builder: (context, child) => Theme(
-        data: Theme.of(context).copyWith(
-          colorScheme: const ColorScheme.light(primary: AppColors.blue600, onPrimary: AppColors.white, onSurface: AppColors.neutral950),
-        ),
-        child: child!,
-      ),
-    );
-    if (picked != null) setState(() => _selectedDate = picked);
+  @override
+  void initState() {
+    super.initState();
+    _selectedDate = widget.initialDate;
   }
 
   @override
   Widget build(BuildContext context) {
     return _BaseInfoSheet(
       title: 'Edit date of birth',
-      onUpdate: () {},
-      child: GestureDetector(
-        onTap: () => _selectDate(context),
-        child: Container(
-          decoration: BoxDecoration(color: const Color(0xFFF5F5F5), borderRadius: BorderRadius.circular(16)),
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('Date of birth', style: AppTypography.label1.copyWith(color: AppColors.neutral950)),
-              Text('${_selectedDate.day.toString().padLeft(2, '0')} / ${_selectedDate.month.toString().padLeft(2, '0')} / ${_selectedDate.year}', 
-                   style: AppTypography.label1.copyWith(color: AppColors.neutral950)),
-            ],
-          ),
-        ),
+      onUpdate: () => widget.onUpdate(_selectedDate),
+      child: PremiumDatePicker(
+        label: 'Date of birth',
+        value: _selectedDate,
+        isDark: false,
+        onDateSelected: (value) => setState(() => _selectedDate = value),
       ),
     );
   }
@@ -141,15 +71,27 @@ class _EditDOBBottomSheetState extends State<EditDOBBottomSheet> {
 
 // --- 2. Edit Age ---
 class EditAgeBottomSheet extends StatelessWidget {
-  const EditAgeBottomSheet({super.key});
+  final int initialAge;
+  final ValueChanged<int> onUpdate;
+
+  const EditAgeBottomSheet({
+    super.key,
+    required this.initialAge,
+    required this.onUpdate,
+  });
+
   @override
   Widget build(BuildContext context) {
-    int currentAge = 48;
+    int currentAge = initialAge;
     return _BaseInfoSheet(
       title: 'Edit age',
-      onUpdate: () {},
+      onUpdate: () => onUpdate(currentAge),
       child: HorizontalWheelPicker(
-        minValue: 1, maxValue: 120, initialValue: 48, unit: 'years',
+        minValue: 1, 
+        maxValue: 120, 
+        initialValue: initialAge, 
+        unit: 'years',
+        isDark: false,
         onChanged: (val) => currentAge = val,
       ),
     );
@@ -158,42 +100,43 @@ class EditAgeBottomSheet extends StatelessWidget {
 
 // --- 3. Edit Gender ---
 class EditGenderBottomSheet extends StatefulWidget {
-  const EditGenderBottomSheet({super.key});
+  final String initialGender;
+  final ValueChanged<String> onUpdate;
+
+  const EditGenderBottomSheet({
+    super.key,
+    required this.initialGender,
+    required this.onUpdate,
+  });
+
   @override
   State<EditGenderBottomSheet> createState() => _EditGenderBottomSheetState();
 }
 
 class _EditGenderBottomSheetState extends State<EditGenderBottomSheet> {
-  String _selected = 'Male';
+  late String _selected;
+
+  @override
+  void initState() {
+    super.initState();
+    _selected = widget.initialGender;
+  }
+
   @override
   Widget build(BuildContext context) {
     return _BaseInfoSheet(
       title: 'Edit gender',
-      onUpdate: () {},
-      child: Container(
-        padding: const EdgeInsets.all(4),
-        decoration: BoxDecoration(color: const Color(0xFFF5F5F5), borderRadius: BorderRadius.circular(12)),
-        child: Row(
-          children: ['Male', 'Female', 'Other'].map((g) {
-            final isSelected = _selected == g;
-            return Expanded(
-              child: GestureDetector(
-                onTap: () { HapticFeedback.selectionClick(); setState(() => _selected = g); },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  decoration: BoxDecoration(
-                    color: isSelected ? AppColors.white : Colors.transparent,
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: isSelected ? [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 4, offset: const Offset(0, 2))] : null,
-                  ),
-                  child: Center(
-                    child: Text(g, style: AppTypography.label2.copyWith(color: isSelected ? AppColors.neutral950 : AppColors.neutral500, fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400)),
-                  ),
-                ),
-              ),
-            );
-          }).toList(),
-        ),
+      onUpdate: () => widget.onUpdate(_selected),
+      child: PremiumSelect<String>(
+        value: _selected,
+        placeholder: 'Gender',
+        items: const ['Male', 'Female', 'Other'],
+        isDark: false,
+        onChanged: (val) {
+          if (val != null) {
+            setState(() => _selected = val);
+          }
+        },
       ),
     );
   }
@@ -201,15 +144,27 @@ class _EditGenderBottomSheetState extends State<EditGenderBottomSheet> {
 
 // --- 4. Edit Height ---
 class EditHeightBottomSheet extends StatelessWidget {
-  const EditHeightBottomSheet({super.key});
+  final int initialHeight;
+  final ValueChanged<int> onUpdate;
+
+  const EditHeightBottomSheet({
+    super.key,
+    required this.initialHeight,
+    required this.onUpdate,
+  });
+
   @override
   Widget build(BuildContext context) {
-    int currentHeight = 169;
+    int currentHeight = initialHeight;
     return _BaseInfoSheet(
       title: 'Edit height',
-      onUpdate: () {},
+      onUpdate: () => onUpdate(currentHeight),
       child: HorizontalWheelPicker(
-        minValue: 50, maxValue: 250, initialValue: 169, unit: 'cm',
+        minValue: 50, 
+        maxValue: 250, 
+        initialValue: initialHeight, 
+        unit: 'cm',
+        isDark: false,
         onChanged: (val) => currentHeight = val,
       ),
     );
@@ -218,15 +173,27 @@ class EditHeightBottomSheet extends StatelessWidget {
 
 // --- 5. Edit Weight ---
 class EditWeightBottomSheet extends StatelessWidget {
-  const EditWeightBottomSheet({super.key});
+  final int initialWeight;
+  final ValueChanged<int> onUpdate;
+
+  const EditWeightBottomSheet({
+    super.key,
+    required this.initialWeight,
+    required this.onUpdate,
+  });
+
   @override
   Widget build(BuildContext context) {
-    int currentWeight = 68;
+    int currentWeight = initialWeight;
     return _BaseInfoSheet(
       title: 'Edit weight',
-      onUpdate: () {},
+      onUpdate: () => onUpdate(currentWeight),
       child: HorizontalWheelPicker(
-        minValue: 20, maxValue: 200, initialValue: 68, unit: 'kg',
+        minValue: 20, 
+        maxValue: 200, 
+        initialValue: initialWeight, 
+        unit: 'kg',
+        isDark: false,
         onChanged: (val) => currentWeight = val,
       ),
     );
@@ -235,32 +202,43 @@ class EditWeightBottomSheet extends StatelessWidget {
 
 // --- 6. Edit Blood Group ---
 class EditBloodGroupBottomSheet extends StatefulWidget {
-  const EditBloodGroupBottomSheet({super.key});
+  final String initialGroup;
+  final ValueChanged<String> onUpdate;
+
+  const EditBloodGroupBottomSheet({
+    super.key,
+    required this.initialGroup,
+    required this.onUpdate,
+  });
+
   @override
   State<EditBloodGroupBottomSheet> createState() => _EditBloodGroupBottomSheetState();
 }
 
 class _EditBloodGroupBottomSheetState extends State<EditBloodGroupBottomSheet> {
-  String _selected = 'O+';
-  final List<String> _groups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+  late String _selected;
+
+  @override
+  void initState() {
+    super.initState();
+    _selected = widget.initialGroup;
+  }
 
   @override
   Widget build(BuildContext context) {
     return _BaseInfoSheet(
       title: 'Edit blood group',
-      onUpdate: () {},
-      child: Container(
-        decoration: BoxDecoration(color: const Color(0xFFF5F5F5), borderRadius: BorderRadius.circular(16)),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: DropdownButtonHideUnderline(
-          child: DropdownButton<String>(
-            value: _selected,
-            isExpanded: true,
-            icon: const Icon(Icons.expand_more, color: AppColors.neutral500),
-            items: _groups.map((g) => DropdownMenuItem(value: g, child: Text(g))).toList(),
-            onChanged: (val) { if (val != null) setState(() => _selected = val); },
-          ),
-        ),
+      onUpdate: () => widget.onUpdate(_selected),
+      child: PremiumSelect<String>(
+        value: _selected,
+        placeholder: 'Blood Group',
+        items: const ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
+        isDark: false,
+        onChanged: (val) {
+          if (val != null) {
+            setState(() => _selected = val);
+          }
+        },
       ),
     );
   }
@@ -268,47 +246,43 @@ class _EditBloodGroupBottomSheetState extends State<EditBloodGroupBottomSheet> {
 
 // --- 7. Edit City ---
 class EditCityBottomSheet extends StatefulWidget {
-  const EditCityBottomSheet({super.key});
+  final String initialCity;
+  final ValueChanged<String> onUpdate;
+
+  const EditCityBottomSheet({
+    super.key,
+    required this.initialCity,
+    required this.onUpdate,
+  });
+
   @override
   State<EditCityBottomSheet> createState() => _EditCityBottomSheetState();
 }
 
 class _EditCityBottomSheetState extends State<EditCityBottomSheet> {
-  final TextEditingController _controller = TextEditingController(text: 'Pune, Maharashtra');
-  final List<String> _suggestions = ['Pune, Maharashtra', 'Mumbai, Maharashtra', 'Bangalore, Karnataka', 'Delhi, NCR', 'Hyderabad, Telangana'];
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.initialCity);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return _BaseInfoSheet(
       title: 'Edit city',
-      onUpdate: () {},
-      child: Autocomplete<String>(
-        initialValue: const TextEditingValue(text: 'Pune, Maharashtra'),
-        optionsBuilder: (TextEditingValue value) {
-          if (value.text == '') return const Iterable<String>.empty();
-          return _suggestions.where((s) => s.toLowerCase().contains(value.text.toLowerCase()));
-        },
-        fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
-          return Container(
-            decoration: BoxDecoration(color: const Color(0xFFF5F5F5), borderRadius: BorderRadius.circular(16)),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-            child: Row(
-              children: [
-                Text('City', style: AppTypography.label1.copyWith(color: AppColors.neutral950)),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: TextField(
-                    controller: controller,
-                    focusNode: focusNode,
-                    textAlign: TextAlign.right,
-                    decoration: const InputDecoration(border: InputBorder.none, hintText: 'Enter city'),
-                    style: AppTypography.label1.copyWith(color: AppColors.neutral950),
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
+      onUpdate: () => widget.onUpdate(_controller.text),
+      child: PremiumTextField(
+        label: 'City',
+        controller: _controller,
+        isDark: false,
       ),
     );
   }

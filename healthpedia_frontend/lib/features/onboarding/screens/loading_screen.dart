@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'dart:ui';
 import 'package:healthpedia_frontend/features/main/screens/main_scaffold.dart';
+import 'package:healthpedia_frontend/core/navigation/premium_route.dart';
+import 'package:healthpedia_frontend/core/constants/app_colors.dart';
 
 /// The final Loading Screen sequence finalizing onboarding setup and preparing to enter the main app.
 /// Features a custom pink background, rotating flower graphic, and a beautifully calculated physics petal drop loop animation.
@@ -34,10 +36,7 @@ class _LoadingScreenState extends State<LoadingScreen> with TickerProviderStateM
     // Advance automatically into the Main Home App Scaffold after exactly 3 seconds 
     Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const MainScaffold()),
-        );
+        context.pushReplacementPremium(const MainScaffold());
       }
     });
   }

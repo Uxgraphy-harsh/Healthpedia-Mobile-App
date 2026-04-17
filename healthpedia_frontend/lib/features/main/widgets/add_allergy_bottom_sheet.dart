@@ -3,19 +3,24 @@ import 'package:flutter/services.dart';
 import 'package:healthpedia_frontend/core/constants/app_colors.dart';
 import 'package:healthpedia_frontend/core/constants/app_spacing.dart';
 import 'package:healthpedia_frontend/core/constants/app_typography.dart';
+import 'package:healthpedia_frontend/core/widgets/premium_sheet_header.dart';
+import 'package:healthpedia_frontend/core/widgets/premium_bottom_sheet.dart';
 import 'severity_switch.dart';
 
-void showAddAllergySheet(BuildContext context) {
+import 'package:healthpedia_frontend/core/widgets/premium_inputs/premium_text_field.dart';
+
+void showAddAllergySheet(BuildContext context, {required Function(String name, String reaction, String type, AllergySeverity severity) onAdd}) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
-    builder: (context) => const AddAllergyBottomSheet(),
+    builder: (context) => AddAllergyBottomSheet(onAdd: onAdd),
   );
 }
 
 class AddAllergyBottomSheet extends StatefulWidget {
-  const AddAllergyBottomSheet({super.key});
+  final Function(String name, String reaction, String type, AllergySeverity severity) onAdd;
+  const AddAllergyBottomSheet({super.key, required this.onAdd});
 
   @override
   State<AddAllergyBottomSheet> createState() => _AddAllergyBottomSheetState();
@@ -38,118 +43,63 @@ class _AddAllergyBottomSheetState extends State<AddAllergyBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom + AppSpacing.space24,
-        left: 16,
-        right: 16,
-        top: 8,
+    return PremiumBottomSheet(
+      title: 'Add allergy',
+      isDark: false,
+      footer: ElevatedButton(
+        onPressed: () {
+          if (_nameController.text.isNotEmpty) {
+            HapticFeedback.mediumImpact();
+            widget.onAdd(
+              _nameController.text,
+              _reactionController.text,
+              _selectedType,
+              _severity,
+            );
+            Navigator.pop(context);
+          }
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.neutral950,
+          foregroundColor: AppColors.white,
+          minimumSize: const Size(double.infinity, 56),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(99),
+          ),
+          elevation: 0,
+        ),
+        child: Text(
+          'Save Allergy',
+          style: AppTypography.label1.copyWith(
+            fontWeight: FontWeight.w500,
+          ),
+        ),
       ),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Center(
-            child: Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: AppColors.neutral200,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              Align(
-                alignment: Alignment.centerLeft,
-                child: GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: Text(
-                    'Cancel',
-                    style: AppTypography.label1.copyWith(
-                      color: AppColors.blue600,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ),
-              ),
-              Text(
-                'Add allergy',
-                style: AppTypography.h6.copyWith(
-                  color: AppColors.neutral950,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 32),
-          TextField(
+          PremiumTextField(
             controller: _nameController,
-            decoration: InputDecoration(
-              labelText: 'Allergy name*',
-              hintText: 'Type to add or search existing symptom..',
-              floatingLabelBehavior: FloatingLabelBehavior.always,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: AppColors.neutral200),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: AppColors.neutral200),
-              ),
-            ),
+            label: 'Allergy name*',
+            placeholder: 'e.g. Penicillin',
+            isDark: false,
+            minHeight: 64,
+            forceLabelInside: true,
           ),
           const SizedBox(height: 16),
-          TextField(
+          PremiumTextField(
             controller: _reactionController,
+            label: 'Reaction',
+            placeholder: 'Describe what happens',
+            isDark: false,
             maxLines: 3,
-            decoration: InputDecoration(
-              labelText: 'Reaction',
-              hintText: 'Describe what happens',
-              floatingLabelBehavior: FloatingLabelBehavior.always,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: AppColors.neutral200),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: AppColors.neutral200),
-              ),
-            ),
+            minHeight: 100,
+            forceLabelInside: true,
           ),
           const SizedBox(height: 24),
           _buildTypeSection(),
           const SizedBox(height: 24),
           _buildSeveritySection(),
-          const SizedBox(height: 32),
-          ElevatedButton(
-            onPressed: () {
-              HapticFeedback.mediumImpact();
-              Navigator.pop(context);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.neutral950,
-              foregroundColor: AppColors.white,
-              minimumSize: const Size(double.infinity, 56),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(99),
-              ),
-              elevation: 0,
-            ),
-            child: Text(
-              'Save Allergy',
-              style: AppTypography.label1.copyWith(
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
         ],
       ),
     );

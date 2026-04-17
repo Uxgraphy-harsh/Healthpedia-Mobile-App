@@ -40,7 +40,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
   }
 
   List<ReminderItem> get _pendingReminders => widget.reminders
-      .where((r) => r.status == ReminderStatus.pending)
+      .where((r) => r.status == ReminderStatus.pending || r.isAwaitingRemoval)
       .take(3)
       .toList();
 
@@ -138,63 +138,67 @@ class _SummaryScreenState extends State<SummaryScreen> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    '74',
-                                    style: TextStyle(
-                                      fontFamily: 'Geist',
-                                      fontSize: 40,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.white,
-                                      height: 1,
-                                    ),
-                                  ),
-                                  const Text(
-                                    'Health score',
-                                    style: TextStyle(
-                                      fontFamily: 'Geist',
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500,
-                                      color: Color(0xFFD4D4D4),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 12),
-                                  // Week comparison
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 8,
-                                      vertical: 4,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: const Color(0x1ABBF7C8),
-                                      borderRadius: BorderRadius.circular(999),
-                                      border: Border.all(
-                                        color: const Color(0x1ABBF7C8),
+                              Flexible(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      '74',
+                                      style: TextStyle(
+                                        fontFamily: 'Geist',
+                                        fontSize: 40,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.white,
+                                        height: 1,
                                       ),
                                     ),
-                                    child: Row(
-                                      children: [
-                                        const Icon(
-                                          Icons.arrow_upward,
-                                          size: 14,
-                                          color: Color(0xFF4ADE80),
+                                    const Text(
+                                      'Health score',
+                                      style: TextStyle(
+                                        fontFamily: 'Geist',
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                        color: Color(0xFFD4D4D4),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 12),
+                                    // Week comparison
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 4,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0x1ABBF7C8),
+                                        borderRadius: BorderRadius.circular(999),
+                                        border: Border.all(
+                                          color: const Color(0x1ABBF7C8),
                                         ),
-                                        const SizedBox(width: 4),
-                                        const Text(
-                                          '+3 from last week',
-                                          style: TextStyle(
-                                            fontFamily: 'Geist',
-                                            fontSize: 12,
+                                      ),
+                                      child: const Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            Icons.arrow_upward,
+                                            size: 14,
                                             color: Color(0xFF4ADE80),
                                           ),
-                                        ),
-                                      ],
+                                          SizedBox(width: 4),
+                                          Text(
+                                            '+3 from last week',
+                                            style: TextStyle(
+                                              fontFamily: 'Geist',
+                                              fontSize: 12,
+                                              color: Color(0xFF4ADE80),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
+                              const SizedBox(width: 12),
                               // Customise Button
                               KineticInteraction(
                                 onTap: () {}, // TODO: Implementation
@@ -211,6 +215,7 @@ class _SummaryScreenState extends State<SummaryScreen> {
                                     ),
                                   ),
                                   child: const Row(
+                                    mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Icon(
                                         Icons.edit,
@@ -278,7 +283,8 @@ class _SummaryScreenState extends State<SummaryScreen> {
                                 'bpm',
                                 'Heart Rate',
                                 'Normal',
-                                'ecg_heart.svg',
+                                Icons.monitor_heart,
+                                const Color(0xFFEF4444), // Red/500
                                 const Color(0xFF4ADE80),
                               ),
                               const SizedBox(width: 12),
@@ -287,7 +293,8 @@ class _SummaryScreenState extends State<SummaryScreen> {
                                 '',
                                 'Steps',
                                 'Below Goal',
-                                'steps.svg',
+                                Icons.directions_run,
+                                const Color(0xFF3B82F6), // Blue/500
                                 const Color(0xFFFB923C),
                               ),
                               const SizedBox(width: 12),
@@ -296,7 +303,8 @@ class _SummaryScreenState extends State<SummaryScreen> {
                                 'min',
                                 'Sleep',
                                 'Below Goal',
-                                'partly_cloudy_night.svg',
+                                Icons.nights_stay,
+                                const Color(0xFF8B5CF6), // Purple/500
                                 const Color(0xFFFB923C),
                               ),
                               const SizedBox(width: 12),
@@ -305,7 +313,8 @@ class _SummaryScreenState extends State<SummaryScreen> {
                                 'kcal',
                                 'Calories',
                                 'Below Goal',
-                                'mode_heat.svg',
+                                Icons.whatshot,
+                                const Color(0xFFF59E0B), // Amber/500
                                 const Color(0xFFFB923C),
                               ),
                             ],
@@ -561,7 +570,8 @@ class _SummaryScreenState extends State<SummaryScreen> {
     String unit,
     String label,
     String status,
-    String icon,
+    IconData iconData,
+    Color iconColor,
     Color statusColor,
   ) {
     return Container(
@@ -574,10 +584,10 @@ class _SummaryScreenState extends State<SummaryScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SvgPicture.asset(
-            'assets/Figma MCP Assets/CommonAssets/Icons/$icon',
-            width: 24,
-            height: 24,
+          Icon(
+            iconData,
+            color: iconColor,
+            size: 24,
           ),
           const SizedBox(height: 4),
           Row(
@@ -635,50 +645,60 @@ class _SummaryScreenState extends State<SummaryScreen> {
   }
 
   Widget _buildReminderItem(ReminderItem data) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: GestureDetector(
-        onTap: () {
-          widget.onToggle(data.id);
-          HapticFeedback.lightImpact();
-        },
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFFE5E5E5)),
-          ),
-          child: Row(
-            children: [
-              ReminderCheckbox(
-                status: data.status,
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      data.title,
-                      style: const TextStyle(
-                        fontFamily: 'Geist',
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    Text(
-                      data.time,
-                      style: const TextStyle(
-                        fontFamily: 'Geist',
-                        fontSize: 12,
-                        color: Color(0xFF737373),
-                      ),
-                    ),
-                  ],
+    return AnimatedOpacity(
+      duration: const Duration(milliseconds: 300),
+      opacity: data.status == ReminderStatus.pending ? 1.0 : 0.6,
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 8),
+        child: GestureDetector(
+          onTap: () {
+            widget.onToggle(data.id);
+            HapticFeedback.lightImpact();
+          },
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: const Color(0xFFE5E5E5)),
+            ),
+            child: Row(
+              children: [
+                ReminderCheckbox(
+                  status: data.status,
                 ),
-              ),
-            ],
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        data.title,
+                        style: TextStyle(
+                          fontFamily: 'Geist',
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          decoration: data.status == ReminderStatus.completed
+                              ? TextDecoration.lineThrough
+                              : TextDecoration.none,
+                          color: data.status == ReminderStatus.completed
+                              ? const Color(0xFFA3A3A3)
+                              : const Color(0xFF0A0A0A),
+                        ),
+                      ),
+                      Text(
+                        data.time,
+                        style: const TextStyle(
+                          fontFamily: 'Geist',
+                          fontSize: 12,
+                          color: Color(0xFF737373),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -3,18 +3,25 @@ import 'package:flutter/services.dart';
 import 'package:healthpedia_frontend/core/constants/app_colors.dart';
 import 'package:healthpedia_frontend/core/constants/app_spacing.dart';
 import 'package:healthpedia_frontend/core/constants/app_typography.dart';
+import 'package:healthpedia_frontend/core/widgets/premium_sheet_header.dart';
+import 'package:healthpedia_frontend/core/widgets/premium_bottom_sheet.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:healthpedia_frontend/core/constants/app_conditions.dart';
+import 'package:healthpedia_frontend/core/widgets/premium_inputs/premium_text_field.dart';
+import 'package:healthpedia_frontend/core/widgets/premium_inputs/premium_date_picker.dart';
 
-void showAddConditionSheet(BuildContext context) {
+void showAddConditionSheet(BuildContext context, {required Function(String name, String date, String illustration) onAdd}) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
-    builder: (context) => const AddConditionBottomSheet(),
+    builder: (context) => AddConditionBottomSheet(onAdd: onAdd),
   );
 }
 
 class AddConditionBottomSheet extends StatefulWidget {
-  const AddConditionBottomSheet({super.key});
+  final Function(String name, String date, String illustration) onAdd;
+  const AddConditionBottomSheet({super.key, required this.onAdd});
 
   @override
   State<AddConditionBottomSheet> createState() => _AddConditionBottomSheetState();
@@ -22,120 +29,140 @@ class AddConditionBottomSheet extends StatefulWidget {
 
 class _AddConditionBottomSheetState extends State<AddConditionBottomSheet> {
   final _nameController = TextEditingController();
-  final _dateController = TextEditingController();
+  DateTime? _selectedDate;
+  late final PageController _illustrationController;
+  int _selectedIllustrationIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _illustrationController = PageController(
+      viewportFraction: 0.25,
+      initialPage: 0,
+    );
+  }
 
   @override
   void dispose() {
+    _illustrationController.dispose();
     _nameController.dispose();
-    _dateController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom + AppSpacing.space24,
-        left: 16,
-        right: 16,
-        top: 8,
+    return PremiumBottomSheet(
+      title: 'Add Condition',
+      isDark: false,
+      footer: ElevatedButton(
+        onPressed: () {
+          if (_nameController.text.isNotEmpty) {
+            HapticFeedback.mediumImpact();
+            final dateStr = _selectedDate != null 
+              ? 'Diagnosed • ${_selectedDate!.year}s' 
+              : 'Diagnosed • early 50s'; // Fallback for demo
+            
+            widget.onAdd(
+              _nameController.text,
+              dateStr,
+              AppConditions.all[_selectedIllustrationIndex],
+            );
+            Navigator.pop(context);
+          }
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.neutral950,
+          foregroundColor: AppColors.white,
+          minimumSize: const Size(double.infinity, 56),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(99),
+          ),
+          elevation: 0,
+        ),
+        child: Text(
+          'Add',
+          style: AppTypography.label1.copyWith(
+            fontWeight: FontWeight.w500,
+          ),
+        ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            width: 40,
-            height: 4,
-            decoration: BoxDecoration(
-              color: AppColors.neutral200,
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-          const SizedBox(height: 16),
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              Align(
-                alignment: Alignment.centerLeft,
-                child: GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: Text(
-                    'Cancel',
-                    style: AppTypography.label1.copyWith(
-                      color: AppColors.blue600,
-                      fontWeight: FontWeight.w400,
+          // Illustration Selector — Snap-to-center PageView
+          SizedBox(
+            height: 64,
+            child: PageView.builder(
+              controller: _illustrationController,
+              clipBehavior: Clip.none,
+              itemCount: AppConditions.all.length,
+              onPageChanged: (index) {
+                HapticFeedback.selectionClick();
+                setState(() => _selectedIllustrationIndex = index);
+              },
+              itemBuilder: (context, index) {
+                final illustration = AppConditions.all[index];
+                final isSelected = _selectedIllustrationIndex == index;
+
+                return GestureDetector(
+                  onTap: () {
+                    _illustrationController.animateToPage(
+                      index,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                    );
+                  },
+                  child: AnimatedOpacity(
+                    duration: const Duration(milliseconds: 200),
+                    opacity: isSelected ? 1 : 0.4,
+                    child: Center(
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        width: 64,
+                        height: 64,
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: isSelected
+                                ? AppColors.neutral950
+                                : AppColors.neutral200,
+                            width: isSelected ? 1.5 : 1,
+                          ),
+                          color: isSelected
+                              ? AppColors.white
+                              : AppColors.neutral50,
+                        ),
+                        child: SvgPicture.asset(
+                          illustration,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-              Text(
-                'Add Condition',
-                style: AppTypography.h6.copyWith(
-                  color: AppColors.neutral950,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
+                );
+              },
+            ),
           ),
           const SizedBox(height: 32),
-          TextField(
+          PremiumTextField(
             controller: _nameController,
-            decoration: InputDecoration(
-              labelText: 'Condition name',
-              hintText: 'e.g. Hypothyroidism',
-              floatingLabelBehavior: FloatingLabelBehavior.always,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: AppColors.neutral200),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: AppColors.neutral200),
-              ),
-            ),
+            label: 'Condition name',
+            placeholder: 'e.g. Hypothyroidism',
+            isDark: false,
+            minHeight: 64,
+            forceLabelInside: true,
           ),
           const SizedBox(height: 16),
-          TextField(
-            controller: _dateController,
-            decoration: InputDecoration(
-              labelText: 'Diagnosis date',
-              hintText: '00/00/0000',
-              floatingLabelBehavior: FloatingLabelBehavior.always,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: AppColors.neutral200),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: AppColors.neutral200),
-              ),
-            ),
-          ),
-          const SizedBox(height: 32),
-          ElevatedButton(
-            onPressed: () {
-              HapticFeedback.mediumImpact();
-              Navigator.pop(context);
+          PremiumDatePicker(
+            label: 'Diagnosis date',
+            placeholder: 'DD/MM/YYYY',
+            value: _selectedDate,
+            onDateSelected: (date) {
+              setState(() => _selectedDate = date);
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.neutral950,
-              foregroundColor: AppColors.white,
-              minimumSize: const Size(double.infinity, 56),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(99),
-              ),
-              elevation: 0,
-            ),
-            child: Text(
-              'Add',
-              style: AppTypography.label1.copyWith(
-                fontWeight: FontWeight.w500,
-              ),
-            ),
+            isDark: false,
+            minHeight: 64,
           ),
         ],
       ),

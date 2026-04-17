@@ -4,6 +4,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:healthpedia_frontend/core/constants/app_colors.dart';
 import 'package:healthpedia_frontend/core/constants/app_spacing.dart';
 import 'package:healthpedia_frontend/core/constants/app_typography.dart';
+import 'package:healthpedia_frontend/core/widgets/premium_sheet_header.dart';
+import 'package:healthpedia_frontend/core/widgets/premium_switch.dart';
 
 Future<void> showShareAccessBottomSheet(
   BuildContext context, {
@@ -54,48 +56,46 @@ class _ShareAccessBottomSheetState extends State<ShareAccessBottomSheet> {
     _options = [
       const _AccessOption(
         label: 'Conditions',
-        iconKind: _AccessIconKind.svg,
-        iconPath: 'assets/Figma MCP Assets/CommonAssets/Icons/diagnosis.svg',
-        iconBackgroundColor: AppColors.rose500,
+        iconPath:
+            'assets/Figma MCP Assets/CommonAssets/Icons/Family & Friends/Conditions/share access bottom sheet.svg',
+        fallbackBackgroundColor: Color(0xFFF43F5E),
         enabled: true,
       ),
       const _AccessOption(
         label: 'Prescriptions',
-        iconKind: _AccessIconKind.emoji,
-        emoji: '💊',
-        iconBackgroundColor: AppColors.purple500,
+        iconPath:
+            'assets/Figma MCP Assets/CommonAssets/Icons/Family & Friends/Prescriptions/share access bottom sheet.svg',
+        fallbackBackgroundColor: Color(0xFFA855F7),
       ),
       const _AccessOption(
         label: 'Allergies',
-        iconKind: _AccessIconKind.svg,
-        iconPath: 'assets/Figma MCP Assets/CommonAssets/Icons/allergy.svg',
-        iconBackgroundColor: AppColors.orange500,
+        iconPath:
+            'assets/Figma MCP Assets/CommonAssets/Icons/Family & Friends/Allergies/share access bottom sheet.svg',
+        fallbackBackgroundColor: Color(0xFFF97316),
       ),
       const _AccessOption(
         label: 'Reports',
-        iconKind: _AccessIconKind.svg,
-        iconPath: 'assets/Figma MCP Assets/CommonAssets/Icons/folder_open.svg',
-        iconBackgroundColor: AppColors.cyan500,
+        iconPath:
+            'assets/Figma MCP Assets/CommonAssets/Icons/Family & Friends/Reports/share access bottom sheet.svg',
+        fallbackBackgroundColor: Color(0xFF06B6D4),
       ),
       const _AccessOption(
         label: 'Symptoms',
-        iconKind: _AccessIconKind.emoji,
-        emoji: '🤒',
-        iconBackgroundColor: AppColors.green500,
+        iconPath:
+            'assets/Figma MCP Assets/CommonAssets/Icons/Family & Friends/Symptoms/share access bottom sheet.svg',
+        fallbackBackgroundColor: Color(0xFF22C55E),
       ),
       const _AccessOption(
         label: 'Family History',
-        iconKind: _AccessIconKind.svg,
         iconPath:
-            'assets/Figma MCP Assets/CommonAssets/Icons/Family History big icon.svg',
-        iconBackgroundColor: AppColors.indigo500,
+            'assets/Figma MCP Assets/CommonAssets/Icons/Family & Friends/Family History/share access bottom sheet.svg',
+        fallbackBackgroundColor: Color(0xFF6366F1),
       ),
       const _AccessOption(
         label: 'Insurance',
-        iconKind: _AccessIconKind.svg,
         iconPath:
-            'assets/Figma MCP Assets/CommonAssets/Icons/shield_with_heart.svg',
-        iconBackgroundColor: AppColors.teal500,
+            'assets/Figma MCP Assets/CommonAssets/Icons/Family & Friends/Insurance/share access bottom sheet.svg',
+        fallbackBackgroundColor: Color(0xFF14B8A6),
         enabled: true,
       ),
     ];
@@ -105,132 +105,123 @@ class _ShareAccessBottomSheetState extends State<ShareAccessBottomSheet> {
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
 
-    return SafeArea(
-      top: false,
-      child: Padding(
-        padding: EdgeInsets.only(bottom: mediaQuery.viewInsets.bottom),
-        child: Container(
-          decoration: const BoxDecoration(
-            color: AppColors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(AppSpacing.radius3xl),
-              topRight: Radius.circular(AppSpacing.radius3xl),
+    return Container(
+      decoration: const BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(24),
+          topRight: Radius.circular(24),
+        ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildDragHandle(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                GestureDetector(
+                  onTap: () => Navigator.of(context).pop(),
+                  child: Text(
+                    'Cancel',
+                    style: AppTypography.label2.copyWith(
+                      color: AppColors.blue600,
+                    ),
+                  ),
+                ),
+                Text(
+                  'Share Access',
+                  style: AppTypography.label1.copyWith(
+                    color: AppColors.neutral950,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(width: 48), // Spacer for balance
+              ],
             ),
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 40,
-                height: 5,
-                margin: const EdgeInsets.symmetric(vertical: 8),
-                decoration: BoxDecoration(
-                  color: AppColors.black.withValues(alpha: 0.10),
-                  borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
+          const SizedBox(height: 16),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _ShareTargetHeader(
+                  name: widget.name,
+                  phoneNumber: widget.phoneNumber,
+                  imagePath: widget.imagePath,
+                  backgroundColor: widget.backgroundColor,
                 ),
-              ),
-              SizedBox(
-                height: 60,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.space16,
-                        ),
-                        child: GestureDetector(
-                          behavior: HitTestBehavior.opaque,
-                          onTap: () => Navigator.of(context).pop(),
-                          child: Text(
-                            'Cancel',
-                            style: AppTypography.label2.copyWith(
-                              color: AppColors.blue600,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Text(
-                      'Share Access',
-                      style: AppTypography.label1SemiBold.copyWith(
-                        color: AppColors.neutral950,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.space16,
-                  AppSpacing.space16,
-                  AppSpacing.space16,
-                  AppSpacing.space16,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _ShareTargetHeader(
-                      name: widget.name,
-                      phoneNumber: widget.phoneNumber,
-                      imagePath: widget.imagePath,
-                      backgroundColor: widget.backgroundColor,
-                    ),
-                    const SizedBox(height: AppSpacing.space20),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: AppColors.neutral100,
-                        borderRadius: BorderRadius.circular(
-                          AppSpacing.radius2xl,
-                        ),
-                      ),
-                      child: Column(
-                        children: List.generate(_options.length, (index) {
-                          final option = _options[index];
-                          return _AccessOptionRow(
-                            option: option,
-                            showDivider: index < _options.length - 1,
-                            onChanged: (value) {
-                              HapticFeedback.selectionClick();
-                              setState(() {
-                                _options[index] = option.copyWith(
-                                  enabled: value,
-                                );
-                              });
-                            },
-                          );
-                        }),
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.space20),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 52,
-                      child: FilledButton(
-                        onPressed: () {
-                          HapticFeedback.lightImpact();
+                const SizedBox(height: 20),
+                Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.neutral100,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Column(
+                    children: List.generate(_options.length, (index) {
+                      final option = _options[index];
+                      return _AccessOptionRow(
+                        option: option,
+                        showDivider: index < _options.length - 1,
+                        onChanged: (value) {
+                          HapticFeedback.selectionClick();
+                          setState(() {
+                            _options[index] = option.copyWith(
+                              enabled: value,
+                            );
+                          });
                         },
-                        style: FilledButton.styleFrom(
-                          backgroundColor: AppColors.blue400,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(99),
-                          ),
-                        ),
-                        child: Text(
-                          'Grant Access',
-                          style: AppTypography.body2Medium.copyWith(
-                            color: AppColors.white,
-                          ),
-                        ),
+                      );
+                    }),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: double.infinity,
+                  height: 52,
+                  child: FilledButton(
+                    onPressed: () {
+                      HapticFeedback.lightImpact();
+                      Navigator.of(context).pop();
+                    },
+                    style: FilledButton.styleFrom(
+                      backgroundColor: AppColors.blue400,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(99),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: Text(
+                      'Grant Access',
+                      style: AppTypography.body2Medium.copyWith(
+                        color: AppColors.white,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            ],
+                const SizedBox(height: 12),
+              ],
+            ),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDragHandle() {
+    return Container(
+      height: 24,
+      alignment: Alignment.center,
+      child: Container(
+        width: 40,
+        height: 5,
+        decoration: BoxDecoration(
+          color: AppColors.black.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(100),
         ),
       ),
     );
@@ -257,34 +248,34 @@ class _ShareTargetHeader extends StatelessWidget {
         Container(
           width: 80,
           height: 80,
-          padding: const EdgeInsets.all(4.75),
+          padding: const EdgeInsets.all(4.7),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            border: Border.all(color: AppColors.neutral300, width: 1.33),
+            border: Border.all(color: AppColors.neutral300, width: 1.3),
           ),
           child: Container(
             decoration: BoxDecoration(
-              color: backgroundColor,
+              color: backgroundColor.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
-            child: ClipOval(child: Image.asset(imagePath, fit: BoxFit.cover)),
+            clipBehavior: Clip.antiAlias,
+            child: Image.asset(imagePath, fit: BoxFit.cover),
           ),
         ),
-        const SizedBox(height: AppSpacing.space8),
+        const SizedBox(height: 8),
         Text(
           name,
           style: AppTypography.label1.copyWith(
             color: AppColors.neutral950,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w600,
           ),
           textAlign: TextAlign.center,
         ),
-        const SizedBox(height: AppSpacing.space4),
+        const SizedBox(height: 4),
         Text(
           phoneNumber,
           style: AppTypography.label3.copyWith(
             color: AppColors.neutral500,
-            fontWeight: FontWeight.w400,
           ),
           textAlign: TextAlign.center,
         ),
@@ -307,17 +298,29 @@ class _AccessOptionRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: AppSpacing.space16),
+      padding: const EdgeInsets.only(left: 16),
       child: Row(
         children: [
-          _AccessIcon(option: option),
-          const SizedBox(width: AppSpacing.space12),
+          SvgPicture.asset(
+            option.iconPath,
+            width: 32,
+            height: 32,
+            placeholderBuilder: (_) => Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                color: option.fallbackBackgroundColor,
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
           Expanded(
             child: Container(
               padding: const EdgeInsets.only(
-                right: AppSpacing.space16,
-                top: AppSpacing.space16,
-                bottom: AppSpacing.space16,
+                right: 16,
+                top: 16,
+                bottom: 16,
               ),
               decoration: BoxDecoration(
                 border: showDivider
@@ -337,7 +340,7 @@ class _AccessOptionRow extends StatelessWidget {
                       ),
                     ),
                   ),
-                  _AccessToggle(value: option.enabled, onChanged: onChanged),
+                  PremiumSwitch(value: option.enabled, onChanged: onChanged),
                 ],
               ),
             ),
@@ -348,115 +351,26 @@ class _AccessOptionRow extends StatelessWidget {
   }
 }
 
-class _AccessIcon extends StatelessWidget {
-  const _AccessIcon({required this.option});
-
-  final _AccessOption option;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 32,
-      height: 32,
-      decoration: BoxDecoration(
-        color: option.iconBackgroundColor,
-        borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-      ),
-      child: Center(
-        child: switch (option.iconKind) {
-          _AccessIconKind.svg => SvgPicture.asset(
-            option.iconPath!,
-            width: 24,
-            height: 24,
-          ),
-          _AccessIconKind.emoji => Text(
-            option.emoji!,
-            style: const TextStyle(fontSize: 24),
-          ),
-        },
-      ),
-    );
-  }
-}
-
-class _AccessToggle extends StatelessWidget {
-  const _AccessToggle({required this.value, required this.onChanged});
-
-  final bool value;
-  final ValueChanged<bool> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => onChanged(!value),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        width: 42,
-        height: 24,
-        padding: const EdgeInsets.all(2),
-        decoration: BoxDecoration(
-          color: value ? AppColors.blue400 : AppColors.neutral300,
-          borderRadius: BorderRadius.circular(100),
-          boxShadow: [
-            BoxShadow(
-              color: (value ? AppColors.blue400 : AppColors.black).withValues(
-                alpha: value ? 0.15 : 0.08,
-              ),
-              blurRadius: 4,
-              offset: const Offset(0, 1),
-            ),
-          ],
-        ),
-        child: Align(
-          alignment: value ? Alignment.centerRight : Alignment.centerLeft,
-          child: Container(
-            width: 20,
-            height: 20,
-            decoration: BoxDecoration(
-              color: AppColors.white,
-              shape: BoxShape.circle,
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x38000000),
-                  blurRadius: 1,
-                  offset: Offset(0, 1),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class _AccessOption {
   const _AccessOption({
     required this.label,
-    required this.iconKind,
-    required this.iconBackgroundColor,
-    this.iconPath,
-    this.emoji,
+    required this.iconPath,
+    this.fallbackBackgroundColor = AppColors.neutral200,
     this.enabled = false,
   });
 
   final String label;
-  final _AccessIconKind iconKind;
-  final String? iconPath;
-  final String? emoji;
-  final Color iconBackgroundColor;
+  final String iconPath;
+  final Color fallbackBackgroundColor;
   final bool enabled;
 
   _AccessOption copyWith({bool? enabled}) {
     return _AccessOption(
       label: label,
-      iconKind: iconKind,
       iconPath: iconPath,
-      emoji: emoji,
-      iconBackgroundColor: iconBackgroundColor,
+      fallbackBackgroundColor: fallbackBackgroundColor,
       enabled: enabled ?? this.enabled,
     );
   }
 }
 
-enum _AccessIconKind { svg, emoji }

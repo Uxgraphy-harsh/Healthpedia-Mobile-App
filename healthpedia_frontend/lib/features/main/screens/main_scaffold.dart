@@ -20,6 +20,7 @@ class ReminderItem {
   final Color categoryColor;
   final Color categoryBg;
   ReminderStatus status;
+  bool isAwaitingRemoval = false;
 
   ReminderItem({
     required this.id,
@@ -47,14 +48,14 @@ class _MainScaffoldState extends State<MainScaffold> {
   @override
   void initState() {
     super.initState();
-    _configureSystemUI();
+    _configureSystemUI(Brightness.light); // Initial summary tab needs light icons
   }
 
-  void _configureSystemUI() {
+  void _configureSystemUI(Brightness brightness) {
     SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
+      SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light,
+        statusBarIconBrightness: brightness,
         systemNavigationBarColor: Colors.transparent,
         systemNavigationBarDividerColor: Colors.transparent,
         systemNavigationBarIconBrightness: Brightness.dark,
@@ -98,17 +99,47 @@ class _MainScaffoldState extends State<MainScaffold> {
     ),
   ];
 
-  void _toggleReminder(String id) {
-    setState(() {
-      final index = _reminders.indexWhere((r) => r.id == id);
-      if (index != -1) {
-        if (_reminders[index].status == ReminderStatus.completed) {
-          _reminders[index].status = ReminderStatus.pending;
-        } else {
-          _reminders[index].status = ReminderStatus.completed;
-        }
+  void _toggleReminder(String id) async {
+    final index = _reminders.indexWhere((r) => r.id == id);
+    if (index == -1) return;
+    
+    // Missed tasks cannot be undone or toggled
+    if (_reminders[index].status == ReminderStatus.missed) return;
+
+    if (_reminders[index].status == ReminderStatus.pending) {
+      // 1. Mark as completed immediately to show the icon change
+      setState(() {
+        _reminders[index].status = ReminderStatus.completed;
+        _reminders[index].isAwaitingRemoval = true;
+      });
+
+      // 2. Wait for the user to see the result
+      await Future.delayed(const Duration(milliseconds: 1000));
+
+      // 3. Finally hide it (by updating the flag that screens use for filtering)
+      if (mounted) {
+        setState(() {
+          _reminders[index].isAwaitingRemoval = false;
+        });
       }
-    });
+    } else {
+      // Un-complete (Toggle back to pending)
+      // 1. Mark as pending immediately to show the icon change
+      setState(() {
+        _reminders[index].status = ReminderStatus.pending;
+        _reminders[index].isAwaitingRemoval = true;
+      });
+
+      // 2. Wait for the user to see the result (1s stay)
+      await Future.delayed(const Duration(milliseconds: 1000));
+
+      // 3. Finally complete the transition
+      if (mounted) {
+        setState(() {
+          _reminders[index].isAwaitingRemoval = false;
+        });
+      }
+    }
   }
 
   @override
@@ -121,10 +152,7 @@ class _MainScaffoldState extends State<MainScaffold> {
           true, // Allow content to scroll perfectly behind the glass bottom nav
       body: Stack(
         children: [
-          SafeArea(
-            bottom: false, // Pages handle their own bottom padding/clearance
-            child: _buildPage(),
-          ),
+          _buildPage(),
           Positioned(
             left: 0,
             right: 0,
@@ -146,6 +174,7 @@ class _MainScaffoldState extends State<MainScaffold> {
           onNavigateToReminders: () {
             setState(() {
               _selectedIndex = 1;
+              _configureSystemUI(Brightness.dark); // Switch to dark icons for Reminders
             });
           },
         );
@@ -200,11 +229,11 @@ class _MainScaffoldState extends State<MainScaffold> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildNavItem(0, 'stacks.svg', 'stacks-1.svg', 'Summary'),
-                _buildNavItem(1, 'event_list-1.svg', 'event_list.svg', 'Reminders'),
+                _buildNavItem(0, Icons.grid_view_rounded, Icons.grid_view, 'Summary'),
+                _buildNavItem(1, Icons.notifications_active_rounded, Icons.notifications_none_rounded, 'Reminders'),
                 const SizedBox(width: 80), // Gap for Ask AI button
-                _buildNavItem(2, 'folder_open-1.svg', 'folder_open.svg', 'Records'),
-                _buildNavItem(3, 'person-1.svg', 'person.svg', 'Profile'),
+                _buildNavItem(2, Icons.folder_copy_rounded, Icons.folder_copy_outlined, 'Records'),
+                _buildNavItem(3, Icons.person_rounded, Icons.person_outline_rounded, 'Profile'),
               ],
             ),
           ),
@@ -213,23 +242,11 @@ class _MainScaffoldState extends State<MainScaffold> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildNavItem(0, 'stacks.svg', 'stacks-1.svg', 'Summary'),
-              _buildNavItem(
-                1,
-                'event_list-1.svg',
-                'event_list.svg',
-                'Reminders',
-              ),
-              const SizedBox(
-                width: 80,
-              ), // Gap accommodating the bleeding Ask AI button
-              _buildNavItem(
-                2,
-                'folder_open-1.svg',
-                'folder_open.svg',
-                'Records',
-              ),
-              _buildNavItem(3, 'person-1.svg', 'person.svg', 'Profile'),
+              _buildNavItem(0, Icons.grid_view_rounded, Icons.grid_view, 'Summary'),
+              _buildNavItem(1, Icons.notifications_active_rounded, Icons.notifications_none_rounded, 'Reminders'),
+              const SizedBox(width: 80), // Gap for Ask AI button
+              _buildNavItem(2, Icons.folder_copy_rounded, Icons.folder_copy_outlined, 'Records'),
+              _buildNavItem(3, Icons.person_rounded, Icons.person_outline_rounded, 'Profile'),
             ],
           ),
 
@@ -268,8 +285,8 @@ class _MainScaffoldState extends State<MainScaffold> {
   /// Bottom Nav discrete button constructor
   Widget _buildNavItem(
     int index,
-    String selectedIcon,
-    String unselectedIcon,
+    IconData selectedIcon,
+    IconData unselectedIcon,
     String label,
   ) {
     bool isSelected = _selectedIndex == index;
@@ -277,7 +294,11 @@ class _MainScaffoldState extends State<MainScaffold> {
     return Expanded(
       child: KineticInteraction(
         onTap: () {
-          setState(() => _selectedIndex = index);
+          setState(() {
+            _selectedIndex = index;
+            // Tab 0 is Summary (Dark), others are Light
+            _configureSystemUI(index == 0 ? Brightness.light : Brightness.dark);
+          });
         },
         child: Container(
           height: 65,
@@ -289,16 +310,12 @@ class _MainScaffoldState extends State<MainScaffold> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SvgPicture.asset(
-                'assets/Figma MCP Assets/CommonAssets/Icons/${isSelected ? selectedIcon : unselectedIcon}',
-                colorFilter: ColorFilter.mode(
-                  isSelected
-                      ? const Color(0xFF2C0011)
-                      : const Color(0xFFA3A3A3),
-                  BlendMode.srcIn,
-                ),
-                width: 24,
-                height: 24,
+              Icon(
+                isSelected ? selectedIcon : unselectedIcon,
+                size: 24,
+                color: isSelected
+                    ? const Color(0xFF2C0011)
+                    : const Color(0xFFA3A3A3),
               ),
               const SizedBox(height: 4),
               Text(

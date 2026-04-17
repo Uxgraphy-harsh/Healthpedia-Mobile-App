@@ -112,45 +112,50 @@ const kDefaultFamilyFriendSections = [
   FamilyFriendSection(
     label: 'Conditions',
     iconKind: SectionIconKind.svg,
-    iconPath: 'assets/Figma MCP Assets/CommonAssets/Icons/diagnosis.svg',
+    iconPath:
+        'assets/Figma MCP Assets/CommonAssets/Icons/Family & Friends/Conditions/share access bottom sheet.svg',
     iconBackgroundColor: AppColors.rose500,
   ),
   FamilyFriendSection(
     label: 'Prescriptions',
-    iconKind: SectionIconKind.emoji,
-    emoji: '💊',
+    iconKind: SectionIconKind.svg,
+    iconPath:
+        'assets/Figma MCP Assets/CommonAssets/Icons/Family & Friends/Prescriptions/share access bottom sheet.svg',
     iconBackgroundColor: AppColors.purple500,
   ),
   FamilyFriendSection(
     label: 'Allergies',
     iconKind: SectionIconKind.svg,
-    iconPath: 'assets/Figma MCP Assets/CommonAssets/Icons/allergy.svg',
+    iconPath:
+        'assets/Figma MCP Assets/CommonAssets/Icons/Family & Friends/Allergies/share access bottom sheet.svg',
     iconBackgroundColor: AppColors.orange500,
   ),
   FamilyFriendSection(
     label: 'Reports',
     iconKind: SectionIconKind.svg,
-    iconPath: 'assets/Figma MCP Assets/CommonAssets/Icons/folder_open.svg',
+    iconPath:
+        'assets/Figma MCP Assets/CommonAssets/Icons/Family & Friends/Reports/share access bottom sheet.svg',
     iconBackgroundColor: AppColors.cyan500,
   ),
   FamilyFriendSection(
     label: 'Symptoms',
-    iconKind: SectionIconKind.emoji,
-    emoji: '🤒',
+    iconKind: SectionIconKind.svg,
+    iconPath:
+        'assets/Figma MCP Assets/CommonAssets/Icons/Family & Friends/Symptoms/share access bottom sheet.svg',
     iconBackgroundColor: AppColors.green500,
   ),
   FamilyFriendSection(
     label: 'Family History',
     iconKind: SectionIconKind.svg,
     iconPath:
-        'assets/Figma MCP Assets/CommonAssets/Icons/Family History big icon.svg',
+        'assets/Figma MCP Assets/CommonAssets/Icons/Family & Friends/Family History/share access bottom sheet.svg',
     iconBackgroundColor: AppColors.indigo500,
   ),
   FamilyFriendSection(
     label: 'Insurance',
     iconKind: SectionIconKind.svg,
     iconPath:
-        'assets/Figma MCP Assets/CommonAssets/Icons/shield_with_heart.svg',
+        'assets/Figma MCP Assets/CommonAssets/Icons/Family & Friends/Insurance/share access bottom sheet.svg',
     iconBackgroundColor: AppColors.teal500,
   ),
 ];
@@ -204,20 +209,12 @@ class _ProfileHero extends StatelessWidget {
         Container(
           width: 116,
           height: 116,
-          padding: const EdgeInsets.all(3),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            border: Border.all(color: AppColors.neutral300, width: 1.5),
+            border: Border.all(color: AppColors.neutral300, width: 1),
           ),
-          child: Container(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: avatarBackgroundColor,
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(8),
-              child: ClipOval(child: Image.asset(imagePath, fit: BoxFit.cover)),
-            ),
+          child: ClipOval(
+            child: Image.asset(imagePath, fit: BoxFit.cover),
           ),
         ),
         const SizedBox(height: AppSpacing.space12),
@@ -332,10 +329,10 @@ class _SectionRow extends StatelessWidget {
                     ),
                     Padding(
                       padding: const EdgeInsets.only(right: AppSpacing.space16),
-                      child: SvgPicture.asset(
-                        'assets/Figma MCP Assets/CommonAssets/Icons/Field Icon V1.svg',
-                        width: 24,
-                        height: 24,
+                      child: const Icon(
+                        Icons.chevron_right,
+                        size: 24,
+                        color: AppColors.neutral400,
                       ),
                     ),
                   ],
@@ -356,24 +353,20 @@ class _SectionIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: 32,
       height: 32,
-      decoration: BoxDecoration(
-        color: section.iconBackgroundColor,
-        borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-      ),
       child: Center(
         child: switch (section.iconKind) {
           SectionIconKind.svg => SvgPicture.asset(
-            section.iconPath!,
-            width: 24,
-            height: 24,
-          ),
+              section.iconPath!,
+              width: 32,
+              height: 32,
+            ),
           SectionIconKind.emoji => Text(
-            section.emoji!,
-            style: const TextStyle(fontSize: 24),
-          ),
+              section.emoji!,
+              style: const TextStyle(fontSize: 24),
+            ),
         },
       ),
     );

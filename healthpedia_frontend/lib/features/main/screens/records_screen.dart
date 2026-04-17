@@ -4,11 +4,14 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:healthpedia_frontend/core/widgets/kinetic_interaction.dart';
 import 'package:healthpedia_frontend/core/navigation/premium_route.dart';
 import '../widgets/add_note_bottom_sheet.dart';
+import '../widgets/upload_report_bottom_sheet.dart';
+import 'package:healthpedia_frontend/core/widgets/premium_floating_cta.dart';
 import 'report_folder_screen.dart';
 import 'prescription_detail_screen.dart';
 import '../widgets/add_prescription_bottom_sheet.dart';
 import '../widgets/add_symptom_bottom_sheet.dart';
 import 'symptom_detail_screen.dart';
+import 'package:healthpedia_frontend/core/constants/app_conditions.dart';
 
 class RecordsScreen extends StatefulWidget {
   const RecordsScreen({super.key});
@@ -29,28 +32,25 @@ class _RecordsScreenState extends State<RecordsScreen>
       title: 'Thyroid',
       updated: '14 Jan 2025',
       fileCount: 6,
-      imagePath: 'assets/Figma MCP Assets/CommonAssets/Images/Report Image.png',
+      imagePath: AppConditions.thyroid,
     ),
     _ReportCard(
       title: 'Diabetes',
       updated: '14 Jan 2025',
       fileCount: 4,
-      imagePath:
-          'assets/Figma MCP Assets/CommonAssets/Images/Report Image-1.png',
+      imagePath: AppConditions.diabetes,
     ),
     _ReportCard(
       title: 'Cardiovascular',
       updated: '2 Nov 2024',
       fileCount: 3,
-      imagePath:
-          'assets/Figma MCP Assets/CommonAssets/Images/Report Image-2.png',
+      imagePath: AppConditions.heart,
     ),
     _ReportCard(
       title: 'General',
       updated: '2 Nov 2024',
       fileCount: 8,
-      imagePath:
-          'assets/Figma MCP Assets/CommonAssets/Images/Report Image-3.png',
+      imagePath: AppConditions.folder,
     ),
   ];
 
@@ -133,107 +133,56 @@ class _RecordsScreenState extends State<RecordsScreen>
                   ),
                 ),
                 // Bottom nav padding
-                const SizedBox(height: 120),
+                const SizedBox(height: 220),
               ],
             ),
 
             // FAB — changes label based on active tab
             Positioned(
               right: 16,
-              bottom: 126,
-              child: GestureDetector(
-                onTap: () {
-                  HapticFeedback.mediumImpact();
-                  if (_tabController.index == 1) {
-                    showAddSymptomSheet(
-                      context,
-                      existingSymptoms: _symptoms.map((s) => s.name).toList(),
-                    );
-                  } else if (_tabController.index == 2) {
-                    showAddPrescriptionSheet(context);
-                  } else if (_tabController.index == 3) {
-                    showAddNoteBottomSheet(context);
-                  }
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 10,
-                  ),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFFF1F2), // rose/50
-                    border: Border.all(
-                      color: const Color(0xFFFFC3D7),
-                      width: 1,
-                    ),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      AnimatedBuilder(
-                        animation: _tabController,
-                        builder: (_, __) {
-                          final idx = _tabController.index;
-                          final isSymptoms = idx == 1;
-                          final isPrescriptions = idx == 2;
-                          final isNotes = idx == 3;
-                          final icon = isSymptoms
-                              ? const Icon(
-                                  Icons.add,
-                                  size: 24,
-                                  color: Color(0xFFCD577F),
-                                )
-                              : isPrescriptions
-                              ? const Icon(
-                                  Icons.add,
-                                  size: 24,
-                                  color: Color(0xFFCD577F),
-                                )
-                              : isNotes
-                              ? const Icon(
-                                  Icons.add,
-                                  size: 24,
-                                  color: Color(0xFFCD577F),
-                                )
-                              : SvgPicture.asset(
-                                  'assets/Figma MCP Assets/CommonAssets/Icons/upload.svg',
-                                  width: 24,
-                                  height: 24,
-                                  colorFilter: const ColorFilter.mode(
-                                    Color(0xFFCD577F),
-                                    BlendMode.srcIn,
-                                  ),
-                                );
-                          final label = isSymptoms
-                              ? 'Add New Symptom'
-                              : isPrescriptions
-                              ? 'Add New Prescription'
-                              : isNotes
+              bottom: 160,
+              child: AnimatedBuilder(
+                animation: _tabController,
+                builder: (context, _) {
+                  final idx = _tabController.index;
+                  final isSymptoms = idx == 1;
+                  final isPrescriptions = idx == 2;
+                  final isNotes = idx == 3;
+
+                  final label = isSymptoms
+                      ? 'Add New Symptom'
+                      : isPrescriptions
+                          ? 'Add New Prescription'
+                          : isNotes
                               ? 'Add New Note'
                               : 'Upload a new report';
-                          return Row(
-                            mainAxisSize: MainAxisSize.min,
-                            
-        children: [
-                              icon,
-                              const SizedBox(width: 12),
-                              Text(
-                                label,
-                                style: const TextStyle(
-                                  fontFamily: 'Geist',
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  color: Color(0xFFCD577F),
-                                ),
-                              ),
-                            ],
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                ),
+
+                  final icon = idx == 0 ? Icons.file_upload_outlined : Icons.add_rounded;
+
+                  return PremiumFloatingCTA(
+                    label: label,
+                    icon: icon,
+                    onTap: () {
+                      if (idx == 0) {
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          backgroundColor: Colors.transparent,
+                          builder: (context) => const UploadReportBottomSheet(),
+                        );
+                      } else if (idx == 1) {
+                        showAddSymptomSheet(
+                          context,
+                          existingSymptoms: _symptoms.map((s) => s.name).toList(),
+                        );
+                      } else if (idx == 2) {
+                        showAddPrescriptionSheet(context);
+                      } else if (idx == 3) {
+                        showAddNoteBottomSheet(context);
+                      }
+                    },
+                  );
+                },
               ),
             ),
           ],
@@ -377,7 +326,7 @@ class _RecordsScreenState extends State<RecordsScreen>
   /// 2-column wrap grid for report cards
   Widget _buildReportsTab() {
     return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 120),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 220),
       child: Wrap(
         spacing: 8,
         runSpacing: 8,
@@ -417,7 +366,7 @@ class _RecordsScreenState extends State<RecordsScreen>
 
   Widget _buildSymptomsTab() {
     return ListView.separated(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 120),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 220),
       itemCount: _symptoms.length,
       separatorBuilder: (_, __) => const SizedBox(height: 8),
       itemBuilder: (_, i) => _buildSymptomCard(_symptoms[i]),
@@ -490,13 +439,16 @@ class _RecordsScreenState extends State<RecordsScreen>
                   // Name + status badge — Geist Medium 16px, Neutral 950
                   Row(
                     children: [
-                      Text(
-                        s.name,
-                        style: const TextStyle(
-                          fontFamily: 'Geist',
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: Color(0xFF0A0A0A),
+                      Flexible(
+                        child: Text(
+                          s.name,
+                          style: const TextStyle(
+                            fontFamily: 'Geist',
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFF0A0A0A),
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -605,7 +557,11 @@ class _RecordsScreenState extends State<RecordsScreen>
             builder: (_) => ReportFolderScreen(
               folderTitle: card.title,
               totalFiles: card.fileCount,
+              imagePath: card.imagePath,
               entries: _getEntriesFor(card.title),
+              onImageChanged: (newPath) {
+                setState(() => card.imagePath = newPath);
+              },
             ),
           ),
         );
@@ -630,11 +586,11 @@ class _RecordsScreenState extends State<RecordsScreen>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Report image — 40×40
-              Image.asset(
+              SvgPicture.asset(
                 card.imagePath,
                 width: 40,
                 height: 40,
-                fit: BoxFit.cover,
+                fit: BoxFit.contain,
               ),
               const SizedBox(height: 12),
               // Title
@@ -713,7 +669,7 @@ class _RecordsScreenState extends State<RecordsScreen>
   Widget _buildPrescriptionsTab() {
     return ListView.separated(
       physics: const BouncingScrollPhysics(),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 220),
       itemCount: _prescriptions.length,
       separatorBuilder: (_, __) => const SizedBox(height: 8),
       itemBuilder: (_, i) => _buildPrescriptionCard(_prescriptions[i]),
@@ -790,7 +746,7 @@ class _RecordsScreenState extends State<RecordsScreen>
 
   Widget _buildNotesTab() {
     return ListView.separated(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 220),
       itemCount: _notes.length,
       separatorBuilder: (_, __) => const SizedBox(height: 12),
       itemBuilder: (_, i) => _buildNoteCard(_notes[i]),
@@ -851,9 +807,9 @@ class _ReportCard {
   final String title;
   final String updated;
   final int fileCount;
-  final String imagePath;
+  String imagePath;
 
-  const _ReportCard({
+  _ReportCard({
     required this.title,
     required this.updated,
     required this.fileCount,

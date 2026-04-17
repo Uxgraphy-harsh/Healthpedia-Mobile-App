@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:healthpedia_frontend/core/constants/app_colors.dart';
 import '../widgets/sort_bottom_sheet.dart';
+import '../widgets/change_folder_image_sheet.dart';
 import 'report_detail_screen.dart';
 
 // ─────────────────────────── Data models ─────────────────────────────────────
@@ -36,17 +38,20 @@ class ReportEntry {
 }
 
 // ─────────────────────────── Screen ──────────────────────────────────────────
-
 class ReportFolderScreen extends StatefulWidget {
   final String folderTitle;
   final int totalFiles;
   final List<ReportEntry> entries;
+  final String imagePath;
+  final ValueChanged<String>? onImageChanged;
 
   const ReportFolderScreen({
     super.key,
     required this.folderTitle,
     required this.totalFiles,
     required this.entries,
+    required this.imagePath,
+    this.onImageChanged,
   });
 
   @override
@@ -57,10 +62,12 @@ class _ReportFolderScreenState extends State<ReportFolderScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
   SortOption _currentSort = SortOption.newestFirst;
+  late String _currentImagePath;
 
   @override
   void initState() {
     super.initState();
+    _currentImagePath = widget.imagePath;
     _searchController.addListener(
       () => setState(() => _searchQuery = _searchController.text),
     );
@@ -144,7 +151,23 @@ class _ReportFolderScreenState extends State<ReportFolderScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: 8),
+                // Folder Illustration — 40×40
+                SvgPicture.asset(
+                  _currentImagePath,
+                  width: 40,
+                  height: 40,
+                  fit: BoxFit.contain,
+                  placeholderBuilder: (context) => Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: AppColors.neutral100,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -170,6 +193,32 @@ class _ReportFolderScreenState extends State<ReportFolderScreen> {
                         ),
                       ),
                     ],
+                  ),
+                ),
+                const SizedBox(width: 16),
+                GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () {
+                    HapticFeedback.lightImpact();
+                    showChangeFolderImageSheet(
+                      context,
+                      currentImage: _currentImagePath,
+                      onSelected: (newPath) {
+                        setState(() => _currentImagePath = newPath);
+                        widget.onImageChanged?.call(newPath);
+                      },
+                    );
+                  },
+                  child: const SizedBox(
+                    width: 40,
+                    height: 40,
+                    child: Center(
+                      child: Icon(
+                        Icons.more_horiz_rounded,
+                        size: 24,
+                        color: Color(0xFF0A0A0A),
+                      ),
+                    ),
                   ),
                 ),
               ],

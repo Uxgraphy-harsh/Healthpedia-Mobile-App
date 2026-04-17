@@ -609,19 +609,12 @@ class _SharedAvatar extends StatelessWidget {
     return Container(
       width: 60,
       height: 60,
-      padding: const EdgeInsets.all(3.6),
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        border: Border.all(color: AppColors.neutral300),
+        border: Border.all(color: AppColors.neutral300, width: 1),
       ),
-      child: Container(
-        decoration: BoxDecoration(
-          color: sharedAccess.backgroundColor,
-          shape: BoxShape.circle,
-        ),
-        child: ClipOval(
-          child: Image.asset(sharedAccess.imagePath, fit: BoxFit.cover),
-        ),
+      child: ClipOval(
+        child: Image.asset(sharedAccess.imagePath, fit: BoxFit.cover),
       ),
     );
   }
@@ -637,19 +630,12 @@ class _RequestAvatar extends StatelessWidget {
     return Container(
       width: 60,
       height: 60,
-      padding: const EdgeInsets.all(3.6),
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        border: Border.all(color: AppColors.neutral300),
+        border: Border.all(color: AppColors.neutral300, width: 1),
       ),
-      child: Container(
-        decoration: BoxDecoration(
-          color: request.backgroundColor,
-          shape: BoxShape.circle,
-        ),
-        child: ClipOval(
-          child: Image.asset(request.imagePath, fit: BoxFit.cover),
-        ),
+      child: ClipOval(
+        child: Image.asset(request.imagePath, fit: BoxFit.cover),
       ),
     );
   }
@@ -665,19 +651,12 @@ class _FamilyAvatar extends StatelessWidget {
     return Container(
       width: 60,
       height: 60,
-      padding: const EdgeInsets.all(3.6),
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        border: Border.all(color: AppColors.neutral300),
+        border: Border.all(color: AppColors.neutral300, width: 1),
       ),
-      child: Container(
-        decoration: BoxDecoration(
-          color: member.backgroundColor,
-          shape: BoxShape.circle,
-        ),
-        child: ClipOval(
-          child: Image.asset(member.imagePath, fit: BoxFit.cover),
-        ),
+      child: ClipOval(
+        child: Image.asset(member.imagePath, fit: BoxFit.cover),
       ),
     );
   }

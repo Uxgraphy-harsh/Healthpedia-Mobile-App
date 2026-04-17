@@ -5,6 +5,7 @@ import 'main_scaffold.dart';
 import 'reminders_history_screen.dart';
 import '../widgets/add_reminder_bottom_sheet.dart';
 import '../widgets/reminder_checkbox.dart';
+import 'package:healthpedia_frontend/core/widgets/premium_floating_cta.dart';
 
 class RemindersScreen extends StatefulWidget {
   final List<ReminderItem> reminders;
@@ -39,7 +40,7 @@ class _RemindersScreenState extends State<RemindersScreen> with SingleTickerProv
   @override
   Widget build(BuildContext context) {
     // Only show pending reminders on this page. Completed/Missed move to History.
-    final pendingReminders = widget.reminders.where((r) => r.status == ReminderStatus.pending).toList();
+    final pendingReminders = widget.reminders.where((r) => r.status == ReminderStatus.pending || r.isAwaitingRemoval).toList();
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -144,7 +145,7 @@ class _RemindersScreenState extends State<RemindersScreen> with SingleTickerProv
                               padding: const EdgeInsets.only(bottom: 12),
                               child: _buildReminderCard(item),
                             )),
-                      const SizedBox(height: 150), // Extra space for FAB and Nav
+                      const SizedBox(height: 220), // Extra space for FAB and Nav
                     ],
                   ),
                 ),
@@ -153,10 +154,11 @@ class _RemindersScreenState extends State<RemindersScreen> with SingleTickerProv
             // Floating Action Button - Add a reminder (Adjusted Radius and Positioning)
             Positioned(
               right: 16,
-              bottom: 126,
-              child: GestureDetector(
+              bottom: 160,
+              child: PremiumFloatingCTA(
+                label: 'Add a reminder',
+                icon: Icons.add_rounded,
                 onTap: () {
-                  HapticFeedback.mediumImpact();
                   showModalBottomSheet(
                     context: context,
                     isScrollControlled: true,
@@ -166,42 +168,6 @@ class _RemindersScreenState extends State<RemindersScreen> with SingleTickerProv
                     builder: (sheetContext) => const AddReminderBottomSheet(),
                   );
                 },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFFF1F2),
-                    borderRadius: BorderRadius.circular(16), // Restored to consistent section radius
-                    border: Border.all(color: const Color(0xFFFFC3D7)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      SvgPicture.asset(
-                        'assets/Figma MCP Assets/CommonAssets/Icons/add_2.svg',
-                        width: 20,
-                        height: 20,
-                        colorFilter: const ColorFilter.mode(Color(0xFFCD577F), BlendMode.srcIn),
-                      ),
-                      const SizedBox(width: 8),
-                      const Text(
-                        'Add a reminder',
-                        style: TextStyle(
-                          fontFamily: 'Geist',
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFFCD577F),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
               ),
             ),
           ],
@@ -229,11 +195,9 @@ class _RemindersScreenState extends State<RemindersScreen> with SingleTickerProv
   }
 
   Widget _buildReminderCard(ReminderItem item) {
-    return GestureDetector(
-      onTap: () {
-        widget.onToggle(item.id);
-        HapticFeedback.lightImpact();
-      },
+    return AnimatedOpacity(
+      duration: const Duration(milliseconds: 300),
+      opacity: item.status == ReminderStatus.pending ? 1.0 : 0.6,
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -246,32 +210,41 @@ class _RemindersScreenState extends State<RemindersScreen> with SingleTickerProv
             // Checklist Icon (Dotted circle for pending)
             ReminderCheckbox(
               status: item.status,
+              onTap: () {
+                widget.onToggle(item.id);
+                HapticFeedback.lightImpact();
+              },
             ),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    item.time,
-                    style: const TextStyle(
-                      fontFamily: 'Geist',
-                      fontSize: 12,
-                      color: Color(0xFF737373),
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item.time,
+                      style: const TextStyle(
+                        fontFamily: 'Geist',
+                        fontSize: 12,
+                        color: Color(0xFF737373),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    item.title,
-                    style: const TextStyle(
-                      fontFamily: 'Geist',
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF0A0A0A),
+                    const SizedBox(height: 2),
+                    Text(
+                      item.title,
+                      style: TextStyle(
+                        fontFamily: 'Geist',
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: item.status == ReminderStatus.completed
+                            ? const Color(0xFFA3A3A3)
+                            : const Color(0xFF0A0A0A),
+                        decoration: item.status == ReminderStatus.completed
+                            ? TextDecoration.lineThrough
+                            : TextDecoration.none,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
                   const SizedBox(height: 8),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),

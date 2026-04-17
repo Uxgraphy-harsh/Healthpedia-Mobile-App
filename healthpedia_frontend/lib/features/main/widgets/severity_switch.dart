@@ -17,23 +17,68 @@ class SeveritySwitch extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    Color containerBorder;
+    Color containerBg;
+
+    switch (selectedSeverity) {
+      case AllergySeverity.mild:
+        containerBorder = const Color(0xFFDCFCE7); // green/100
+        containerBg = const Color(0xFFF7FDF9); // Solid very light green
+        break;
+      case AllergySeverity.moderate:
+        containerBorder = const Color(0xFFFFEDD5); // orange/100
+        containerBg = const Color(0xFFFFFBF7); // Solid very light orange
+        break;
+      case AllergySeverity.severe:
+        containerBorder = const Color(0xFFFEE2E2); // red/100
+        containerBg = const Color(0xFFFFF9F9); // Solid very light red
+        break;
+    }
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: const Color(0xFFF5F5F5),
-        borderRadius: BorderRadius.circular(12),
+        color: containerBg,
+        borderRadius: BorderRadius.circular(99),
+        border: Border.all(color: containerBorder, width: 1),
       ),
       child: Row(
         children: [
-          _buildSegment(AllergySeverity.mild, 'Mild', AppColors.green600, const Color(0xFFF0FDF4)),
-          _buildSegment(AllergySeverity.moderate, 'Moderate', AppColors.orange600, const Color(0xFFFFF7ED)),
-          _buildSegment(AllergySeverity.severe, 'Severe', AppColors.red600, const Color(0xFFFEF2F2)),
+          _buildSegment(
+            AllergySeverity.mild, 
+            'Mild', 
+            AppColors.green600, 
+            const Color(0xFFF0FDF4),
+            const Color(0xFFBBF7D0), // green/200
+          ),
+          _buildSegment(
+            AllergySeverity.moderate, 
+            'Moderate', 
+            AppColors.orange600, 
+            const Color(0xFFFFF7ED),
+            const Color(0xFFFED7AA), // orange/200
+          ),
+          _buildSegment(
+            AllergySeverity.severe, 
+            'Severe', 
+            AppColors.red600, 
+            const Color(0xFFFEF2F2),
+            const Color(0xFFFECACA), // red/200
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildSegment(AllergySeverity severity, String label, Color activeTextColor, Color activeBgColor) {
+  Widget _buildSegment(
+    AllergySeverity severity, 
+    String label, 
+    Color activeTextColor, 
+    Color activeBgColor,
+    Color activeBorderColor,
+  ) {
     final isSelected = selectedSeverity == severity;
     return Expanded(
       child: GestureDetector(
@@ -43,20 +88,23 @@ class SeveritySwitch extends StatelessWidget {
         },
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.symmetric(vertical: 10),
+          curve: Curves.easeInOut,
+          padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
-            color: isSelected ? activeBgColor : Colors.transparent,
-            borderRadius: BorderRadius.circular(8),
-            boxShadow: isSelected 
-                ? [BoxShadow(color: activeTextColor.withOpacity(0.1), blurRadius: 4, offset: const Offset(0, 2))]
-                : null,
+            color: isSelected ? activeBgColor : activeBgColor.withOpacity(0),
+            borderRadius: BorderRadius.circular(99),
+            border: Border.all(
+              color: isSelected ? activeBorderColor : activeBorderColor.withOpacity(0),
+              width: 1,
+            ),
           ),
           child: Center(
             child: Text(
               label,
               style: AppTypography.label2.copyWith(
                 color: isSelected ? activeTextColor : AppColors.neutral500,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                fontSize: 14,
               ),
             ),
           ),

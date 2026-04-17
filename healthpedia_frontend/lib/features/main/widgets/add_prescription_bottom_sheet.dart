@@ -1,27 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:healthpedia_frontend/core/widgets/app_modal_bottom_sheet.dart';
+import 'package:healthpedia_frontend/core/widgets/premium_inputs/premium_text_field.dart';
+import 'package:healthpedia_frontend/core/widgets/premium_inputs/premium_file_drop.dart';
+import 'package:healthpedia_frontend/core/widgets/premium_inputs/base_input_container.dart';
 import 'package:healthpedia_frontend/core/constants/app_colors.dart';
 import 'package:healthpedia_frontend/core/constants/app_spacing.dart';
 import 'package:healthpedia_frontend/core/constants/app_typography.dart';
+import 'package:healthpedia_frontend/core/widgets/premium_bottom_sheet.dart';
 
 Future<void> showAddPrescriptionSheet(BuildContext context) {
-  return showModalBottomSheet<void>(
+  return showAppModalBottomSheet<void>(
     context: context,
-    isScrollControlled: true,
-    isDismissible: true,
-    enableDrag: true,
-    backgroundColor: Colors.transparent,
     builder: (_) => const AddPrescriptionBottomSheet(),
   );
 }
 
 Future<void> showAddPrescriptionMedicinesSheet(BuildContext context) {
-  return showModalBottomSheet<void>(
+  return showAppModalBottomSheet<void>(
     context: context,
-    isScrollControlled: true,
-    isDismissible: true,
-    enableDrag: true,
-    backgroundColor: Colors.transparent,
     builder: (_) => const _AddPrescriptionMedicinesBottomSheet(
       medicines: _mockPrescriptionMedicines,
     ),
@@ -29,23 +26,15 @@ Future<void> showAddPrescriptionMedicinesSheet(BuildContext context) {
 }
 
 Future<void> showAddPrescriptionMedicineEditorSheet(BuildContext context) {
-  return showModalBottomSheet<void>(
+  return showAppModalBottomSheet<void>(
     context: context,
-    isScrollControlled: true,
-    isDismissible: true,
-    enableDrag: true,
-    backgroundColor: Colors.transparent,
     builder: (_) => const _AddPrescriptionMedicineEditorBottomSheet(),
   );
 }
 
 Future<void> showAddPrescriptionDetailsSheet(BuildContext context) {
-  return showModalBottomSheet<void>(
+  return showAppModalBottomSheet<void>(
     context: context,
-    isScrollControlled: true,
-    isDismissible: true,
-    enableDrag: true,
-    backgroundColor: Colors.transparent,
     builder: (_) => const _AddPrescriptionDetailsBottomSheet(),
   );
 }
@@ -66,125 +55,55 @@ class _AddPrescriptionBottomSheetState
 
   @override
   Widget build(BuildContext context) {
-    final viewInsets = MediaQuery.of(context).viewInsets.bottom;
-
-    return SafeArea(
-      top: false,
-      child: Padding(
-        padding: EdgeInsets.only(bottom: viewInsets),
-        child: Container(
-          decoration: const BoxDecoration(
-            color: AppColors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(AppSpacing.radius3xl),
-              topRight: Radius.circular(AppSpacing.radius3xl),
+    return PremiumBottomSheet(
+      title: 'Prescription details',
+      leadingLabel: 'Back',
+      onLeadingTap: () => Navigator.of(context).pop(),
+      footer: SizedBox(
+        width: double.infinity,
+        height: 52,
+        child: FilledButton(
+          onPressed: () => Navigator.of(context).pop(),
+          style: FilledButton.styleFrom(
+            backgroundColor: AppColors.black,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(99),
             ),
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 40,
-                height: 5,
-                margin: const EdgeInsets.only(top: 8, bottom: 6),
-                decoration: BoxDecoration(
-                  color: AppColors.black.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
-                ),
-              ),
-              SizedBox(
-                height: 60,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.space16,
-                        ),
-                        child: GestureDetector(
-                          behavior: HitTestBehavior.opaque,
-                          onTap: () => Navigator.of(context).pop(),
-                          child: Text(
-                            'Back',
-                            style: AppTypography.label2.copyWith(
-                              color: AppColors.blue600,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Text(
-                      'Prescription details',
-                      style: AppTypography.label1SemiBold.copyWith(
-                        color: AppColors.neutral950,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.space16,
-                  AppSpacing.space16,
-                  AppSpacing.space16,
-                  AppSpacing.space24,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Prescription details and adding at least medicine 1 is\nrequired to add new prescription.',
-                      style: AppTypography.label2.copyWith(
-                        color: AppColors.red500,
-                        fontWeight: FontWeight.w400,
-                        height: 20 / 14,
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.space20),
-                    _SheetOptionTile(
-                      iconBackground: AppColors.rose500,
-                      icon: Icons.assignment_turned_in_rounded,
-                      iconColor: AppColors.white,
-                      title: 'Prescription Details',
-                      isRequired: true,
-                      onTap: () => showAddPrescriptionDetailsSheet(context),
-                    ),
-                    const SizedBox(height: AppSpacing.space20),
-                    _SheetOptionTile(
-                      iconBackground: AppColors.purple500,
-                      emoji: '💊',
-                      title: 'Medicines',
-                      trailingCounter: '${_medicines.length}',
-                      onTap: () => showAddPrescriptionMedicinesSheet(context),
-                    ),
-                    const SizedBox(height: AppSpacing.space32),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 52,
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          color: AppColors.black.withValues(alpha: 0.20),
-                          borderRadius: BorderRadius.circular(99),
-                        ),
-                        child: Center(
-                          child: Text(
-                            'Done',
-                            style: AppTypography.body2Medium.copyWith(
-                              color: AppColors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+          child: Text(
+            'Done',
+            style: AppTypography.body2Medium.copyWith(color: AppColors.white),
           ),
         ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Prescription details and adding at least medicine 1 is\nrequired to add new prescription.',
+            style: AppTypography.label2.copyWith(
+              color: AppColors.red500,
+              fontWeight: FontWeight.w400,
+              height: 20 / 14,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.space20),
+          _PrescriptionSheetOptionTile(
+            iconBackground: AppColors.blue500,
+            icon: Icons.personal_injury_outlined,
+            title: 'Add symptoms details',
+            isRequired: true,
+            onTap: () => showAddPrescriptionDetailsSheet(context),
+          ),
+          const SizedBox(height: AppSpacing.space10),
+          _PrescriptionSheetOptionTile(
+            iconBackground: AppColors.purple500,
+            emoji: '💊',
+            title: 'Medicines',
+            trailingCounter: '${_medicines.length}',
+            onTap: () => showAddPrescriptionMedicinesSheet(context),
+          ),
+        ],
       ),
     );
   }
@@ -215,13 +134,12 @@ class _PrescriptionMedicine {
   final String quantity;
 }
 
-class _SheetOptionTile extends StatelessWidget {
-  const _SheetOptionTile({
+class _PrescriptionSheetOptionTile extends StatelessWidget {
+  const _PrescriptionSheetOptionTile({
     required this.iconBackground,
     required this.title,
     required this.onTap,
     this.icon,
-    this.iconColor,
     this.emoji,
     this.isRequired = false,
     this.trailingCounter,
@@ -229,7 +147,6 @@ class _SheetOptionTile extends StatelessWidget {
 
   final Color iconBackground;
   final IconData? icon;
-  final Color? iconColor;
   final String? emoji;
   final String title;
   final bool isRequired;
@@ -253,10 +170,9 @@ class _SheetOptionTile extends StatelessWidget {
           ),
           child: Row(
             children: [
-              _IconBadge(
+              _PrescriptionIconBadge(
                 background: iconBackground,
                 icon: icon,
-                iconColor: iconColor,
                 emoji: emoji,
               ),
               const SizedBox(width: AppSpacing.space12),
@@ -309,17 +225,15 @@ class _SheetOptionTile extends StatelessWidget {
   }
 }
 
-class _IconBadge extends StatelessWidget {
-  const _IconBadge({
+class _PrescriptionIconBadge extends StatelessWidget {
+  const _PrescriptionIconBadge({
     required this.background,
     this.icon,
-    this.iconColor,
     this.emoji,
   });
 
   final Color background;
   final IconData? icon;
-  final Color? iconColor;
   final String? emoji;
 
   @override
@@ -361,7 +275,7 @@ class _IconBadge extends StatelessWidget {
           Center(
             child: emoji != null
                 ? Text(emoji!, style: const TextStyle(fontSize: 18))
-                : Icon(icon, size: 18, color: iconColor ?? AppColors.white),
+                : Icon(icon, size: 18, color: AppColors.white),
           ),
         ],
       ),
@@ -379,125 +293,55 @@ class _AddPrescriptionMedicinesBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      top: false,
-      child: Container(
-        decoration: const BoxDecoration(
-          color: AppColors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(AppSpacing.radius3xl),
-            topRight: Radius.circular(AppSpacing.radius3xl),
+    return PremiumBottomSheet(
+      title: 'Medicines',
+      leadingLabel: 'Back',
+      onLeadingTap: () => Navigator.of(context).pop(),
+      footer: OutlinedButton(
+        onPressed: () => showAddPrescriptionMedicineEditorSheet(context),
+        style: OutlinedButton.styleFrom(
+          minimumSize: const Size(double.infinity, 52),
+          side: const BorderSide(color: AppColors.neutral400),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(99),
           ),
         ),
-        child: Column(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              width: 40,
-              height: 5,
-              margin: const EdgeInsets.only(top: 8, bottom: 6),
-              decoration: BoxDecoration(
-                color: AppColors.black.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
-              ),
-            ),
-            SizedBox(
-              height: 60,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.space16,
-                      ),
-                      child: GestureDetector(
-                        behavior: HitTestBehavior.opaque,
-                        onTap: () => Navigator.of(context).pop(),
-                        child: Text(
-                          'Back',
-                          style: AppTypography.label2.copyWith(
-                            color: AppColors.blue600,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Text(
-                    'Medicines',
-                    style: AppTypography.label1SemiBold.copyWith(
-                      color: AppColors.neutral950,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.space16,
-                AppSpacing.space16,
-                AppSpacing.space16,
-                AppSpacing.space24,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'MEDICINES',
-                    style: AppTypography.label2SemiBold.copyWith(
-                      color: AppColors.neutral500,
-                      letterSpacing: 0.56,
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.space12),
-                  Row(
-                    children: [
-                      for (
-                        var index = 0;
-                        index < medicines.length;
-                        index++
-                      ) ...[
-                        Expanded(
-                          child: _MedicineCard(medicine: medicines[index]),
-                        ),
-                        if (index < medicines.length - 1)
-                          const SizedBox(width: AppSpacing.space12),
-                      ],
-                    ],
-                  ),
-                  const SizedBox(height: AppSpacing.space24),
-                  OutlinedButton(
-                    onPressed: () =>
-                        showAddPrescriptionMedicineEditorSheet(context),
-                    style: OutlinedButton.styleFrom(
-                      minimumSize: const Size(double.infinity, 52),
-                      side: const BorderSide(color: AppColors.neutral400),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(99),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.add, size: 24, color: AppColors.pink500),
-                        const SizedBox(width: AppSpacing.space10),
-                        Text(
-                          'Add More',
-                          style: AppTypography.body2Medium.copyWith(
-                            color: AppColors.pink500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+            const Icon(Icons.add, size: 24, color: AppColors.pink500),
+            const SizedBox(width: AppSpacing.space10),
+            Text(
+              'Add More',
+              style: AppTypography.body2Medium.copyWith(
+                color: AppColors.pink500,
               ),
             ),
           ],
         ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'MEDICINES',
+            style: AppTypography.label2SemiBold.copyWith(
+              color: AppColors.neutral500,
+              letterSpacing: 0.56,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.space12),
+          Row(
+            children: [
+              for (var index = 0; index < medicines.length; index++) ...[
+                Expanded(child: _MedicineCard(medicine: medicines[index])),
+                if (index < medicines.length - 1)
+                  const SizedBox(width: AppSpacing.space12),
+              ],
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -695,15 +539,24 @@ class _AddPrescriptionMedicineEditorBottomSheetState
   int _pillCount = 2;
   String _selectedWhenToTake = 'Breakfast';
   String _selectedFoodInstruction = 'Before meal';
-  List<_SheetAttachment> _attachments = const [
-    _SheetAttachment(name: 'WhatsApp-2338340124732.png', sizeLabel: '1.1 MB'),
+  List<_PrescriptionSheetAttachment> _attachments = const [
+    _PrescriptionSheetAttachment(
+      name: 'WhatsApp-2338340124732.png',
+      sizeLabel: '1.1 MB',
+    ),
   ];
 
   static const _whenToTakeOptions = [
-    _SelectionOption(label: 'Breakfast', icon: Icons.wb_sunny_rounded),
-    _SelectionOption(label: 'Lunch', letter: 'L'),
-    _SelectionOption(label: 'Dinner', letter: 'D'),
-    _SelectionOption(label: 'Before Bed', icon: Icons.nights_stay_rounded),
+    _PrescriptionSelectionOption(
+      label: 'Breakfast',
+      icon: Icons.wb_sunny_rounded,
+    ),
+    _PrescriptionSelectionOption(label: 'Lunch', letter: 'L'),
+    _PrescriptionSelectionOption(label: 'Dinner', letter: 'D'),
+    _PrescriptionSelectionOption(
+      label: 'Before Bed',
+      icon: Icons.nights_stay_rounded,
+    ),
   ];
 
   static const _foodInstructionOptions = [
@@ -735,7 +588,7 @@ class _AddPrescriptionMedicineEditorBottomSheetState
     setState(() {
       _attachments = [
         ..._attachments,
-        _SheetAttachment(
+        _PrescriptionSheetAttachment(
           name: file.name,
           sizeLabel: '${sizeInMb.toStringAsFixed(1)} MB',
         ),
@@ -745,196 +598,110 @@ class _AddPrescriptionMedicineEditorBottomSheetState
 
   @override
   Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-    final maxHeight = mediaQuery.size.height * 0.60;
-
-    return SafeArea(
-      top: false,
-      child: Padding(
-        padding: EdgeInsets.only(bottom: mediaQuery.viewInsets.bottom),
-        child: Container(
-          constraints: BoxConstraints(maxHeight: maxHeight),
-          decoration: const BoxDecoration(
-            color: AppColors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(AppSpacing.radius3xl),
-              topRight: Radius.circular(AppSpacing.radius3xl),
+    return PremiumBottomSheet(
+      title: 'Medicines',
+      leadingLabel: 'Back',
+      onLeadingTap: () => Navigator.of(context).pop(),
+      footer: SizedBox(
+        width: double.infinity,
+        height: 52,
+        child: FilledButton(
+          onPressed: () => Navigator.pop(context),
+          style: FilledButton.styleFrom(
+            backgroundColor: AppColors.black,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(99),
             ),
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 40,
-                height: 5,
-                margin: const EdgeInsets.only(top: 8, bottom: 6),
-                decoration: BoxDecoration(
-                  color: AppColors.black.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
-                ),
-              ),
-              SizedBox(
-                height: 60,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.space16,
-                        ),
-                        child: GestureDetector(
-                          behavior: HitTestBehavior.opaque,
-                          onTap: () => Navigator.of(context).pop(),
-                          child: Text(
-                            'Back',
-                            style: AppTypography.label2.copyWith(
-                              color: AppColors.blue600,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Text(
-                      'Medicines',
-                      style: AppTypography.label1SemiBold.copyWith(
-                        color: AppColors.neutral950,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.fromLTRB(
-                    AppSpacing.space16,
-                    AppSpacing.space16,
-                    AppSpacing.space16,
-                    AppSpacing.space16,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _LabeledInputField(
-                        label: 'Medicine name',
-                        isRequired: true,
-                        hint: 'e.g. Thyrox 50, metformin 500mg, etc...',
-                        controller: _medicineNameController,
-                      ),
-                      const SizedBox(height: AppSpacing.space10),
-                      _PillCountField(
-                        count: _pillCount,
-                        onDecrement: () => setState(
-                          () =>
-                              _pillCount = _pillCount > 1 ? _pillCount - 1 : 1,
-                        ),
-                        onIncrement: () =>
-                            setState(() => _pillCount = _pillCount + 1),
-                      ),
-                      const SizedBox(height: AppSpacing.space10),
-                      _LabeledInputField(
-                        label: 'Note',
-                        hint: 'e.g. Take with warm water, etc...',
-                        controller: _noteController,
-                        maxLines: 3,
-                        minHeight: 86,
-                      ),
-                      const SizedBox(height: AppSpacing.space20),
-                      _SectionLabel(title: 'WHEN TO TAKE'),
-                      const SizedBox(height: AppSpacing.space10),
-                      Wrap(
-                        spacing: AppSpacing.space8,
-                        runSpacing: AppSpacing.space8,
-                        children: _whenToTakeOptions
-                            .map(
-                              (option) => _ChoiceTile(
-                                width: 175,
-                                label: option.label,
-                                icon: option.icon,
-                                letter: option.letter,
-                                selected: _selectedWhenToTake == option.label,
-                                onTap: () => setState(
-                                  () => _selectedWhenToTake = option.label,
-                                ),
-                              ),
-                            )
-                            .toList(),
-                      ),
-                      const SizedBox(height: AppSpacing.space20),
-                      _SectionLabel(title: 'FOOD INSTRUCTION'),
-                      const SizedBox(height: AppSpacing.space10),
-                      Wrap(
-                        spacing: AppSpacing.space8,
-                        runSpacing: AppSpacing.space8,
-                        children: _foodInstructionOptions
-                            .map(
-                              (option) => _PillChip(
-                                label: option,
-                                selected: _selectedFoodInstruction == option,
-                                onTap: () => setState(
-                                  () => _selectedFoodInstruction = option,
-                                ),
-                              ),
-                            )
-                            .toList(),
-                      ),
-                      const SizedBox(height: AppSpacing.space20),
-                      _SectionLabel(title: 'MEDICINE PHOTOS'),
-                      const SizedBox(height: AppSpacing.space10),
-                      _UploadArea(onTap: _pickFiles),
-                      const SizedBox(height: AppSpacing.space10),
-                      ..._attachments.map(
-                        (attachment) => Padding(
-                          padding: const EdgeInsets.only(
-                            bottom: AppSpacing.space10,
-                          ),
-                          child: _AttachmentRow(
-                            attachment: attachment,
-                            onRemove: () => setState(
-                              () => _attachments = _attachments
-                                  .where((item) => item != attachment)
-                                  .toList(),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Container(
-                color: AppColors.white,
-                padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.space16,
-                  0,
-                  AppSpacing.space16,
-                  AppSpacing.space16,
-                ),
-                child: SizedBox(
-                  width: double.infinity,
-                  height: 52,
-                  child: FilledButton(
-                    onPressed: () {},
-                    style: FilledButton.styleFrom(
-                      backgroundColor: AppColors.black,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(99),
-                      ),
-                    ),
-                    child: Text(
-                      'Add',
-                      style: AppTypography.body2Medium.copyWith(
-                        color: AppColors.white,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
+          child: Text(
+            'Add',
+            style: AppTypography.body2Medium.copyWith(color: AppColors.white),
           ),
         ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          PremiumTextField(
+            isDark: false,
+            label: 'Medicine name*',
+            placeholder: 'e.g. Thyrox 50, metformin 500mg, etc...',
+            controller: _medicineNameController,
+            forceLabelInside: true,
+          ),
+          const SizedBox(height: AppSpacing.space10),
+          _PrescriptionPillCountField(
+            count: _pillCount,
+            onDecrement: () => setState(
+              () => _pillCount = _pillCount > 1 ? _pillCount - 1 : 1,
+            ),
+            onIncrement: () => setState(() => _pillCount = _pillCount + 1),
+          ),
+          const SizedBox(height: AppSpacing.space10),
+          PremiumTextField(
+            isDark: false,
+            label: 'Note',
+            placeholder: 'e.g. Take with warm water, etc...',
+            controller: _noteController,
+            maxLines: 3,
+            forceLabelInside: true,
+          ),
+          const SizedBox(height: AppSpacing.space20),
+          const _PrescriptionSectionLabel(title: 'WHEN TO TAKE'),
+          const SizedBox(height: AppSpacing.space10),
+          Wrap(
+            spacing: AppSpacing.space8,
+            runSpacing: AppSpacing.space8,
+            children: _whenToTakeOptions
+                .map(
+                  (option) => _PrescriptionChoiceTile(
+                    width: 175,
+                    label: option.label,
+                    icon: option.icon,
+                    letter: option.letter,
+                    selected: _selectedWhenToTake == option.label,
+                    onTap: () =>
+                        setState(() => _selectedWhenToTake = option.label),
+                  ),
+                )
+                .toList(),
+          ),
+          const SizedBox(height: AppSpacing.space20),
+          const _PrescriptionSectionLabel(title: 'FOOD INSTRUCTION'),
+          const SizedBox(height: AppSpacing.space10),
+          Wrap(
+            spacing: AppSpacing.space8,
+            runSpacing: AppSpacing.space8,
+            children: _foodInstructionOptions
+                .map(
+                  (option) => _PrescriptionPillChip(
+                    label: option,
+                    selected: _selectedFoodInstruction == option,
+                    onTap: () =>
+                        setState(() => _selectedFoodInstruction = option),
+                  ),
+                )
+                .toList(),
+          ),
+          const SizedBox(height: AppSpacing.space20),
+          const _PrescriptionSectionLabel(title: 'MEDICINE PHOTOS'),
+          const SizedBox(height: AppSpacing.space10),
+          PremiumFileDrop(isDark: false, onBrowse: _pickFiles),
+          const SizedBox(height: AppSpacing.space10),
+          ..._attachments.map(
+            (attachment) => Padding(
+              padding: const EdgeInsets.only(bottom: AppSpacing.space10),
+              child: _PrescriptionAttachmentRow(
+                attachment: attachment,
+                onRemove: () => setState(
+                  () => _attachments = _attachments
+                      .where((item) => item != attachment)
+                      .toList(),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -978,149 +745,112 @@ class _AddPrescriptionDetailsBottomSheetState
 
   @override
   Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-
-    return SafeArea(
-      top: false,
-      child: Padding(
-        padding: EdgeInsets.only(bottom: mediaQuery.viewInsets.bottom),
-        child: Container(
-          constraints: BoxConstraints(maxHeight: mediaQuery.size.height * 0.86),
-          decoration: const BoxDecoration(
-            color: AppColors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(AppSpacing.radius3xl),
-              topRight: Radius.circular(AppSpacing.radius3xl),
+    return PremiumBottomSheet(
+      title: 'Prescription details',
+      leadingLabel: 'Back',
+      onLeadingTap: () => Navigator.of(context).pop(),
+      footer: SizedBox(
+        width: double.infinity,
+        height: 52,
+        child: FilledButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          style: FilledButton.styleFrom(
+            backgroundColor: AppColors.black,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(99),
             ),
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 40,
-                height: 5,
-                margin: const EdgeInsets.only(top: 8, bottom: 6),
-                decoration: BoxDecoration(
-                  color: AppColors.black.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(AppSpacing.radiusFull),
-                ),
-              ),
-              SizedBox(
-                height: 60,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.space16,
-                        ),
-                        child: GestureDetector(
-                          behavior: HitTestBehavior.opaque,
-                          onTap: () => Navigator.of(context).pop(),
-                          child: Text(
-                            'Back',
-                            style: AppTypography.label2.copyWith(
-                              color: AppColors.blue600,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Text(
-                      'Prescription details',
-                      style: AppTypography.label1SemiBold.copyWith(
-                        color: AppColors.neutral950,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.fromLTRB(
-                    AppSpacing.space16,
-                    AppSpacing.space16,
-                    AppSpacing.space16,
-                    AppSpacing.space24,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _PrescriptionUploadArea(onTap: _pickPrescriptionFile),
-                      const SizedBox(height: AppSpacing.space20),
-                      const _SectionLabel(title: 'PRESCRIPTION DETAILS'),
-                      const SizedBox(height: AppSpacing.space10),
-                      _LabeledInputField(
-                        label: 'Doctor',
-                        isRequired: true,
-                        hint: 'Type to add or search existing symptom...',
-                        controller: _doctorController,
-                      ),
-                      const SizedBox(height: AppSpacing.space10),
-                      _LabeledInputField(
-                        label: 'Hospital / Lab',
-                        isRequired: true,
-                        hint: 'Type to add or search existing symptom...',
-                        controller: _hospitalController,
-                      ),
-                      const SizedBox(height: AppSpacing.space10),
-                      _LabeledInputField(
-                        label: 'Date',
-                        hint: '00/00/0000',
-                        controller: _dateController,
-                      ),
-                      const SizedBox(height: AppSpacing.space10),
-                      _LabeledInputField(
-                        label: 'Speciality',
-                        hint: 'Endocrinology',
-                        controller: _specialityController,
-                      ),
-                      const SizedBox(height: AppSpacing.space20),
-                      Text(
-                        'ATTACHMENTS',
-                        style: AppTypography.label2SemiBold.copyWith(
-                          color: AppColors.neutral500,
-                          letterSpacing: 0.56,
-                        ),
-                      ),
-                      const SizedBox(height: AppSpacing.space12),
-                      const _PdfAttachmentCard(),
-                      const SizedBox(height: AppSpacing.space12),
-                      const _PrescriptionReferenceCard(),
-                      const SizedBox(height: AppSpacing.space12),
-                      const _PrescriptionReferenceCard(),
-                    ],
-                  ),
-                ),
-              ),
-            ],
+          child: Text(
+            'Add',
+            style: AppTypography.body2Medium.copyWith(color: AppColors.white),
           ),
         ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          PremiumFileDrop(isDark: false, onBrowse: _pickPrescriptionFile),
+          const SizedBox(height: AppSpacing.space20),
+          const _PrescriptionSectionLabel(title: 'PRESCRIPTION DETAILS'),
+          const SizedBox(height: AppSpacing.space10),
+          PremiumTextField(
+            isDark: false,
+            label: 'Doctor*',
+            placeholder: 'Type to add or search existing symptom...',
+            controller: _doctorController,
+            forceLabelInside: true,
+          ),
+          const SizedBox(height: AppSpacing.space10),
+          PremiumTextField(
+            isDark: false,
+            label: 'Hospital / Lab*',
+            placeholder: 'Type to add or search existing symptom...',
+            controller: _hospitalController,
+            forceLabelInside: true,
+          ),
+          const SizedBox(height: AppSpacing.space10),
+          PremiumTextField(
+            isDark: false,
+            label: 'Date',
+            placeholder: '00/00/0000',
+            controller: _dateController,
+            suffixIcon: Icons.calendar_month_outlined,
+            forceLabelInside: true,
+          ),
+          const SizedBox(height: AppSpacing.space10),
+          PremiumTextField(
+            isDark: false,
+            label: 'Speciality',
+            placeholder: 'Endocrinology',
+            controller: _specialityController,
+            forceLabelInside: true,
+          ),
+          const SizedBox(height: AppSpacing.space20),
+          Text(
+            'ATTACHMENTS',
+            style: AppTypography.label2SemiBold.copyWith(
+              color: AppColors.neutral500,
+              letterSpacing: 0.56,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.space12),
+          const _PrescriptionPdfAttachmentCard(),
+          const SizedBox(height: AppSpacing.space12),
+          const _PrescriptionReferenceCard(),
+          const SizedBox(height: AppSpacing.space12),
+          const _PrescriptionReferenceCard(),
+        ],
       ),
     );
   }
 }
 
-class _SelectionOption {
-  const _SelectionOption({required this.label, this.icon, this.letter});
+class _PrescriptionSelectionOption {
+  const _PrescriptionSelectionOption({
+    required this.label,
+    this.icon,
+    this.letter,
+  });
 
   final String label;
   final IconData? icon;
   final String? letter;
 }
 
-class _SheetAttachment {
-  const _SheetAttachment({required this.name, required this.sizeLabel});
+class _PrescriptionSheetAttachment {
+  const _PrescriptionSheetAttachment({
+    required this.name,
+    required this.sizeLabel,
+  });
 
   final String name;
   final String sizeLabel;
 }
 
-class _SectionLabel extends StatelessWidget {
-  const _SectionLabel({required this.title});
+class _PrescriptionSectionLabel extends StatelessWidget {
+  const _PrescriptionSectionLabel({required this.title});
 
   final String title;
 
@@ -1137,147 +867,8 @@ class _SectionLabel extends StatelessWidget {
   }
 }
 
-class _PrescriptionUploadArea extends StatelessWidget {
-  const _PrescriptionUploadArea({required this.onTap});
-
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(
-          horizontal: 12,
-          vertical: AppSpacing.space24,
-        ),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-          border: Border.all(color: AppColors.neutral300),
-          gradient: const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color(0xFFDDEAFF),
-              AppColors.white,
-              Color(0xFFFFF2C9),
-              Color(0xFFFBE4F5),
-            ],
-            stops: [0.0, 0.35, 0.78, 1.0],
-          ),
-        ),
-        child: Column(
-          children: [
-            const Icon(
-              Icons.file_upload_outlined,
-              size: 24,
-              color: AppColors.pink500,
-            ),
-            const SizedBox(height: AppSpacing.space12),
-            SizedBox(
-              width: 246,
-              child: Text(
-                'Upload file for AI to\nautomatically fetch details',
-                textAlign: TextAlign.center,
-                style: AppTypography.label1Bold.copyWith(
-                  color: AppColors.neutral950,
-                  height: 1.2,
-                ),
-              ),
-            ),
-            const SizedBox(height: AppSpacing.space4),
-            Text(
-              'Max upto 2 mb per file upload',
-              style: AppTypography.label2.copyWith(color: AppColors.neutral500),
-            ),
-            const SizedBox(height: AppSpacing.space12),
-            Wrap(
-              spacing: AppSpacing.space4,
-              children: const [
-                _FormatChip(label: 'PDF'),
-                _FormatChip(label: 'JPG'),
-                _FormatChip(label: 'PNG'),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _LabeledInputField extends StatelessWidget {
-  const _LabeledInputField({
-    required this.label,
-    required this.hint,
-    required this.controller,
-    this.isRequired = false,
-    this.maxLines = 1,
-    this.minHeight = 55,
-  });
-
-  final String label;
-  final String hint;
-  final TextEditingController controller;
-  final bool isRequired;
-  final int maxLines;
-  final double minHeight;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      constraints: BoxConstraints(minHeight: minHeight),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9.5),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-        border: Border.all(color: AppColors.neutral200),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          RichText(
-            text: TextSpan(
-              style: AppTypography.caption1.copyWith(
-                color: AppColors.neutral500,
-              ),
-              children: [
-                TextSpan(text: label),
-                if (isRequired)
-                  const TextSpan(
-                    text: '*',
-                    style: TextStyle(color: AppColors.red700),
-                  ),
-              ],
-            ),
-          ),
-          const SizedBox(height: AppSpacing.space4),
-          TextField(
-            controller: controller,
-            maxLines: maxLines,
-            style: AppTypography.body3.copyWith(color: AppColors.neutral950),
-            decoration: InputDecoration(
-              isDense: true,
-              filled: false,
-              border: InputBorder.none,
-              enabledBorder: InputBorder.none,
-              focusedBorder: InputBorder.none,
-              contentPadding: EdgeInsets.zero,
-              hintText: hint,
-              hintStyle: AppTypography.body3.copyWith(
-                color: AppColors.neutral400,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _PillCountField extends StatelessWidget {
-  const _PillCountField({
+class _PrescriptionPillCountField extends StatelessWidget {
+  const _PrescriptionPillCountField({
     required this.count,
     required this.onDecrement,
     required this.onIncrement,
@@ -1289,14 +880,9 @@ class _PillCountField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      constraints: const BoxConstraints(minHeight: 55),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-        border: Border.all(color: AppColors.neutral200),
-      ),
+    return BaseInputContainer(
+      isDark: false,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
         children: [
           Expanded(
@@ -1313,19 +899,36 @@ class _PillCountField extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   '$count',
-                  style: AppTypography.body3.copyWith(
-                    color: const Color(0xFF2B2B2B),
+                  style: AppTypography.body1SemiBold.copyWith(
+                    color: AppColors.neutral950,
                   ),
                 ),
               ],
             ),
           ),
-          Row(
-            children: [
-              _QuantityButton(icon: Icons.remove, onTap: onDecrement),
-              const SizedBox(width: AppSpacing.space4),
-              _QuantityButton(icon: Icons.add, onTap: onIncrement),
-            ],
+          Container(
+            height: 36,
+            decoration: BoxDecoration(
+              color: AppColors.neutral100,
+              borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+              border: Border.all(color: AppColors.neutral200),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _StepperButton(
+                  icon: Icons.remove,
+                  onTap: onDecrement,
+                  isLeft: true,
+                ),
+                Container(width: 1, height: 24, color: AppColors.neutral200),
+                _StepperButton(
+                  icon: Icons.add,
+                  onTap: onIncrement,
+                  isLeft: false,
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -1333,32 +936,37 @@ class _PillCountField extends StatelessWidget {
   }
 }
 
-class _QuantityButton extends StatelessWidget {
-  const _QuantityButton({required this.icon, required this.onTap});
+class _StepperButton extends StatelessWidget {
+  const _StepperButton({
+    required this.icon,
+    required this.onTap,
+    required this.isLeft,
+  });
 
   final IconData icon;
   final VoidCallback onTap;
+  final bool isLeft;
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return InkWell(
       onTap: onTap,
+      borderRadius: BorderRadius.horizontal(
+        left: Radius.circular(isLeft ? AppSpacing.radiusMd : 0),
+        right: Radius.circular(isLeft ? 0 : AppSpacing.radiusMd),
+      ),
       child: Container(
-        width: 36,
+        width: 40,
         height: 36,
-        decoration: BoxDecoration(
-          color: const Color(0xFFEAEAEA),
-          borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-          border: Border.all(color: const Color(0xFFBEBEBE)),
-        ),
-        child: Icon(icon, size: 24, color: AppColors.neutral950),
+        alignment: Alignment.center,
+        child: Icon(icon, size: 20, color: AppColors.neutral950),
       ),
     );
   }
 }
 
-class _ChoiceTile extends StatelessWidget {
-  const _ChoiceTile({
+class _PrescriptionChoiceTile extends StatelessWidget {
+  const _PrescriptionChoiceTile({
     required this.label,
     required this.selected,
     required this.onTap,
@@ -1418,8 +1026,8 @@ class _ChoiceTile extends StatelessWidget {
   }
 }
 
-class _PillChip extends StatelessWidget {
-  const _PillChip({
+class _PrescriptionPillChip extends StatelessWidget {
+  const _PrescriptionPillChip({
     required this.label,
     required this.selected,
     required this.onTap,
@@ -1454,89 +1062,13 @@ class _PillChip extends StatelessWidget {
   }
 }
 
-class _UploadArea extends StatelessWidget {
-  const _UploadArea({required this.onTap});
+class _PrescriptionAttachmentRow extends StatelessWidget {
+  const _PrescriptionAttachmentRow({
+    required this.attachment,
+    required this.onRemove,
+  });
 
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(
-          horizontal: 12,
-          vertical: AppSpacing.space24,
-        ),
-        decoration: BoxDecoration(
-          color: AppColors.white,
-          borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-          border: Border.all(
-            color: AppColors.neutral300,
-            style: BorderStyle.solid,
-          ),
-        ),
-        child: Column(
-          children: [
-            const Icon(
-              Icons.file_upload_outlined,
-              size: 24,
-              color: AppColors.pink500,
-            ),
-            const SizedBox(height: AppSpacing.space12),
-            Text(
-              'Tap to upload',
-              style: AppTypography.label1Bold.copyWith(
-                color: AppColors.neutral950,
-              ),
-            ),
-            const SizedBox(height: AppSpacing.space4),
-            Text(
-              'Max upto 2 mb per file upload',
-              style: AppTypography.label2.copyWith(color: AppColors.neutral500),
-            ),
-            const SizedBox(height: AppSpacing.space12),
-            Wrap(
-              spacing: AppSpacing.space4,
-              children: const [
-                _FormatChip(label: 'PDF'),
-                _FormatChip(label: 'JPG'),
-                _FormatChip(label: 'PNG'),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _FormatChip extends StatelessWidget {
-  const _FormatChip({required this.label});
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: AppColors.neutral200,
-        borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-      ),
-      child: Text(
-        label,
-        style: AppTypography.label2.copyWith(color: AppColors.neutral500),
-      ),
-    );
-  }
-}
-
-class _AttachmentRow extends StatelessWidget {
-  const _AttachmentRow({required this.attachment, required this.onRemove});
-
-  final _SheetAttachment attachment;
+  final _PrescriptionSheetAttachment attachment;
   final VoidCallback onRemove;
 
   @override
@@ -1587,8 +1119,8 @@ class _AttachmentRow extends StatelessWidget {
   }
 }
 
-class _PdfAttachmentCard extends StatelessWidget {
-  const _PdfAttachmentCard();
+class _PrescriptionPdfAttachmentCard extends StatelessWidget {
+  const _PrescriptionPdfAttachmentCard();
 
   @override
   Widget build(BuildContext context) {

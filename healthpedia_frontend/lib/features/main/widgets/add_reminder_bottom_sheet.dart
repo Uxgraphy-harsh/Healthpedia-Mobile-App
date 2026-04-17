@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:healthpedia_frontend/core/widgets/premium_bottom_sheet.dart';
+import 'package:healthpedia_frontend/core/widgets/premium_inputs/premium_text_field.dart';
 import 'repeat_bottom_sheet.dart';
 
 class AddReminderBottomSheet extends StatefulWidget {
@@ -101,190 +103,121 @@ class _AddReminderBottomSheetState extends State<AddReminderBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(24),
-          topRight: Radius.circular(24),
+    return PremiumBottomSheet(
+      title: 'Add reminder',
+      leadingLabel: 'Cancel',
+      onLeadingTap: () => Navigator.of(context).pop(),
+      footer: SizedBox(
+        width: double.infinity,
+        height: 52,
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.black,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(99),
+            ),
+            elevation: 0,
+          ),
+          child: const Text(
+            'Save Reminder',
+            style: TextStyle(
+              fontFamily: 'Geist',
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: Colors.white,
+            ),
+          ),
         ),
       ),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Home Indicator
-          Container(
-            margin: const EdgeInsets.symmetric(vertical: 8),
-            width: 40,
-            height: 5,
-            decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(100),
-            ),
+          _buildSectionLabel('REMINDER'),
+          const SizedBox(height: 10),
+          
+          // Title Field
+          PremiumTextField(
+            controller: _titleController,
+            label: 'Title',
+            placeholder: 'Thyroid Medicine',
+            isDark: false,
+            forceLabelInside: true,
+          ),
+          const SizedBox(height: 16),
+          
+          // Date & Time Row
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: PremiumTextField(
+                  label: 'Date',
+                  placeholder: _selectedDate != null 
+                      ? "${_selectedDate!.day.toString().padLeft(2, '0')}/${_selectedDate!.month.toString().padLeft(2, '0')}/${_selectedDate!.year}"
+                      : '00/00/0000',
+                  onTap: () => _selectDate(context),
+                  isDark: false,
+                  forceLabelInside: true,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: PremiumTextField(
+                  label: 'Time',
+                  placeholder: _selectedTime != null 
+                      ? "${_selectedTime!.hourOfPeriod == 0 ? 12 : _selectedTime!.hourOfPeriod.toString().padLeft(2, '0')}:${_selectedTime!.minute.toString().padLeft(2, '0')} ${isAM ? 'AM' : 'PM'}"
+                      : '00:00 AM',
+                  onTap: () => _selectTime(context),
+                  isDark: false,
+                  forceLabelInside: true,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          
+          // Repeat Field
+          PremiumTextField(
+            label: 'Repeat',
+            placeholder: _repeatLabel,
+            onTap: () => _openRepeatSheet(context),
+            showTrailingChevron: true,
+            isDark: false,
+            forceLabelInside: true,
           ),
           
-          // Header
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: const Text(
-                      'Cancel',
-                      style: TextStyle(
-                        fontFamily: 'Geist',
-                        fontSize: 14,
-                        color: Color(0xFF2563EB), // Blue 600
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ),
-                ),
-                const Text(
-                  'Add reminder',
-                  style: TextStyle(
-                    fontFamily: 'Geist',
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF0A0A0A),
-                  ),
-                ),
-              ],
-            ),
+          const SizedBox(height: 20),
+          _buildSectionLabel('TYPE', isRequired: true),
+          const SizedBox(height: 10),
+          
+          // Type Chips
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              _buildTypeChip('Appointment'),
+              _buildTypeChip('Medicine'),
+              _buildTypeChip('Report collection'),
+              _buildTypeChip('Food'),
+              _buildTypeChip('General reminder'),
+            ],
           ),
-
-          const Divider(height: 1, color: Color(0xFFE5E5E5)),
-
-          // Form Content
-          Flexible(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildSectionLabel('REMINDER'),
-                  const SizedBox(height: 10),
-                  
-                  // Title Field
-                  _buildTextField(
-                    label: 'Title',
-                    placeholder: 'Thyroid Medicine',
-                    isRequired: true,
-                    controller: _titleController,
-                  ),
-                  const SizedBox(height: 8),
-                  
-                  // Date & Time Row
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildTextField(
-                          label: 'Date',
-                          placeholder: _selectedDate != null 
-                              ? "${_selectedDate!.day.toString().padLeft(2, '0')}/${_selectedDate!.month.toString().padLeft(2, '0')}/${_selectedDate!.year}"
-                              : '00/00/0000',
-                          isReadOnly: true,
-                          onTap: () => _selectDate(context),
-                          textStyle: TextStyle(
-                            fontFamily: 'Geist',
-                            fontSize: 15,
-                            fontWeight: FontWeight.w400,
-                            color: _selectedDate != null ? const Color(0xFF0A0A0A) : const Color(0xFFA3A3A3),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () => _selectTime(context),
-                          child: _buildTimeField(),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  
-                  // Repeat Field
-                  _buildTextField(
-                    label: 'Repeat',
-                    placeholder: _repeatLabel,
-                    isReadOnly: true,
-                    showArrow: true,
-                    onTap: () => _openRepeatSheet(context),
-                    textStyle: const TextStyle(
-                      fontFamily: 'Geist',
-                      fontSize: 15,
-                      fontWeight: FontWeight.w400,
-                      color: Color(0xFF0A0A0A),
-                    ),
-                  ),
-                  
-                  const SizedBox(height: 20),
-                  _buildSectionLabel('TYPE', isRequired: true),
-                  const SizedBox(height: 10),
-                  
-                  // Type Chips
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: [
-                      _buildTypeChip('Appointment'),
-                      _buildTypeChip('Medicine'),
-                      _buildTypeChip('Report collection'),
-                      _buildTypeChip('Food'),
-                      _buildTypeChip('General reminder'),
-                    ],
-                  ),
-                  
-                  const SizedBox(height: 20),
-                  _buildSectionLabel('ADDITIONAL INFORMATION'),
-                  const SizedBox(height: 10),
-                  
-                  // Description Field
-                  _buildTextField(
-                    label: 'Description',
-                    placeholder: 'Write or paste a link',
-                    controller: _descriptionController,
-                    height: 86,
-                  ),
-                  
-                  const SizedBox(height: 24),
-                  
-                  // Save Button
-                  SizedBox(
-                    width: double.infinity,
-                    height: 52,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        // Action: Save logic
-                        Navigator.of(context).pop();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(99),
-                        ),
-                        elevation: 0,
-                      ),
-                      child: const Text(
-                        'Save Reminder',
-                        style: TextStyle(
-                          fontFamily: 'Geist',
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                ],
-              ),
-            ),
+          
+          const SizedBox(height: 20),
+          _buildSectionLabel('ADDITIONAL INFORMATION'),
+          const SizedBox(height: 10),
+          
+          // Description Field
+          PremiumTextField(
+            controller: _descriptionController,
+            label: 'Description',
+            placeholder: 'Write or paste a link',
+            isDark: false,
+            maxLines: 4,
+            forceLabelInside: true,
           ),
         ],
       ),
@@ -313,173 +246,6 @@ class _AddReminderBottomSheetState extends State<AddReminderBottomSheet> {
     );
   }
 
-  Widget _buildTextField({
-    required String label,
-    required String placeholder,
-    bool isRequired = false,
-    bool isReadOnly = false,
-    bool showArrow = false,
-    TextEditingController? controller,
-    double? height,
-    TextStyle? textStyle,
-    VoidCallback? onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9.5),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.1),
-          border: Border.all(color: const Color(0xFFE5E5E5)),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            RichText(
-              text: TextSpan(
-                style: const TextStyle(
-                  fontFamily: 'Geist',
-                  fontSize: 12,
-                  color: Color(0xFF737373),
-                  fontWeight: FontWeight.w400,
-                ),
-                children: [
-                  TextSpan(text: label),
-                  if (isRequired)
-                    const TextSpan(
-                      text: '*',
-                      style: TextStyle(color: Color(0xFFB91C1C)),
-                    ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 4),
-            SizedBox(
-              height: height == null ? 22 : height - 35,
-              child: Row(
-                children: [
-                  Expanded(
-                    child: isReadOnly
-                        ? Text(
-                            placeholder,
-                            style: textStyle ??
-                                const TextStyle(
-                                  fontFamily: 'Geist',
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w400,
-                                  color: Color(0xFFA3A3A3),
-                                ),
-                          )
-                        : TextField(
-                            controller: controller,
-                            cursorColor: const Color(0xFF0A0A0A),
-                            decoration: InputDecoration(
-                              isDense: true,
-                              contentPadding: EdgeInsets.zero,
-                              hintText: placeholder,
-                              hintStyle: const TextStyle(
-                                fontFamily: 'Geist',
-                                fontSize: 15,
-                                fontWeight: FontWeight.w400,
-                                color: Color(0xFFA3A3A3),
-                              ),
-                              border: InputBorder.none,
-                              enabledBorder: InputBorder.none,
-                              focusedBorder: InputBorder.none,
-                              filled: false,
-                            ),
-                            style: const TextStyle(
-                              fontFamily: 'Geist',
-                              fontSize: 15,
-                              fontWeight: FontWeight.w400,
-                              color: Color(0xFF0A0A0A),
-                            ),
-                          ),
-                  ),
-                  if (showArrow)
-                    const Icon(Icons.arrow_forward_ios, size: 14, color: Color(0xFF0A0A0A)),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTimeField() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9.5),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
-        border: Border.all(color: const Color(0xFFE5E5E5)),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Text(
-            'Time',
-            style: TextStyle(
-              fontFamily: 'Geist',
-              fontSize: 12,
-              fontWeight: FontWeight.w400,
-              color: Color(0xFF737373),
-            ),
-          ),
-          const SizedBox(height: 4),
-          SizedBox(
-            height: 22,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  _selectedTime != null 
-                      ? "${_selectedTime!.hourOfPeriod == 0 ? 12 : _selectedTime!.hourOfPeriod.toString().padLeft(2, '0')}:${_selectedTime!.minute.toString().padLeft(2, '0')}"
-                      : '00:00',
-                  style: TextStyle(
-                    fontFamily: 'Geist',
-                    fontSize: 15,
-                    fontWeight: FontWeight.w400,
-                    color: _selectedTime != null ? const Color(0xFF0A0A0A) : const Color(0xFFA3A3A3),
-                  ),
-                ),
-                const Spacer(),
-                GestureDetector(
-                  onTap: () => setState(() => isAM = true),
-                  child: Text(
-                    'AM',
-                    style: TextStyle(
-                      fontFamily: 'Geist',
-                      fontSize: 15,
-                      fontWeight: isAM ? FontWeight.w600 : FontWeight.w400,
-                      color: isAM ? const Color(0xFF0A0A0A) : const Color(0xFFA3A3A3),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                GestureDetector(
-                  onTap: () => setState(() => isAM = false),
-                  child: Text(
-                    'PM',
-                    style: TextStyle(
-                      fontFamily: 'Geist',
-                      fontSize: 15,
-                      fontWeight: !isAM ? FontWeight.w600 : FontWeight.w400,
-                      color: !isAM ? const Color(0xFF0A0A0A) : const Color(0xFFA3A3A3),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildTypeChip(String type) {
     final bool isSelected = selectedType == type;
